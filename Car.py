@@ -24,10 +24,20 @@ class Car:
         self.position = (x, z)
 
     def getDistanceBetween(self, otherCar):
-        x1, y1 = self.position
-        x2, y2 = otherCar.position
+        x1, z1 = self.position
+        x2, z2 = otherCar.position
         
-        return(sqrt((abs(x2 - x1))**2 + abs(y2 - y1)**2))
+        return(sqrt((abs(x2 - x1))**2 + abs(z2 - z1)**2))
 
     def getRelativeSpeed(self, otherCar):
         return(otherCar.speed - self.speed)
+
+
+    def calculateNextPosition(self, dt):
+        
+        # Ici, fait pour que ça fonctionne dans le cas unidimensionnel selon x seulement (on ne touche pas à z)
+        # En gros : on considère que les vecteurs vitesse et accélération sont selon Ux seulement
+        x, z = self.position
+        
+        self.position = (x + self.speed*dt, z)
+        return(self.position)
