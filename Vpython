@@ -1,6 +1,51 @@
+Web VPython 3.2
+
+
+class Car:
+
+    mass = 1240 # kg
+
+    def __init__(self, speed, x, z):
+        self.speed = speed # m.s^(-1)
+        self.accel = 0
+
+        self.position = (x, z)
+
+
+    # Définit la vitesse de la voiture (en m.s^(-1))
+    def setSpeed(self, speedToSet):
+        self.speed = speedToSet
+
+    # Définit l'accélération de la voiture (m.s^(-2))
+    def setAccel(self, accelToSet):
+        self.accel = accelToSet
+
+    # Définit les nouvelles coordonnées de la voiture
+    def setPosition(self, x, z):
+        self.position = (x, z)
+
+    def getDistanceBetween(self, otherCar):
+        x1, z1 = self.position
+        x2, z2 = otherCar.position
+        
+        return(sqrt((abs(x2 - x1))**2 + abs(z2 - z1)**2))
+
+    def getRelativeSpeed(self, otherCar):
+        return(otherCar.speed - self.speed)
+
+
+    def calculateNextPosition(self, dt):
+        
+        # Ici, fait pour que ça fonctionne dans le cas unidimensionnel selon x seulement (on ne touche pas à z)
+        # En gros : on considère que les vecteurs vitesse et accélération sont selon Ux seulement
+        x, z = self.position
+        
+        self.position = (x + self.speed*dt, z)
+        return(self.position)
+   
 ## valeurs efficaces 
 ## vitesse = 1
-## dt = 1
+dt = 1
 ## rate = 60
 
 scene.width = scene.height = 1000
@@ -12,7 +57,7 @@ Uy = vector(0,1,0)
 Uz = vector(0,0,1)
 
 N = 5 ## nombre de voitures
-vitesse_init = vector(2,0,0)
+vitesse_init = 2
 
 def vroom(N,spawnpoint,pas): ## renvoie deux listes, véhicules_p et véhicules_vp (pour respectivement python et vpython) contenant, à l'indice i, la voiture n°i en python ou vpython / dans le cas où les voitures spawn en ligne droite espacées d'un pas régulié / N un entier, spawnpoint un couple (x,z) et pas un entier
     vehicules_p = []
@@ -25,5 +70,15 @@ def vroom(N,spawnpoint,pas): ## renvoie deux listes, véhicules_p et véhicules_
         vehicules_vp.append(voiture_vp)
     return (vehicules_p,vehicules_vp)
     
-vroom(N,(0,0),50) 
+vehicules_p,vehicules_vp=vroom(N,(0,0),50) 
 
+
+while True : ## boucle permettant de faire avancer, de façon rectiligne et uniforme, les voitures
+    rate(60)
+    for i in range(N) :
+        voiture_p = vehicules_p[i]
+        voiture_vp = vehicules_vp[i]
+        x,z = voiture_p.calculateNextPosition(dt) 
+        voiture_vp.pos = vector(x,0,z)
+        
+## modifier la fct nextpoz et surtt le speed qui est un vecteur
