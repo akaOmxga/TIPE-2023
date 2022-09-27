@@ -1,0 +1,29 @@
+## valeurs efficaces 
+## vitesse = 1
+## dt = 1
+## rate = 60
+
+scene.width = scene.height = 1000
+scene.range = 200
+scene.background = color.white
+
+Ux = vector(1,0,0)
+Uy = vector(0,1,0)
+Uz = vector(0,0,1)
+
+N = 5 ## nombre de voitures
+vitesse_init = vector(2,0,0)
+
+def vroom(N,spawnpoint,pas): ## renvoie deux listes, véhicules_p et véhicules_vp (pour respectivement python et vpython) contenant, à l'indice i, la voiture n°i en python ou vpython / dans le cas où les voitures spawn en ligne droite espacées d'un pas régulié / N un entier, spawnpoint un couple (x,z) et pas un entier
+    vehicules_p = []
+    vehicules_vp = []
+    (x,z) = spawnpoint
+    for i in range(N):
+        voiture_p = Car(vitesse_init,x - i*pas,z)
+        vehicules_p.append(voiture_p)
+        voiture_vp = box(pos=vector(x - i*pas,0,z), size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
+        vehicules_vp.append(voiture_vp)
+    return (vehicules_p,vehicules_vp)
+    
+vroom(N,(0,0),50) 
+
