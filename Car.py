@@ -5,12 +5,12 @@ class Car:
     mass = 1240 # kg
 
 
-    # Pour créer un objet voiture : ``car = Car(vitesse, x, z)`` exemple : ``maVoiture = new Car(15, 0, 0)`` 
-    def __init__(self, speed, x, z):
+    # Pour créer un objet voiture : ``car = Car(vitesse, x, y)`` exemple : ``maVoiture = new Car(15, 0, 0)`` 
+    def __init__(self, speed, x, y):
         self.speed = speed # m.s^(-1)
         self.accel = 0
 
-        self.position = (x, z)
+        self.position = (x, y)
 
 
     # Définit la vitesse de la voiture (en m.s^(-1))
@@ -22,17 +22,17 @@ class Car:
         self.accel = accelToSet
 
     # Définit les nouvelles coordonnées de la voiture
-    def setPosition(self, x, z):
-        self.position = (x, z)
+    def setPosition(self, x, y):
+        self.position = (x, y)
 
     def getDistanceBetween(self, otherCar):
-        x1, z1 = self.position
-        x2, z2 = otherCar.position
+        x1, y1 = self.position
+        x2, y2 = otherCar.position
         
-        return(sqrt((abs(x2 - x1))**2 + abs(z2 - z1)**2))
+        return(sqrt((abs(x2 - x1))**2 + abs(y2 - y1)**2))
 
 
-    # Renvoie la vitesse relative entre cet objet et la voiture passée en argument
+    # Renvoie la vitesse relative entre cet objet et la voiture passée en argument (ne tient pas compte de l'orientation des voitures)
     def getRelativeSpeed(self, otherCar):
         return(otherCar.speed - self.speed)
 
@@ -40,11 +40,11 @@ class Car:
     # Calcule la prochaine position de la voiture, la définit et la renvoie
     def calculateNextPosition(self, dt):
         
-        # Ici, fait pour que ça fonctionne dans le cas unidimensionnel selon x seulement (on ne touche pas à z)
+        # Ici, fait pour que ça fonctionne dans le cas unidimensionnel selon x seulement (on ne touche pas à y)
         # En gros : on considère que les vecteurs vitesse et accélération sont selon Ux seulement
-        x, z = self.position
+        x, y = self.position
 
-        self.position = (x + self.speed*dt, z)
+        self.position = (x + self.speed*dt, y)
         return(self.position)
 
 
