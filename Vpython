@@ -1,5 +1,25 @@
-Web VPython 3.2
 
+scene.width = scene.height = 1000
+scene.range = 200
+scene.background = color.white
+
+Ux = vector(1,0,0)
+Uy = vector(0,1,0)
+Uz = vector(0,0,1)
+
+N = 5 ## nombre de voitures
+vitesse_init = 3
+## valeurs efficaces 
+## vitesse = 1
+## dt = 1
+dt = 0.5
+## rate = 60
+coef_virage = 100
+
+## notion de trajctoire : la classe Car comporte un  attribut trajectoire (pick aléatoirement entre plusieurs possibles) : fonction f tq f(x,dt) = (y,z), prend la position actuelle x puis calcul la nouvelle pos selon y après le temps dt, où y est la coords y et z la limitation de vitesse sur la portion de route considérée
+
+def trajectoire(x) :
+    return (coef_virage*sin((2*pi/300)*x))
 
 class Car:
 
@@ -9,7 +29,7 @@ class Car:
         self.speed = speed # m.s^(-1)
         self.accel = 0
 
-        self.position = (x, z)
+        self.position = (x,z)
 
 
     # Définit la vitesse de la voiture (en m.s^(-1))
@@ -39,38 +59,28 @@ class Car:
         # Ici, fait pour que ça fonctionne dans le cas unidimensionnel selon x seulement (on ne touche pas à z)
         # En gros : on considère que les vecteurs vitesse et accélération sont selon Ux seulement
         x, z = self.position
-        
         self.position = (x + self.speed*dt, z)
         return(self.position)
-   
-## valeurs efficaces 
-## vitesse = 1
-dt = 1
-## rate = 60
-
-scene.width = scene.height = 1000
-scene.range = 200
-scene.background = color.white
-
-Ux = vector(1,0,0)
-Uy = vector(0,1,0)
-Uz = vector(0,0,1)
-
-N = 5 ## nombre de voitures
-vitesse_init = 2
+    
+    def calculateNextPosition_traj(self, dt):
+        
+        x, z = self.position
+        self.position = (x + self.speed*dt,trajectoire(x))
+        return(self.position)
+        
 
 def vroom(N,spawnpoint,pas): ## renvoie deux listes, véhicules_p et véhicules_vp (pour respectivement python et vpython) contenant, à l'indice i, la voiture n°i en python ou vpython / dans le cas où les voitures spawn en ligne droite espacées d'un pas régulié / N un entier, spawnpoint un couple (x,z) et pas un entier
     vehicules_p = []
     vehicules_vp = []
     (x,z) = spawnpoint
     for i in range(N):
-        voiture_p = Car(vitesse_init,x - i*pas,z)
+        voiture_p = Car(random(1, 5),x - i*pas,z)
         vehicules_p.append(voiture_p)
-        voiture_vp = box(pos=vector(x - i*pas,0,z), size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
+        voiture_vp = box(make_trail = True,trail_type='points', interval=10, retain=100, pos=vector(x - i*pas,0,z), size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
         vehicules_vp.append(voiture_vp)
     return (vehicules_p,vehicules_vp)
     
-vehicules_p,vehicules_vp=vroom(N,(0,0),50) 
+vehicules_p,vehicules_vp=vroom(N,(0,0),100) 
 
 
 while True : ## boucle permettant de faire avancer, de façon rectiligne et uniforme, les voitures
@@ -78,7 +88,10 @@ while True : ## boucle permettant de faire avancer, de façon rectiligne et unif
     for i in range(N) :
         voiture_p = vehicules_p[i]
         voiture_vp = vehicules_vp[i]
-        x,z = voiture_p.calculateNextPosition(dt) 
-        voiture_vp.pos = vector(x,0,z)
-        
-## modifier la fct nextpoz et surtt le speed qui est un vecteur
+        x,z = voiture_p.position
+        if x < 0 :
+            x,z = voiture_p.calculateNextPosition(dt) 
+            voiture_vp.pos = vector(x,0,z)
+        else :
+            x,z = voiture_p.calculateNextPosition_traj(dt) 
+            voiture_vp.pos = vector(x,0,z)
