@@ -1,4 +1,6 @@
 
+Web VPython 3.2
+
 scene.width = scene.height = 1000
 scene.range = 200
 scene.background = color.white
@@ -7,19 +9,62 @@ Ux = vector(1,0,0)
 Uy = vector(0,1,0)
 Uz = vector(0,0,1)
 
-N = 5 ## nombre de voitures
+L = 4 ## longueur de la voiture en m
+K = 25 ## coefficient d'homogénéité des forces
+N = 25 ## nombre de voitures
 vitesse_init = 3
 ## valeurs efficaces 
 ## vitesse = 1
 ## dt = 1
-dt = 0.5
+dt = 1
 ## rate = 60
-coef_virage = 100
+coef_virage = 50
+vmax = 10 
+
+
+## u est un tableau de liste, u[0][i] est la position de la i-ème voiture (avec comme référence u[0][0] la voiture en tête), u[1][i] pareil avec les vitesses et u[2][i] pareil avec les accélérations
+
+def acceleration(u): ## rajouter dt et le paramètre vmax
+    for k in range(1,len(u[2])):
+
+        u[2][k]=K*((u[1][k-1]-u[1][k])/(u[0][k-1]-u[0][k])) ## pfd de chaque voiture pour calculer leur accélération en t + dt
+
+        if u[1][k]+u[2][k] < 0 :  ## dt
+            u[1][k] = 0
+            u[2][k] = 0
+        elif u[1][k]+u[2][k] > 30: ## vmax en m/s
+            u[1][k]= 30
+            u[2][k]= 0
+        else:
+            u[1][k]=u[1][k]+u[2][k] ## nouvelle vitesse en t + dt (intégration)
+
+        u[0][k]=u[0][k]+u[1][k] ## intégration pour obtenir la position 
+    return u
+
+
+L = [[40*(10-k) for k in range(10)],[20 for k in range(10)],[0 for k in range(10)]] ## u test 
+
+def pertubation(u,a): ## liste u et a accélération à laquelle on veut perturber la première voiture 
+    u[2][0] = a
+    if u[1][0] + u[2][0] < 0:
+        u[1][0] = 0
+    else:
+        u[1][0] = u[1][0] + u[2][0]
+    u[0][0] = u[0][0] + u[1][0]
+    rep = acceleration(u) ## on répercute la perturbation en calculant la nouvelle liste 
+    return rep
+
 
 ## notion de trajctoire : la classe Car comporte un  attribut trajectoire (pick aléatoirement entre plusieurs possibles) : fonction f tq f(x,dt) = (y,z), prend la position actuelle x puis calcul la nouvelle pos selon y après le temps dt, où y est la coords y et z la limitation de vitesse sur la portion de route considérée
 
 def trajectoire(x) :
+    return (coef_virage*atan((x/100))+30)
+
+def trajectoire1(x) :
     return (coef_virage*sin((2*pi/300)*x))
+    
+def trajectoire2(x) :
+    return (coef_virage*cos((2*pi/300)*x))
 
 class Car:
 
@@ -28,7 +73,6 @@ class Car:
     def __init__(self, speed, x, z):
         self.speed = speed # m.s^(-1)
         self.accel = 0
-
         self.position = (x,z)
 
 
@@ -65,7 +109,7 @@ class Car:
     def calculateNextPosition_traj(self, dt):
         
         x, z = self.position
-        self.position = (x + self.speed*dt,trajectoire(x))
+        self.position = (x + self.speed*dt,trajectoire1(x))
         return(self.position)
         
 
@@ -74,7 +118,7 @@ def vroom(N,spawnpoint,pas): ## renvoie deux listes, véhicules_p et véhicules_
     vehicules_vp = []
     (x,z) = spawnpoint
     for i in range(N):
-        voiture_p = Car(random(1, 5),x - i*pas,z)
+        voiture_p = Car(random(3, 6),x - i*pas,z)
         vehicules_p.append(voiture_p)
         voiture_vp = box(make_trail = True,trail_type='points', interval=10, retain=100, pos=vector(x - i*pas,0,z), size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
         vehicules_vp.append(voiture_vp)
@@ -95,3 +139,4 @@ while True : ## boucle permettant de faire avancer, de façon rectiligne et unif
         else :
             x,z = voiture_p.calculateNextPosition_traj(dt) 
             voiture_vp.pos = vector(x,0,z)
+ 
