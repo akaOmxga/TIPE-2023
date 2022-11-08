@@ -1,0 +1,9 @@
+{
+    "configurations": [
+        {
+            "type": "python",
+            "name": "roadtest",
+            "arguments": ["./himite_idm/dev/test.py"],
+        },
+    ]
+}

@@ -1,8 +1,7 @@
 from math import *
 
-class Car:
+class Vehicle:
 
-    # Pour créer un objet voiture : ``car = Car(vitesse, x, y)`` exemple : ``maVoiture = new Car(15, 0, 0)`` 
     def __init__(self, speed, x, y):
         self.speed = speed # m.s^(-1)
         self.accel = 0
