@@ -1,0 +1,151 @@
+Web VPython 3.2
+
+scene.width = scene.height = 1000
+scene.range = 200
+scene.background = color.white
+
+Ux = vector(1,0,0)
+Uy = vector(0,1,0)
+Uz = vector(0,0,1)
+
+## base orthonormée
+
+scalaire = 100
+
+fleche_x = arrow(pos=vector(0,100,0),axis=vector(scalaire,0,0), shaftwidth=1)
+fleche_y = arrow(pos=vector(0,100,0),axis=vector(0,scalaire,0), shaftwidth=1)
+fleche_z = arrow(pos=vector(0,100,0),axis=vector(0,0,scalaire), shaftwidth=1)
+
+class Car :
+    
+    def __init__(self, spawnpoint, speed, vehicle):
+        self.position = spawpoint # (x,z)
+        self.speed = speed # m.s^(-1)
+        self.accel = 0  # m.s^(-2), 0 par défaut car en mvt rect et unif
+        self.vehicle = vehicle
+
+
+y_reference  = 5
+largeur_reference = 15
+
+class Reseau :
+    
+    def __init__(self,start,end) : # start = (a,b,c) et end = (x,y,z) sont les coords de début et de fin de la route
+        self.start = start
+        self.end = end
+        
+    def ligne(self,start,end) :
+        (a,b,c),(x,y,z) = start, end
+        longueur = sqrt((x-a)**2+(z-c)**2)
+        route = box(pos = vector((a+x)/2,(b+y)/2,(c+z)/2), size = vector(longueur, y_reference, largeur_reference))
+        theta = atan((z-c)/(x-a))
+        route.rotate(-theta,vector(0,1,0))
+
+        
+    def virage (self,start,end) : 
+        (a,b,c),(x,y,z) = start, end
+        delta_x = x-a
+        delta_z = z-c
+        r = min(abs(delta_x),abs(delta_z))
+        ## par convention, on tourne d'abord, avec un rayon étant le min des distances, puis ensuite lignes droite
+        ## on peut obtenir l'inverse en réalisant virage(end,start)!! penser à le faire 
+        if abs(delta_x) < abs(delta_z) :
+            centre_v = vector(a,b,c + sign(delta_z)*r)
+            sortie_virage = (a + sign(delta_x)*r,b, c + sign(delta_z)*r)
+            if sign(delta_x)>0 and sign(delta_z)>0 :
+                alpha, beta = 0, pi/2
+            elif sign(delta_x)<0 and sign(delta_z)>0 :
+                alpha, beta = pi/2, pi
+            elif sign(delta_x)<0 and sign(delta_z)<0 :
+                alpha, beta = pi, 3*pi/2
+            else : 
+                alpha, beta = -pi/2, 0
+        else :
+            centre_v = vector(a + sign(delta_x)*r,b,c)
+            sortie_virage = (a + sign(delta_x)*r,b, c + sign(delta_z)*r)
+            if sign(delta_x)<0 and sign(delta_z)<0 :
+                alpha, beta = 0, pi/2
+            elif sign(delta_x)>0 and sign(delta_z)<0 :
+                alpha, beta = pi/2, pi
+            elif sign(delta_x)>0 and sign(delta_z)>0 :
+                alpha, beta = pi, 3*pi/2
+            else : 
+                alpha, beta = -pi/2, 0
+        v = extrusion(path=paths.arc(pos=centre_v,radius=r, angle1 = alpha , angle2 = beta), shape = [shapes.rectangle(width=largeur_reference, height=y_reference)]) 
+        ## ligne entre sortie-virage et fin
+        (d,e,f) = sortie_virage
+        if (d != x) or (e != y) or (f != z) :
+            longueur = sqrt((x-d)**2+(z-f)**2)+2 #+2 pr rendre smooth la transition
+            route = box(pos = vector((d+x)/2,(e+y)/2,(f+z)/2), size = vector(longueur, y_reference, largeur_reference))
+            theta = atan((z-f)/(x-d))
+            route.rotate(-theta,vector(0,1,0))
+            
+        ### MODELISATION ###
+        
+        #échelle les voitures font 20 de long soit 5m dans la vraie vie
+        #   => 1m = 4
+        #   => 100m = 400
+        #   => 250m = 1000
+
+    
+## exemple de virages stylés
+#route1 = Reseau()
+#route1.virage((0,0,0),(150,0,-75))
+#route1.virage((150,0,-75),(-50,0,100))
+#route1.virage((0,0,0),(-50,0,100))
+#route1.virage((0,0,0),(80,0,-180))
+#route1.virage((-50,0,100),(-100,0,20))
+#route1.virage((-100,0,20),(0,0,0))
+#route1.virage((80,0,-180),(-100,0,20))
+
+## grand rond point centrée en 0,0
+#rond_point1 = Reseau()
+#rond_point1.virage((250,0,0),(0,0,250))
+#rond_point1.virage((-250,0,0),(0,0,250))
+#rond_point1.virage((-250,0,0),(0,0,-250))
+#rond_point1.virage((250,0,0),(0,0,-250))
+
+
+## route_principale = grande autoroute ligne droite
+#route_principale = Reseau()
+#route_principale.ligne((-5000, 0, 0),((5000,0, 0)))
+
+## voiture (avec exemple virages)
+#voiture_ref = box(pos=vector(0,6,0),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
+
+#voituredebut = box(pos=vector(150,6,-75),size = vector(20,10,10),axis = vector(0,0,0), color = vector(0,1,0))
+#voiturefin = box(pos=vector(-50,6,100),size = vector(20,10,10),axis = vector(0,0,0), color = vector(0,0,1))
+
+#voiture_virage_debut = box(pos=vector(-100,6,20),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,1,1))
+#voiture_virage_fin = box(pos=vector(80,6,-180),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,1,1))
+
+##monter et descendre :
+#route0 = Reseau()
+#route0.ligne((-50,-10,0),(50,10,0))
+
+##Highway Onramp
+#route2 = Reseau()
+#route2.ligne((-5000,0,-30),(5000,0,-30))
+#route2.ligne((-5000,0,-10),(5000,0,-10))
+#route2.ligne((-5000,0,10),(5000,0,10))
+#route2.ligne((-5000,0,30),(5000,0,30))
+#route2.ligne((-500,0,-30),(-299,0,-50))
+#route2.ligne((-301,0,-50),(0,0,-50))
+#route2.virage((300,0,-300),(0,0,-50))
+
+##Two-Way intersection 
+#route3 = Reseau()
+#route3.ligne((
+
+##Rondabout
+#route4 = Reseau()
+
+##Diverging Diamond Interchange #2D
+#route5 = Reseau()
+
+##Diverging Diamond Interchange #3D
+#route6 = Reseau()
+#route6.ligne((-5000,0,-30),(5000,0,-30))
+#route6.ligne((-5000,0,-10),(5000,0,-10))
+#route6.ligne((-5000,0,10),(5000,0,10))
+#route6.ligne((-5000,0,30),(5000,0,30))
