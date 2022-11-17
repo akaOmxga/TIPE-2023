@@ -18,4 +18,5 @@ class Simulation:
 
     def create_road(self, road):
         self.roads.append(road)
-        print(road)
+        vpython.createRoad(a, b)
+        graphe.addA

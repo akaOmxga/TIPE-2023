@@ -2,8 +2,8 @@
     "configurations": [
         {
             "type": "python",
-            "name": "roadtest",
-            "arguments": ["./himite_idm/dev/test.py"],
+            "name": "graphe test",
+            "arguments": ["./graph/NetworkGraph.py"],
         },
     ]
 }
