@@ -1,5 +1,3 @@
-Web VPython 3.2
-
 scene.width = scene.height = 1000
 scene.range = 200
 scene.background = color.white
@@ -18,12 +16,35 @@ fleche_z = arrow(pos=vector(0,100,0),axis=vector(0,0,scalaire), shaftwidth=1)
 
 class Car :
     
-    def __init__(self, spawnpoint, speed, vehicle):
+    def __init__(self, spawnpoint, speed, vehicle, trajectoire, chemin): ## trajectoire, une fonction donnant la trajectoire de la voiture dans la simulation (propre à chaque lignes/virages) ; chemin, un chemin du graphe représentant l'ensemble des routes (lignes et virages) que la voitures doit empreinter
         self.position = spawpoint # (x,z)
         self.speed = speed # m.s^(-1)
         self.accel = 0  # m.s^(-2), 0 par défaut car en mvt rect et unif
         self.vehicle = vehicle
+        self.trajectoire = trajectoire
+        self.chemin = chemin
+    
+    # Définit la vitesse de la voiture (en m.s^(-1))
+    def setSpeed(self, speedToSet):
+        self.speed = speedToSet
 
+    # Définit l'accélération de la voiture (m.s^(-2))
+    def setAccel(self, accelToSet):
+        self.accel = accelToSet
+
+    # Définit les nouvelles coordonnées de la voiture
+    def setPosition(self, x, z):
+        self.position = (x, z)
+
+    def getDistanceBetween(self, otherCar):
+        x1, z1 = self.position
+        x2, z2 = otherCar.position
+        
+        return(sqrt(((x2 - x1))**2 + (z2 - z1)**2))
+
+    def getRelativeSpeed(self, otherCar):
+        return(otherCar.speed - self.speed)
+        
 
 y_reference  = 5
 largeur_reference = 15
@@ -38,9 +59,18 @@ class Reseau :
         (a,b,c),(x,y,z) = start, end
         longueur = sqrt((x-a)**2+(z-c)**2)
         route = box(pos = vector((a+x)/2,(b+y)/2,(c+z)/2), size = vector(longueur, y_reference, largeur_reference))
-        theta = atan((z-c)/(x-a))
-        route.rotate(-theta,vector(0,1,0))
-
+        if x != a :
+            theta = atan((z-c)/(x-a))
+            alpha = atan((y-b)/(x-a))
+            rota = Uz.rotate(-theta,vector(0,1,0))
+            route.rotate(-theta,vector(0,1,0))
+            route.rotate(alpha,rota)
+        else : 
+            theta = sign(z-c)*pi/2
+            alpha = atan((y-b)/(z-c))
+            rota = Uz.rotate(-theta,vector(0,1,0))
+            route.rotate(-theta,vector(0,1,0))
+            route.rotate(-alpha,rota)
         
     def virage (self,start,end) : 
         (a,b,c),(x,y,z) = start, end
@@ -86,7 +116,17 @@ class Reseau :
         #   => 1m = 4
         #   => 100m = 400
         #   => 250m = 1000
+        
+## test routes inclinées ## attention ne pas tourner et monter en même temps + les monter sont possibles seulement sur .ligne (pas sur .virage)
+#route0 = Reseau()
+#route0.ligne((-100,-50,0),(100,50,-0))
 
+## voiture (avec exemple virages)
+#voiture_ref = box(pos=vector(0,6,0),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
+#voituredebut = box(pos=vector(150,6,-75),size = vector(20,10,10),axis = vector(0,0,0), color = vector(0,1,0))
+#voiturefin = box(pos=vector(-50,6,100),size = vector(20,10,10),axis = vector(0,0,0), color = vector(0,0,1))
+#voiture_virage_debut = box(pos=vector(-100,6,20),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,1,1))
+#voiture_virage_fin = box(pos=vector(80,6,-180),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,1,1))
     
 ## exemple de virages stylés
 #route1 = Reseau()
@@ -110,42 +150,208 @@ class Reseau :
 #route_principale = Reseau()
 #route_principale.ligne((-5000, 0, 0),((5000,0, 0)))
 
-## voiture (avec exemple virages)
-#voiture_ref = box(pos=vector(0,6,0),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
-
-#voituredebut = box(pos=vector(150,6,-75),size = vector(20,10,10),axis = vector(0,0,0), color = vector(0,1,0))
-#voiturefin = box(pos=vector(-50,6,100),size = vector(20,10,10),axis = vector(0,0,0), color = vector(0,0,1))
-
-#voiture_virage_debut = box(pos=vector(-100,6,20),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,1,1))
-#voiture_virage_fin = box(pos=vector(80,6,-180),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,1,1))
-
-##monter et descendre :
-#route0 = Reseau()
-#route0.ligne((-50,-10,0),(50,10,0))
-
-##Highway Onramp
+##Highway Onramp # attention si on essaye de faire bouger les voitures sur cette route, il est important de recoller les morceaux entre la rampe et l'autoroute cad, de créer une transition, un sommet commun entre la voie d'insertion et l'autoroute puis à noouveau l'autoroute
 #route2 = Reseau()
 #route2.ligne((-5000,0,-30),(5000,0,-30))
 #route2.ligne((-5000,0,-10),(5000,0,-10))
 #route2.ligne((-5000,0,10),(5000,0,10))
 #route2.ligne((-5000,0,30),(5000,0,30))
+
 #route2.ligne((-500,0,-30),(-299,0,-50))
 #route2.ligne((-301,0,-50),(0,0,-50))
 #route2.virage((300,0,-300),(0,0,-50))
 
-##Two-Way intersection 
+## Single intersection
 #route3 = Reseau()
-#route3.ligne((
+#route3.ligne((-5000,0,0),(5000,0,0))
+#route3.ligne((0,0,-5000),(0,0,5000))
+
+##Two-Way intersection 
+#route4 = Reseau()
+#route4.ligne((-50,0,-10),(-5000,0,-10))
+#route4.ligne((-5000,0,10),(-50,0,10))
+#route4.ligne((10,0,-50),(10,0,-5000))
+#route4.ligne((-10,0,-5000),(-10,0,-50))
+#route4.ligne((50,0,10),(5000,0,10))
+#route4.ligne((5000,0,-10),(50,0,-10))
+#route4.ligne((-10,0,50),(-10,0,5000))
+#route4.ligne((10,0,5000),(10,0,50))
+
+#route4.virage((10,0,-50),(-50,0,10))
+#route4.virage((-10,0,50),(-50,0,10))
+#route4.ligne((-50,0,10),(50,0,10))
+
+#route4.virage((10,0,50),(-50,0,-10))
+#route4.virage((10,0,50),(50,0,10))
+#route4.ligne((10,0,50),(10,0,-50))
+
+#route4.virage((-10,0,50),(50,0,-10))
+#route4.virage((10,0,-50),(50,0,-10))
+#route4.ligne((50,0,-10),(-50,0,-10))
+
+#route4.virage((-10,0,-50),(50,0,10))
+#route4.virage((-10,0,-50),(-50,0,-10))
+#route4.ligne((-10,0,-50),(-10,0,50))
 
 ##Rondabout
-#route4 = Reseau()
-
-##Diverging Diamond Interchange #2D
 #route5 = Reseau()
+#intérieur
+#route5.ligne((30,0,-90),(-30,0,-90))
+#route5.virage((-90,0,-30),(-30,0,-90))
+#route5.ligne((-90,0,-30),(-90,0,30))
+#route5.virage((-90,0,30),(-30,0,90))
+#route5.ligne((-30,0,90),(30,0,90))
+#route5.virage((90,0,30),(30,0,90))
+#route5.ligne((90,0,30),(90,0,-30))
+#route5.virage((90,0,-30),(30,0,-90))
+#sortie virage
+#route5.virage((-30,0,-90),(-10,0,-250))
+#route5.virage((30,0,-90),(10,0,-250))
+#route5.virage((-90,0,30),(-250,0,10))
+#route5.virage((-90,0,-30),(-250,0,-10))
+#route5.virage((-30,0,90),(-10,0,250))
+#route5.virage((30,0,90),(10,0,250))
+#route5.virage((90,0,30),(250,0,10))
+#route5.virage((90,0,-30),(250,0,-10))
+#extérieur
+#route5.ligne((-10,0,-5000),(-10,0,-250))
+#route5.ligne((10,0,-250),(10,0,-5000))
+#route5.ligne((-5000,0,10),(-250,0,10))
+#route5.ligne((-250,0,-10),(-5000,0,-10))
+#route5.ligne((-10,0,250),(-10,0,5000))
+#route5.ligne((10,0,5000),(10,0,250))
+#route5.ligne((250,0,10),(5000,0,10))
+#route5.ligne((250,0,-10),(5000,0,-10))
 
 ##Diverging Diamond Interchange #3D
 #route6 = Reseau()
-#route6.ligne((-5000,0,-30),(5000,0,-30))
+#autoroute :
+#route6.ligne((5000,0,-30),(400,0,-30))
+#route6.ligne((400,0,-30),(-400,0,-30))
+#route6.ligne((-400,0,-30),(-5000,0,-30))
+
 #route6.ligne((-5000,0,-10),(5000,0,-10))
 #route6.ligne((-5000,0,10),(5000,0,10))
-#route6.ligne((-5000,0,30),(5000,0,30))
+
+#route6.ligne((-5000,0,30),(-400,0,30))
+#route6.ligne((-400,0,30),(400,0,30))
+#route6.ligne((400,0,30),(5000,0,30))
+
+#entrée-sortie :
+#route6.ligne((-300,0,-50),(-400,0,-30))
+#route6.virage((-300,0,-50),(-200,0,-200))
+#route6.virage((-200,0,-200),(-125,0,-245))
+#route6.ligne((-400,0,30),(-300,0,50))
+#route6.virage((-300,0,50),(-200,0,200))
+#route6.virage((-200,0,200),(-125,0,245))
+#route6.ligne((400,0,-30),(300,0,-50))
+#route6.virage((300,0,-50),(200,0,-200))
+#route6.virage((200,0,-200),(125,0,-245))
+#route6.ligne((400,0,30),(300,0,50))
+#route6.virage((300,0,50),(200,0,200))
+#route6.virage((200,0,200),(125,0,245))
+
+#montée et pont :
+#route6.ligne((-60,30,-20),(-60,0,-120))
+#route6.virage((-125,0,-245),(-60,0,-120))
+#route6.ligne((-60,0,20),(-60,30,120))
+#route6.virage((-125,0,245),(-60,0,120))
+#route6.ligne((-60,30,20),(-60,30,-20))
+
+#route6.ligne((60,30,-20),(60,0,-120))
+#route6.virage((125,0,-245),(60,0,-120))
+#route6.ligne((60,0,120),(60,30,20))
+#route6.virage((125,0,245),(60,0,120))
+#route6.ligne((60,30,20),(60,30,-20))
+
+#transitions
+#route6.virage((-60,0,-310),(-125,0,-245))
+#route6.ligne((-60,0,-5000),(-60,0,-310))
+#route6.virage((60,0,-310),(125,0,-245))
+#route6.ligne((60,0,-5000),(60,0,-310))
+#route6.virage((-60,0,310),(-125,0,245))
+#route6.ligne((-60,0,5000),(-60,0,310))
+#route6.virage((60,0,310),(125,0,245))
+#route6.ligne((60,0,5000),(60,0,310))
+
+#croissements (ou feux-rouges) :
+#route6.ligne((-60,0,-180),(60,0,-310))
+#route6.ligne((-60,0,-310),(60,0,-180))
+#route6.ligne((-60,0,180),(60,0,310))
+#route6.ligne((-60,0,310),(60,0,180))
+
+
+        ### IMPLEMENTER LES TRAJECTOIRES ET FAIRE AVANCER LES VOITURES LE LONG D'UN GRAPHE ###
+        
+## supposons disposer de deux types de données, des graphes G = {S1 = (x1,y1,z1) ; liste d'adjacence = [(voisin = (x,y,z), virage = bool)]} où virage est un booléen valant true si il s'agit d'une liaison virage et false si c'est une ligne 
+
+## permet de trouver, dans L = [(voisin,virage)], le virage bool virage associé au voisin S
+def trouver_virage(L,S) :
+    n = len(L)
+    (x,y,z) = S
+    answer = False 
+    for i in range(n):
+        voisin = L[i][0] 
+        (a,b,c) = voisin
+        if a == x and b == y and c == z :
+            answer = L[i][1]
+    return answer
+
+## renvoie une fonction trajectoire qui lie les points start et end, en fonction qu'il s'agisse d'un virage ou non
+def nouvelle_traj(start,end,virage) :
+    if virage == False :
+        def traj1(x1): # fonction affine de x, de l'espace reliant start à end 
+            a,b,c = start
+            x,y,z = end 
+            vecteur_start_end = vector(x-a,y-b,z-c) #vecteur directeur de la droite start-end
+            l = x1/vecteur_start_end.x
+            return(x1,l*vecteur_start_end.y,l*vecteur_start_end.z)
+        return(traj1)
+    else :
+        def traj2(x2): # fonction virage de x, à 90°, en 2D dans le plan (Ox,Oz) reliant start à end 
+            (a,b,c),(x,y,z) = start, end
+            delta_x = x-a
+            delta_z = z-c
+            r = min(abs(delta_x),abs(delta_z)) # rayon du cercle
+            if abs(delta_x) < abs(delta_z) :
+                centre_v = vector(a,b,c + sign(delta_z)*r)
+                sortie_virage = (a + sign(delta_x)*r,b, c + sign(delta_z)*r)
+                if sign(delta_x)>0 and sign(delta_z)>0 :
+                    alpha, beta = 0, pi/2
+                elif sign(delta_x)<0 and sign(delta_z)>0 :
+                    alpha, beta = pi/2, pi
+                elif sign(delta_x)<0 and sign(delta_z)<0 :
+                    alpha, beta = pi, 3*pi/2
+                else : 
+                    alpha, beta = -pi/2, 0
+            else :
+                centre_v = vector(a + sign(delta_x)*r,b,c)
+                sortie_virage = (a + sign(delta_x)*r,b, c + sign(delta_z)*r)
+                if sign(delta_x)<0 and sign(delta_z)<0 :
+                    alpha, beta = 0, pi/2
+                elif sign(delta_x)>0 and sign(delta_z)<0 :
+                    alpha, beta = pi/2, pi
+                elif sign(delta_x)>0 and sign(delta_z)>0 :
+                    alpha, beta = pi, 3*pi/2
+                else : 
+                    alpha, beta = -pi/2, 0
+            # on dispose du centre du cercle, noté centre_v et de l'angle auquel l'arc doit commencé : alpha, et celui auquel il doit se finir : beta
+            # grace à l'équation d'un cercle dans le plan (Ox,Oz) où le centre est (a,b,c) et r le rayon alors z = c -+ sqrt(r**2 - (x-a)**2)
+            if alpha == 0 or alpha == pi/2 :
+                return(x2,y,centre_v.z + sqrt(r**2 - (x2-centre_v.x)**2))
+            else : 
+                return(x2,y,centre_v.z + sqrt(r**2 - (x2-centre_v.x)**2))
+        return traj2(x) 
+    
+            
+
+## soit c un chemin du graphe représentant la trajectoire de la voiture à simuler 
+## un chemin "c" d'un graphe "network" est une liste de sommet du graphe tq pr tt i [|0;len(c)-1|], le sommet Si et Si+1 sont reliés dans le graphe par une route
+def parcours_voiture(network, voiture): ## on fait avancer d'une étape la voiture sur son chemin en venant réaliser toute les modification nécessaires pour ensuite appliquer notre modèle sur la prochaine portion de route
+    current_Sommet = voiture.chemin[0]
+    next_Sommet = voiture.chemin[1]
+    c = voiture.chemin[1:]
+    voiture.chemin = c
+    virage = trouver_virage(network[current_Sommet],next_Sommet)
+    traj = nouvelle_traj(current_Sommet, next_Sommet, virage)
+    voiture.trajectoire = traj 
