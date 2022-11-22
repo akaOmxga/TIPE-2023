@@ -3,6 +3,9 @@ class NetworkGraph:
     def __init__(self):
         self.network = {} # Graphe (dictionnaire) sous la formé k,v : coordonnées, sommets connectés (liste d'adj)
 
+    def __str__(self):
+        return f"{self.network}"
+
     # Créé un sommet correspondant physiquement à l'extrémité d'une route
     # x, y, z sont les coordonnées de l'extrémité de la route
     # Méthode privée car on ne doit a priori pas en rajouter un hors de cette classe
@@ -28,11 +31,3 @@ class NetworkGraph:
             self.__addSommet(end)
 
         self.addConnection(start, end, curved)
-
-
-graph = NetworkGraph()
-graph.addEdge((1, 1, 0), (1, 2, 0))
-graph.addEdge((1, 1, 0), (1, 3, 0))
-graph.addEdge((1, 2, 0), (1, 3, 0))
-graph.addEdge((1, 2, 0), (1, 4, 0))
-print(graph.network)
