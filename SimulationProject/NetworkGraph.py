@@ -1,14 +1,7 @@
-# class GraphRoad:
-#
-#     def __init__(self, start, end, curved):
-#         self.start = start
-#         self.end = end
-#         self.curved = curved
-
 class NetworkGraph:
 
     def __init__(self):
-        self.network = {} # Graphe (dictionnaire) sous la formé k,v : coordonnées, sommet
+        self.network = {} # Graphe (dictionnaire) sous la formé k,v : coordonnées, sommets connectés (liste d'adj)
 
     # Créé un sommet correspondant physiquement à l'extrémité d'une route
     # x, y, z sont les coordonnées de l'extrémité de la route
