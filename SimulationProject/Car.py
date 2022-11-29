@@ -2,19 +2,15 @@ from math import *
 
 class Car:
 
-    # Pour créer un objet voiture : ``car = Car(vitesse, x, y)`` exemple : ``maVoiture = new Car(15, 0, 0)``
-    def __init__(self, speed, x, y, z):
+    ## trajectoire, une fonction donnant la trajectoire de la voiture dans la simulation (propre à chaque lignes/virages) ; chemin, un chemin du graphe représentant l'ensemble des routes (lignes et virages) que la voitures doit empreinter
+    # c.f. Victor si on a un problème
+    def __init__(self, spawnpoint, speed, vehicle, trajectoire, chemin):
+        self.position = spawpoint # (x,y,z)
         self.speed = speed # m.s^(-1)
-        self.accel = 0
-        self.mass = 1240 # kg
-
-        self.position = (x, y, z)
+        self.accel = 0  # m.s^(-2), 0 par défaut car en mvt rect et unif
+        self.vehicle = vehicle
+        self.trajectoire = trajectoire
+        self.chemin = chemin
 
     def __str__(self):
         return f"Objet voiture, position : {position}"
-
-    def getDistanceBetween(self, otherCar):
-        x1, y1, z1 = self.position
-        x2, y2, z2 = otherCar.position
-
-        return(sqrt((abs(x2 - x1))**2 + abs(y2 - y1)**2) + abs(z2 - z1)**2)

@@ -2,8 +2,8 @@
     "configurations": [
         {
             "type": "python",
-            "name": "graphe test",
-            "arguments": ["./graph/NetworkGraph.py"],
+            "name": "Simulation test",
+            "arguments": ["./SimulationProject/Simulation.py"],
         },
     ]
 }
