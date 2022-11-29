@@ -1,3 +1,8 @@
+Web VPython 3.2
+
+import time 
+import random 
+
 scene.width = scene.height = 1000
 scene.range = 200
 scene.background = color.white
@@ -17,7 +22,7 @@ fleche_z = arrow(pos=vector(0,100,0),axis=vector(0,0,scalaire), shaftwidth=1)
 class Car :
     
     def __init__(self, spawnpoint, speed, vehicle, trajectoire, chemin): ## trajectoire, une fonction donnant la trajectoire de la voiture dans la simulation (propre à chaque lignes/virages) ; chemin, un chemin du graphe représentant l'ensemble des routes (lignes et virages) que la voitures doit empreinter
-        self.position = spawpoint # (x,z)
+        self.position = spawpoint # (x,y,z)
         self.speed = speed # m.s^(-1)
         self.accel = 0  # m.s^(-2), 0 par défaut car en mvt rect et unif
         self.vehicle = vehicle
@@ -239,7 +244,7 @@ class Reseau :
 
 #entrée-sortie :
 #route6.ligne((-300,0,-50),(-400,0,-30))
-#route6.virage((-300,0,-50),(-200,0,-200))
+##route6.virage((-300,0,-50),(-200,0,-200))
 #route6.virage((-200,0,-200),(-125,0,-245))
 #route6.ligne((-400,0,30),(-300,0,50))
 #route6.virage((-300,0,50),(-200,0,200))
@@ -344,7 +349,7 @@ def nouvelle_traj(start,end,virage) :
         return traj2(x) 
     
             
-
+## network = dico de couple (sommet, liste d'adjacence) où la liste d'adjacence = [somme_voisins], chaque sommet est sous la forme (x,y,z)
 ## soit c un chemin du graphe représentant la trajectoire de la voiture à simuler 
 ## un chemin "c" d'un graphe "network" est une liste de sommet du graphe tq pr tt i [|0;len(c)-1|], le sommet Si et Si+1 sont reliés dans le graphe par une route
 def parcours_voiture(network, voiture): ## on fait avancer d'une étape la voiture sur son chemin en venant réaliser toute les modification nécessaires pour ensuite appliquer notre modèle sur la prochaine portion de route
@@ -355,3 +360,57 @@ def parcours_voiture(network, voiture): ## on fait avancer d'une étape la voitu
     virage = trouver_virage(network[current_Sommet],next_Sommet)
     traj = nouvelle_traj(current_Sommet, next_Sommet, virage)
     voiture.trajectoire = traj 
+    
+limite_vitesse = 90 #m/s
+
+def parcours_voisins(network, s, aTraiter, antecedent, reponse ,end) :
+    if network[s] == [] : ## on est bloqué à s, s n'a pas de voisins accessibles 
+        return ()
+    elif s == end : ## on trouve un chemin possible
+        antecedent.append(s)
+        reponse.append(antecedent)
+        return()
+    elif s in antecedent : ## on retourne sur nos pas => cycle
+        return()
+    else : ## on continu 
+        antecedent.append(s)
+        for v in network(s) :
+            aTraiter.append(v)
+            parcours_voisins(network, v, aTraiter, antecedent, reponse, end)
+
+def all_possible_chemin(network, start, end) : ## génère tous les chemins sans cycle de network entre start et end 
+    reponse = []
+    aTraiter = Queue()
+    aTraiter.append(start)
+    empty = Queue()
+    while aTraiter != empty :
+        s = aTraiter.pop()
+        parcours_voisins(network, s, aTraiter, [], reponse, end)
+    return(reponse)
+
+def random_chemin(network, start, end) :
+    possible_chemin = all_possible_chemin(network,start,end)
+    n = randint(0,len(possible_chemin))
+    return(possible_chemin[n])
+    
+## on se donne les listes spawners et dispawners (contenant des sommets) étant les seuls sommets capables de spawn respectivement de dispawn
+## le speed de spawn sera par défaut la limite_vitesse
+
+def spawn(spawnpoint,next_Sommet,speed,trajectoire,chemin) : 
+    a,b,c= spawnpoint
+    vehicle = box(pos=vector(a,b,c),size=vector(20,10,10),axis=vector(0,0,0),color=vector(random(),random(),random()))
+    trajectoire = nouvelle_traj(spawnpoint,next_Sommet,trouver_virage(network.(spawnpoint),next_Sommet))
+    chemin = random_chemin(network, spawnpoint, dispawners[randint(len(dispawners))])
+    return(Car(spawnpoint, speed, vehicle, trajectoire, chemin))
+
+def spawner_tempo(spawnpoint, next_Sommet, tau) ## où spawnpoint est le sommet qui fera spawn les voitures, next_Sommet le prochain sommet (obligatoire pour orienter la première direction des voitures), tau le nombre de voiture que l'on veut faire apparaître en 1minutes (en voiture/min)
+    t0 = time.time()
+    while time.time(
+       spawn(
+
+    
+def spawner_continu(spawnpoint, next_Sommet, tau) :
+
+def dispawner(
+    
+def stop(
