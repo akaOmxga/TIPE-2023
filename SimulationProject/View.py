@@ -18,10 +18,10 @@ scalaire = 100
 y_reference  = 5
 largeur_reference = 15
 
-class Reseau:
+class View:
 
     def __init__(self):
-        print("Creating view")
+        pass
 
     def create_road(self, start, end, curved):
         if curved:
@@ -30,8 +30,6 @@ class Reseau:
             self.__create_line(start, end)
 
     def __create_line(self, start, end):
-        print("Creating line")
-
 
         (a,b,c), (x,y,z) = start, end
         longueur = sqrt((x-a)**2+(z-c)**2)
@@ -55,8 +53,6 @@ class Reseau:
             route.rotate(-alpha,rota)
 
     def __create_curve(self, start, end):
-        print("Creating curve")
-
 
         (a,b,c), (x,y,z) = start, end
         delta_x = x-a
@@ -104,15 +100,3 @@ class Reseau:
         #   => 1m = 4
         #   => 100m = 400
         #   => 250m = 1000
-
-route1 = Reseau()
-route1.create_road((0,0,0),(150,0,-75), True)
-route1.create_road((150,0,-75),(-50,0,100), True)
-route1.create_road((0,0,0),(-50,0,100), True)
-route1.create_road((0,0,0),(80,0,-180), True)
-route1.create_road((-50,0,100),(-100,0,20), True)
-route1.create_road((-100,0,20),(0,0,0), True)
-route1.create_road((80,0,-180),(-100,0,20), True)
-
-while True:
-    rate(60)

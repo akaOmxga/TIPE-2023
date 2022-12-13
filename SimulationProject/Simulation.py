@@ -1,12 +1,15 @@
 from TrafficMap import *
 from NetworkGraph import *
-import View as view
+from View import *
+from vpython import *
+
 
 class Simulation:
 
     def __init__(self):
         self.network = NetworkGraph()
         self.trafficMap = TrafficMap()
+        self.view = View()
 
 
     def create_roads(self, roads_to_create, curved=False):
@@ -17,4 +20,4 @@ class Simulation:
     def __create_road(self, road, curved):
         start, end = road
         self.network.addEdge(start, end, curved)
-        view.create_road(start, end, curved)
+        self.view.create_road(start, end, curved)

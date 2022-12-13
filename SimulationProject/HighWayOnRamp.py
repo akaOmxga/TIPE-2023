@@ -1,4 +1,5 @@
 from Simulation import *
+from vpython import *
 
 simulation = Simulation()
 
@@ -15,8 +16,11 @@ curved_roads = [
     ((300, 0, -300), (0, 0, -50))
 ]
 
+
+
 simulation.create_roads(straight_roads)
 simulation.create_roads(curved_roads, True)
 
-print(simulation.network)
-print(simulation.trafficMap)
+# sans ça, le côté vpython sort 10^10^10 erreurs/s
+while True:
+    rate(60)
