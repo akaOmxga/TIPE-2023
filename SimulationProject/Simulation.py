@@ -21,3 +21,6 @@ class Simulation:
         start, end = road
         self.network.addEdge(start, end, curved)
         self.view.create_road(start, end, curved)
+
+    def update(self):
+        pass

@@ -17,10 +17,10 @@ curved_roads = [
 ]
 
 
-
 simulation.create_roads(straight_roads)
 simulation.create_roads(curved_roads, True)
 
 # sans ça, le côté vpython sort 10^10^10 erreurs/s
 while True:
     rate(60)
+    simulation.update()

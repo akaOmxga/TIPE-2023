@@ -5,5 +5,10 @@
             "name": "Highway On Ramp",
             "arguments": ["./SimulationProject/HighWayOnRamp.py"],
         },
+        {
+            "type": "python",
+            "name": "Two Way Intersection",
+            "arguments": ["./SimulationProject/TwoWayIntersection.py"],
+        },
     ]
 }

@@ -1,40 +1,40 @@
 graph = {
-    1: [2, 6],
-    2: [1, 3, 4, 6],
-    3: [6],
-    4: [2, 5],
-    5: [7],
-    6: [2, 3, 7],
-    7: [3]
+    (1, 0, 2): [(1, 0, 3)],
+    (1, 0, 3): [(1, 0, 4), (3, 0, 3)],
+    (1, 0, 4): [(2, 0, 1), (3, 0, 5)],
+    (2, 0, 1): [(1, 0, 2), (3, 0, 3), (5, 0, 1)],
+    (3, 0, 3): [(2, 0, 1), (1, 0, 3), (3, 0, 5), (5, 0, 5)],
+    (3, 0, 5): [(3, 0, 3), (5, 0, 5)],
+    (5, 0, 1): [(2, 0, 1), (3, 0, 3), (6, 0, 2)],
+    (5, 0, 5): [(3, 0, 3), (6, 0, 4)],
+    (6, 0, 2): [(5, 0, 1), (6, 0, 4)],
+    (6, 0, 4): [(5, 0, 5), (6, 0, 2)],
 }
 
-paths = []
-
-def find_paths(start, end, graphe):
-    paths.clear()
-
+def find_paths(start, end):
     visited = {}
-    for k in graphe.keys():
+    for k in graph.keys():
         visited[k] = False
 
-    find(start, end, graphe, visited, [])
+    return find(start, end, visited, [], [])
 
 
-def find(current, end, graphe, visited, current_path):
+def find(current, end, visited, current_path, paths):
     visited[current] = True
     current_path.append(current)
-
-    print(current_path)
 
     if (current == end):
         paths.append(current_path.copy())
     else:
-        for i in graphe[current]:
+        for i in graph[current]:
             if (visited[i] == False):
-                find(i, end, graphe, visited, current_path)
+                paths = find(i, end, visited, current_path, paths)
 
     current_path.pop()
     visited[current] = False
 
-find_paths(1, 3, graph)
-print(paths)
+    return paths
+
+paths = find_paths((1, 0, 3), (5, 0, 5))
+for elt in paths:
+    print(elt)

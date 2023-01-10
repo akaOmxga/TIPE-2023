@@ -1,5 +1,3 @@
-Web VPython 3.2
-
 #################################################################################       SETUP ET CLASS          #########################################################
 
 ## ici on modélise les routes, fait avancer les voitures et modifit les graphes en même temps

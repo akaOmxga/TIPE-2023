@@ -31,3 +31,30 @@ class NetworkGraph:
             self.__addSommet(end)
 
         self.addConnection(start, end, curved)
+
+
+    # Permet de trouver tous les chemins sans cycles entre start et end (start et end des triplets (x, y, z))
+    def find_all_paths(self, start, end):
+        visited = {}
+
+        for k in self.network.keys():
+            visited[k] = False
+
+        return self.find(start, end, visited, [], [])
+
+
+    def find(current, end, visited, current_path, paths):
+        visited[current] = True
+        current_path.append(current)
+
+        if (current == end):
+            paths.append(current_path.copy())
+        else:
+            for i in self.network[current]:
+                if (visited[i] == False):
+                    paths = self.find(i, end, visited, current_path, paths)
+
+        current_path.pop()
+        visited[current] = False
+
+        return paths
