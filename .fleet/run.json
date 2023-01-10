@@ -2,8 +2,8 @@
     "configurations": [
         {
             "type": "python",
-            "name": "Simulation test",
-            "arguments": ["./SimulationProject/Simulation.py"],
+            "name": "Highway On Ramp",
+            "arguments": ["./SimulationProject/HighWayOnRamp.py"],
         },
     ]
 }
