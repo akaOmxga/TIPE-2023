@@ -3,10 +3,10 @@ Web VPython 3.2
 #################################################################################       SETUP ET CLASS          #########################################################
 
 ## ici on modélise les routes, fait avancer les voitures et modifit les graphes en même temps
+from vpython import *
 
-
-y_reference  = 5
-y_voiture=7
+y_reference = 5
+y_voiture = 7
 largeur_reference = 15
 
 import random 
@@ -23,13 +23,13 @@ Uz = vector(0,0,1)
 
 scalaire = 100
 
-fleche_x = arrow(pos=vector(0,100,0),axis=vector(scalaire,0,0), shaftwidth=1)
-fleche_y = arrow(pos=vector(0,100,0),axis=vector(0,scalaire,0), shaftwidth=1)
-fleche_z = arrow(pos=vector(0,100,0),axis=vector(0,0,scalaire), shaftwidth=1)
+fleche_x = arrow(pos=vector(0,100,0),axis=vector(scalaire, 0, 0), shaftwidth=1)
+fleche_y = arrow(pos=vector(0,100,0),axis=vector(0, scalaire, 0), shaftwidth=1)
+fleche_z = arrow(pos=vector(0,100,0),axis=vector(0, 0, scalaire), shaftwidth=1)
 
-class Car :
+class Car:
     
-    def __init__(self, spawnpoint, speed, vehicle, trajectoire, chemin, temps): ## trajectoire, une fonction donnant la trajectoire de la voiture dans la simulation (propre à chaque lignes/virages) ; chemin, un chemin du graphe représentant l'ensemble des routes (lignes et virages) que la voitures doit empreinter
+    def __init__(self, spawnpoint, speed, vehicle, trajectoire, chemin): ## trajectoire, une fonction donnant la trajectoire de la voiture dans la simulation (propre à chaque lignes/virages) ; chemin, un chemin du graphe représentant l'ensemble des routes (lignes et virages) que la voitures doit empreinter
         (x,y,z) = spawnpoint
         self.position = (x,y,z) # (x,y,z)
         self.speed = speed # m.s^(-1)
@@ -121,44 +121,43 @@ class TrafficMap:
         self.traffic_map[(start_coords, end_coords)] = cars_on_road
     
 
-class Road : ## à faire, lorsque l'on créer une ligne ou un virage, il faut ajouter la portion dans la liste reseau
+class Roads: ## à faire, lorsque l'on créer une ligne ou un virage, il faut ajouter la portion dans la liste reseau
     
-    def __init__(self,start,end,centre_virage,rayon_virage,reseau) : # start = (a,b,c) et end = (x,y,z) sont les coords de début et de fin de la route, reseau est une liste [ (  (S1,S2,route_vpython,centre_virage,rayon_virage) ) ,...] (les centres et rayons valant 0 s'il s'agit d'une ligne droite
-        self.start = start
-        self.end = end
-        self.reseau = [] 
+    def __init__(self):
+        self.reseau = []
         
-    def ligne(self,start,end) :
-        (a,b,c),(x,y,z) = start, end
-        longueur = sqrt((x-a)**2+(z-c)**2)
-        route = box(pos = vector((a+x)/2,(b+y)/2,(c+z)/2), size = vector(longueur, y_reference, largeur_reference))
-        if x != a :
+    def createLigne(self, start, end):
+        (a,b,c), (x,y,z) = start, end
+        longueur = sqrt((x-a)**2 + (z-c)**2)
+        route = box(pos = vector((a+x)/2, (b+y)/2, (c+z)/2), size = vector(longueur, y_reference, largeur_reference))
+        if x != a:
             theta = atan((z-c)/(x-a))
             alpha = atan((y-b)/(x-a))
-            rota = Uz.rotate(-theta,vector(0,1,0))
-            route.rotate(-theta,vector(0,1,0))
-            route.rotate(alpha,rota)
-        else : 
+            rota = Uz.rotate(-theta, vector(0, 1, 0))
+            route.rotate(-theta, vector(0, 1, 0))
+            route.rotate(alpha, rota)
+        else:
             theta = sign(z-c)*pi/2
             alpha = atan((y-b)/(z-c))
-            rota = Uz.rotate(-theta,vector(0,1,0))
-            route.rotate(-theta,vector(0,1,0))
-            route.rotate(-alpha,rota)
-        self.reseau.append((start,end,route,(0,0,0),0))
+            rota = Uz.rotate(-theta, vector(0, 1, 0))
+            route.rotate(-theta, vector(0, 1, 0))
+            route.rotate(-alpha, rota)
+        self.reseau.append((start, end, route, (0, 0, 0), 0))
         
-    def virage (self,start,end) : 
-        (a,b,c),(x,y,z) = start, end
+    def createVirage(self, start, end):
+        (a,b,c), (x,y,z) = start, end
         delta_x = x-a
         delta_z = z-c
-        r = min(abs(delta_x),abs(delta_z))
+        r = min(abs(delta_x), abs(delta_z))
+
         ## par convention, on tourne d'abord, avec un rayon étant le min des distances, puis ensuite lignes droite
         ## on peut obtenir l'inverse en réalisant virage(end,start)!! penser à le faire 
-        if abs(delta_x) < abs(delta_z) :
-            centre_v = vector(a,b,c + sign(delta_z)*r)
-            sortie_virage = (a + sign(delta_x)*r,b, c + sign(delta_z)*r)
-            if sign(delta_x)>0 and sign(delta_z)>0 :
+        if abs(delta_x) < abs(delta_z):
+            centre_v = vector(a, b, c + sign(delta_z)*r)
+            sortie_virage = (a + sign(delta_x)*r, b, c + sign(delta_z)*r)
+            if sign(delta_x) > 0 and sign(delta_z)>0:
                 alpha, beta = 0, pi/2
-            elif sign(delta_x)<0 and sign(delta_z)>0 :
+            elif sign(delta_x)<0 and sign(delta_z)>0:
                 alpha, beta = pi/2, pi
             elif sign(delta_x)<0 and sign(delta_z)<0 :
                 alpha, beta = pi, 3*pi/2
@@ -178,9 +177,10 @@ class Road : ## à faire, lorsque l'on créer une ligne ou un virage, il faut aj
         centre_virage = (centre_v.x,centre_v.y,centre_v.z)
         v = extrusion(path=paths.arc(pos=centre_v,radius=r, angle1 = alpha , angle2 = beta), shape = [shapes.rectangle(width=largeur_reference, height=y_reference)]) 
         self.reseau.append((start,sortie_virage,v,centre_virage,r))
+        print(self.reseau)
         ## ligne entre sortie-virage et fin
         (d,e,f) = sortie_virage
-        if (d != x) or (e != y) or (f != z) :
+        if (d != x) or (e != y) or (f != z):
             longueur = sqrt((x-d)**2+(z-f)**2)+2 #+2 pr rendre smooth la transition
             route = box(pos = vector((d+x)/2,(e+y)/2,(f+z)/2), size = vector(longueur, y_reference, largeur_reference))
             theta = atan((z-f)/(x-d))
@@ -205,7 +205,7 @@ epsilon = 10 ## distance avec laquelle on compare dm, le pas d'actualisation des
 ## supposons disposer de deux types de données, des graphes G = {S1 = (x1,y1,z1) ; liste d'adjacence = [(voisin = (x,y,z), virage = bool)]} où virage est un booléen valant true si il s'agit d'une liaison virage et false si c'est une ligne 
 
 ## permet de trouver, dans L = [(voisin,virage)], le virage bool virage associé au voisin S
-def trouver_virage(L,S) :
+def trouver_virage(L,S):
     n = len(L)
     (x,y,z) = S
     answer = False 
@@ -229,12 +229,12 @@ def est_virage(start,end):
 ## la fct trajectoire renvoyée sera de R4 dans R3 /
 ##trajectoire((x,y,z),l)) ,où (x,y,z) est la position actuelle et l la distance que la voiture peut parcourir pendant dt selon le modèle (double intégration du pfd selon dt), 
 ##renvoie la nouvelle position (x',y',z') / la voiture ait parcouru l depuis (x,y,z)
-def distance(point1, point2) :
+def distance(point1, point2):
     a,b,c = point1
     x,y,z = point2
     return( sqrt( (x-a)**2 + (y-b)**2 + (z-c)**2 ) )
     
-def arctan_2(y,x) :
+def arctan_2(y,x):
     return(2*atan(y/(sqrt(x**2 + y**2) + x)))
 
 
@@ -243,14 +243,14 @@ def nouvelle_traj(start,end,virage,road): ## args doit contenir (centre_virage,r
     (x1,y1,z1) = end
     d = distance(start,end)
     if virage == False :
-        def traj(x,y,z,l,centre,rayon) :
+        def traj(x,y,z,l,centre,rayon):
             position = vector(x,y,z)
             debut = vector(x0,y0,z0)
             fin = vector (x1,y1,z1)
             return( position + (l/d)*(fin - debut))
         return traj
     else :
-        def traj(x,y,z,l,centre,rayon) :
+        def traj(x,y,z,l,centre,rayon):
             (a,b,c) = centre
             c = vector(a,b,c)
             theta = l/rayon
@@ -263,11 +263,11 @@ def nouvelle_traj(start,end,virage,road): ## args doit contenir (centre_virage,r
 #    (x1,y1,z1) = end
 #    d = distance(start,end)
 #    if virage == False :
-#        def traj(x,y,z,l,centre,rayon) :
+#        def traj(x,y,z,l,centre,rayon):
 #            return(x + l*(x1-x0)/d, y +l*(y1-y0)/d, z + l*(z1-z0)/d)
 #        return traj
 #    else :
-#        def traj(x,y,z,l,centre,rayon) :
+#        def traj(x,y,z,l,centre,rayon):
 #            theta = l/rayon
 #            angle = arctan_2(z-centre[2],x-centre[0]) + theta
 #            new_z = centre[2] #+ rayon*sin(angle)
@@ -281,13 +281,13 @@ def nouvelle_traj(start,end,virage,road): ## args doit contenir (centre_virage,r
 #    (x1,y1,z1) = end
 #    d = distance(start,end)
 #    if virage == False :
-#        def traj(x,y,z,l) :
+#        def traj(x,y,z,l):
 #            return(x + l*(x1-x0)/d, y +l*(y1-y0)/d, z + l*(z1-z0)/d)
 #        return traj
 #    else :
 #        (centre,rayon) = info_virage(start,end,road)
 #        (a,b,c) = centre
-#        def traj(x,y,z,l) :
+#        def traj(x,y,z,l):
 #            theta = l/rayon
 #            angle = arctan_2(z-c,x-a) + theta
 #            new_z = c + rayon*sin(angle)
@@ -302,13 +302,13 @@ def nouvelle_traj(start,end,virage,road): ## args doit contenir (centre_virage,r
 #    (x1,y1,z1) = end
 #    d = distance(start,end)
 #    if virage == False :
-#        def traj(x,y,z,l) :
+#        def traj(x,y,z,l):
 #            return(x + l*(x1-x0)/d, y +l*(y1-y0)/d, z + l*(z1-z0)/d)
 #        return traj
 #    else :
 #        (centre,rayon) = info_virage(start,end,road)
 #        (a,b,c) = centre
-#        def traj(x,y,z,l) :
+#        def traj(x,y,z,l):
 #            theta = l/rayon
 #            if y = 0 :
 #                phi = theta + sign(x)*(pi/2)
@@ -321,7 +321,7 @@ def nouvelle_traj(start,end,virage,road): ## args doit contenir (centre_virage,r
 #            return(new_x,new_y,new_z)
 #        return(traj)
  
-def prochain_vehicule(voiture,network,map) : ##renvoie le véhicule le plus proche situé devant voiture
+def prochain_vehicule(voiture,network,map): ##renvoie le véhicule le plus proche situé devant voiture
     c = voiture.chemin
     sommet_depart = c[0]
     if map[sommet_depart]== []: ## cas où il n'y a pas de voiture sur la route 
@@ -329,10 +329,10 @@ def prochain_vehicule(voiture,network,map) : ##renvoie le véhicule le plus proc
     else : ## sinon
         return()
         
-def pfd_test(voiture,dt,network,map,contexte =()) :
+def pfd_test(voiture,dt,network,map,contexte =()):
     return(10)
 
-def pfd(voiture,dt,network,map,contexte = ()) : ## renvoie la l'accélération de la voiture dans les conditions décrites par le contexte (network,map)
+def pfd(voiture,dt,network,map,contexte = ()): ## renvoie la l'accélération de la voiture dans les conditions décrites par le contexte (network,map)
 ## contexte est un élément de la modélisation venant modifié le comportement du véhicule. Ex : les stops, les feux rouges ...
     v = prochain_vehicule(voiture,network,map)
     pos_voiture = (voiture.pos.x,voiture.pos.y,voiture.pos.z)
@@ -347,31 +347,31 @@ def pfd(voiture,dt,network,map,contexte = ()) : ## renvoie la l'accélération d
 def integration(v,accel,dt): ##  modifiable, ici on intégre 2 fois en considérant les conditions initialses v0 = 0 (à réfléchir) et x0=0 (ce qui est nécessaire)
     return((1/2)*accel*dt**2 + v*dt)
     
-def sous_liste(n,liste) : ## renvoie liste[n::]
+def sous_liste(n,liste): ## renvoie liste[n::]
     rep = []
-    for i in range(n,len(liste)) :
+    for i in range(n,len(liste)):
         rep.append(liste[i])
     return(rep)
     
-def info_virage(sommet1,sommet2,road) : ## renvoie (c,r) le centre et le rayon du virage entre les sommets 1 et 2
+def info_virage(sommet1,sommet2,road): ## renvoie (c,r) le centre et le rayon du virage entre les sommets 1 et 2
     if est_virage(sommet1,sommet2) == False :
         return((0,0,0),0)
     else :
         reseau = road.reseau
         n = len(reseau)
-        for i in range(n) :
+        for i in range(n):
             (s3,s4,route,centre,rayon) = reseau[i]
             if sommet1 == s3 and sommet2 == s4:
                 return((centre,rayon))
         return((0,0,0),0)    
     
-#def info_virage(sommet1,sommet2,road) : ## renvoie (c,r) le centre et le rayon du virage entre les sommets 1 et 2
+#def info_virage(sommet1,sommet2,road): ## renvoie (c,r) le centre et le rayon du virage entre les sommets 1 et 2
 #    if est_virage(sommet1,sommet2) == False :
 #        return((0,0,0),0)
 #    else :
 #        reseau = road.reseau
 #        n = len(reseau)
-#        for i in range(n) :
+#        for i in range(n):
 #            (a,b,c) = sommet1
 #            (d,e,f) = sommet2
 #            (s3,s4,route,centre,rayon) = reseau[i]
@@ -382,7 +382,7 @@ def info_virage(sommet1,sommet2,road) : ## renvoie (c,r) le centre et le rayon d
 #        return((0,0,0),0)
     
     
-def actualise(car,dt,network,map,road) : ## dispawn les voitures, avancer les voitures, les transitions entre les différents noeud du graphe si la voiture nous informe que c'est le cas
+def actualise(car,dt,network,map,road): ## dispawn les voitures, avancer les voitures, les transitions entre les différents noeud du graphe si la voiture nous informe que c'est le cas
     c = car.chemin
     n = len(c) 
     sommet_fin = c[1]
@@ -413,19 +413,19 @@ def actualise(car,dt,network,map,road) : ## dispawn les voitures, avancer les vo
     return()
 
     
-def Simulation(dt,liste_bagnoles,network,map,road) : ## à faire dans une boucle while true
+def Simulation(dt,liste_bagnoles,network,map,road): ## à faire dans une boucle while true
     ## spawner les voitures :
         
     ## actualise les voitures :
     for voiture in liste_bagnoles :
         actualise(voiture,dt,network,map,road)
 
-def dispawn(voiture) :  
+def dispawn(voiture):
     voiture_vpython = voiture.vehicle
     voiture_vpython.visible = False
     del voiture_vpython
 
-def calcul_chemin(S1,S2,road) :
+def calcul_chemin(S1,S2,road):
     if est_virage(S1,S2) == False :
         return(distance(S1,S2))
     else :
@@ -439,7 +439,7 @@ def calcul_chemin(S1,S2,road) :
         return((pi/2)*rayon + distance(sortie_virage,S2))
     
 
-def longueur_chemin(chemin,road) : ## renvoie la longueur en mètre d'un chemin 
+def longueur_chemin(chemin,road): ## renvoie la longueur en mètre d'un chemin
     reponse = 0 
     for i in range(len(chemin)-1):
         reponse = reponse + calcul_chemin(chemin[i],chemin[i+1],road)
@@ -459,9 +459,9 @@ def longueur_chemin(chemin,road) : ## renvoie la longueur en mètre d'un chemin
 #route1.ligne((-200,0,0),(0,0,0))
 #route1.virage((100,0,-100),(0,0,0))
 
-route2 = Road()
-route2.virage((0,0,0),(100,0,100))
-route2.ligne((100,0,100),(200,0,100))
+route2 = Roads()
+route2.createVirage((0, 0, 0), (100, 0, 100))
+route2.createLigne((100, 0, 100), (200, 0, 100))
 
 route2.reseau.append((0,0,0),(100,0,100),1,(100,0,0),100)
 
@@ -528,8 +528,6 @@ L = [car2]
 
 dt = 1/60
 
-while True :
+while True:
     rate(1)
     Simulation(dt,L,network2,map2,route2)
-    
-
