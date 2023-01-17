@@ -3,7 +3,6 @@ Web VPython 3.2
 #################################################################################       SETUP ET CLASS          #########################################################
 
 ## ici on modélise les routes, fait avancer les voitures et modifit les graphes en même temps
-from vpython import *
 
 y_reference = 5
 y_voiture = 7
@@ -28,8 +27,8 @@ fleche_y = arrow(pos=vector(0,100,0),axis=vector(0, scalaire, 0), shaftwidth=1)
 fleche_z = arrow(pos=vector(0,100,0),axis=vector(0, 0, scalaire), shaftwidth=1)
 
 class Car:
-    
-    def __init__(self, spawnpoint, speed, vehicle, trajectoire, chemin): ## trajectoire, une fonction donnant la trajectoire de la voiture dans la simulation (propre à chaque lignes/virages) ; chemin, un chemin du graphe représentant l'ensemble des routes (lignes et virages) que la voitures doit empreinter
+
+    def __init__(self, spawnpoint, speed, vehicle, chemin): ## trajectoire, une fonction donnant la trajectoire de la voiture dans la simulation (propre à chaque lignes/virages) ; chemin, un chemin du graphe représentant l'ensemble des routes (lignes et virages) que la voitures doit empreinter
         (x,y,z) = spawnpoint
         self.position = (x,y,z) # (x,y,z)
         self.speed = speed # m.s^(-1)
@@ -177,7 +176,6 @@ class Roads: ## à faire, lorsque l'on créer une ligne ou un virage, il faut aj
         centre_virage = (centre_v.x,centre_v.y,centre_v.z)
         v = extrusion(path=paths.arc(pos=centre_v,radius=r, angle1 = alpha , angle2 = beta), shape = [shapes.rectangle(width=largeur_reference, height=y_reference)]) 
         self.reseau.append((start,sortie_virage,v,centre_virage,r))
-        print(self.reseau)
         ## ligne entre sortie-virage et fin
         (d,e,f) = sortie_virage
         if (d != x) or (e != y) or (f != z):
@@ -185,7 +183,7 @@ class Roads: ## à faire, lorsque l'on créer une ligne ou un virage, il faut aj
             route = box(pos = vector((d+x)/2,(e+y)/2,(f+z)/2), size = vector(longueur, y_reference, largeur_reference))
             theta = atan((z-f)/(x-d))
             route.rotate(-theta,vector(0,1,0))
-        self.reseau.append((sortie_virage,end,route,(0,0,0),0))
+            self.reseau.append((sortie_virage,end,route,(0,0,0),0))
     
     
             
@@ -195,7 +193,7 @@ class Roads: ## à faire, lorsque l'on créer une ligne ou un virage, il faut aj
 
 delta_f = 10 ## distance avec laquelle on compare la distance entre deux voitures ; pour freiner
 delta_a = 50 ## distance avec laquelle on compare la distance entre deux voitures ; pour accélérer 
-epsilon = 10 ## distance avec laquelle on compare dm, le pas d'actualisation des voitures ; pour les transitions de route // epsilon = 8 minimun
+epsilon = 1 ## distance avec laquelle on compare dm, le pas d'actualisation des voitures ; pour les transitions de route // epsilon = 8 minimun
 ## il faut trouver un équilibre dans cette variable pour que les transitions de routes soit smooth 
         
 
@@ -204,17 +202,6 @@ epsilon = 10 ## distance avec laquelle on compare dm, le pas d'actualisation des
         
 ## supposons disposer de deux types de données, des graphes G = {S1 = (x1,y1,z1) ; liste d'adjacence = [(voisin = (x,y,z), virage = bool)]} où virage est un booléen valant true si il s'agit d'une liaison virage et false si c'est une ligne 
 
-## permet de trouver, dans L = [(voisin,virage)], le virage bool virage associé au voisin S
-def trouver_virage(L,S):
-    n = len(L)
-    (x,y,z) = S
-    answer = False 
-    for i in range(n):
-        voisin = L[i][0] 
-        (a,b,c) = voisin
-        if a == x and b == y and c == z :
-            answer = L[i][1]
-    return answer
     
 ## permet d'avoir un booléen traduisant si la route reliant start et end est un virage 
 def est_virage(start,end):
@@ -238,88 +225,23 @@ def arctan_2(y,x):
     return(2*atan(y/(sqrt(x**2 + y**2) + x)))
 
 
-def nouvelle_traj(start,end,virage,road): ## args doit contenir (centre_virage,rayon_virage)
-    (x0,y0,z0) = start
-    (x1,y1,z1) = end
-    d = distance(start,end)
+
+def trajectoire(x,y,z,l,start,end,virage,road):
     if virage == False :
-        def traj(x,y,z,l,centre,rayon):
-            position = vector(x,y,z)
-            debut = vector(x0,y0,z0)
-            fin = vector (x1,y1,z1)
-            return( position + (l/d)*(fin - debut))
-        return traj
+        (x0,y0,z0) = start
+        (x1,y1,z1) = end
+        d = distance(start,end)
+        return(x + l*(x1-x0)/d, y +l*(y1-y0)/d, z + l*(z1-z0)/d)
     else :
-        def traj(x,y,z,l,centre,rayon):
-            (a,b,c) = centre
-            c = vector(a,b,c)
-            theta = l/rayon
-            angle = arctan_2(z-centre[2],x-centre[0]) + theta
-            return ( c + vector(rayon*cos(angle),y,rayon*sin(angle)))
-        return traj
-
-#def nouvelle_traj(start,end,virage,road): ## args doit contenir (centre_virage,rayon_virage)
-#    (x0,y0,z0) = start
-#    (x1,y1,z1) = end
-#    d = distance(start,end)
-#    if virage == False :
-#        def traj(x,y,z,l,centre,rayon):
-#            return(x + l*(x1-x0)/d, y +l*(y1-y0)/d, z + l*(z1-z0)/d)
-#        return traj
-#    else :
-#        def traj(x,y,z,l,centre,rayon):
-#            theta = l/rayon
-#            angle = arctan_2(z-centre[2],x-centre[0]) + theta
-#            new_z = centre[2] #+ rayon*sin(angle)
-#            new_y = y
-#            new_x = centre[0] #+ rayon*cos(angle)
-#            return(new_x,new_y,new_z)
-#        return traj
-
-#def nouvelle_traj(start,end,virage,road): ## args doit contenir (centre_virage,rayon_virage)
-#    (x0,y0,z0) = start
-#    (x1,y1,z1) = end
-#    d = distance(start,end)
-#    if virage == False :
-#        def traj(x,y,z,l):
-#            return(x + l*(x1-x0)/d, y +l*(y1-y0)/d, z + l*(z1-z0)/d)
-#        return traj
-#    else :
-#        (centre,rayon) = info_virage(start,end,road)
-#        (a,b,c) = centre
-#        def traj(x,y,z,l):
-#            theta = l/rayon
-#            angle = arctan_2(z-c,x-a) + theta
-#            new_z = c + rayon*sin(angle)
-#            new_y = y
-#            new_x = a + rayon*cos(angle)
-#            return(new_x,new_y,new_z)
-#        return traj
+        (centre,rayon) = info_virage(start,end,road)
+        a,b,c = centre
+        v = vector(a,b,c)
+        theta = l/rayon
+        angle = arctan_2(z-centre[2],x-centre[0]) + theta
+        dl = v + vector(rayon*cos(angle),y,rayon*sin(angle))
+        return (dl.x,dl.y,dl.z) 
         
 
-#def nouvelle_traj(start,end,virage,road): ## args doit contenir (centre_virage,rayon_virage)
-#    (x0,y0,z0) = start
-#    (x1,y1,z1) = end
-#    d = distance(start,end)
-#    if virage == False :
-#        def traj(x,y,z,l):
-#            return(x + l*(x1-x0)/d, y +l*(y1-y0)/d, z + l*(z1-z0)/d)
-#        return traj
-#    else :
-#        (centre,rayon) = info_virage(start,end,road)
-#        (a,b,c) = centre
-#        def traj(x,y,z,l):
-#            theta = l/rayon
-#            if y = 0 :
-#                phi = theta + sign(x)*(pi/2)
-#            else :
-#                phi = theta + atan(x/y)
-#            r = distance((a,b,c),(x,y,z))
-#            new_x = r*sqrt(tan(phi)**2/(1+tan(phi)**2))
-#            new_z = r/sqrt(1+tan(phi)**2)
-#            new_y = y 
-#            return(new_x,new_y,new_z)
-#        return(traj)
  
 def prochain_vehicule(voiture,network,map): ##renvoie le véhicule le plus proche situé devant voiture
     c = voiture.chemin
@@ -330,7 +252,7 @@ def prochain_vehicule(voiture,network,map): ##renvoie le véhicule le plus proch
         return()
         
 def pfd_test(voiture,dt,network,map,contexte =()):
-    return(10)
+    return(1)
 
 def pfd(voiture,dt,network,map,contexte = ()): ## renvoie la l'accélération de la voiture dans les conditions décrites par le contexte (network,map)
 ## contexte est un élément de la modélisation venant modifié le comportement du véhicule. Ex : les stops, les feux rouges ...
@@ -381,15 +303,14 @@ def info_virage(sommet1,sommet2,road): ## renvoie (c,r) le centre et le rayon du
 #                return((centre,rayon))
 #        return((0,0,0),0)
     
-    
 def actualise(car,dt,network,map,road): ## dispawn les voitures, avancer les voitures, les transitions entre les différents noeud du graphe si la voiture nous informe que c'est le cas
     c = car.chemin
     n = len(c) 
     sommet_fin = c[1]
     v = car.speed
     voiture = car.vehicle ## car est l'élément du module tant dis que voiture est l'objet Vpython
-    dm = integration(v,pfd_test(voiture,dt,network,map),dt) #distance infinitésimale parcourue par la voiture sur dt
-    (x,y,z) = (voiture.pos.x,voiture.pos.y,voiture.pos.z)
+    dm = 1 #integration(v,pfd_test(voiture,dt,network,map),dt) #distance infinitésimale parcourue par la voiture sur dt
+    x,y,z =voiture.pos.x,voiture.pos.y,voiture.pos.z
     if distance(sommet_fin,(x,y,z)) < epsilon and n == 1 : ## cas où la voiture est  proche  (à epsilon près) de son point d'arrivée ; on fait dispawn la voiture
         dispawn(voiture)
     elif distance(sommet_fin,(x,y,z)) < epsilon : ## cas où la voiture est proche (à epsilon près) d'une transition de route ; on fait la transition vers a la prochaine route, avec toutes les modifications que cela implique
@@ -397,20 +318,46 @@ def actualise(car,dt,network,map,road): ## dispawn les voitures, avancer les voi
         (new_x,new_y,new_z) = c[1]
         new_chemin = sous_liste(1,c)
         voiture.pos = vector(new_x,new_y,new_z)
-        # update les propriétés : le chemin, la trajectoire
-        if est_virage(new_chemin[0],new_chemin[1])== False : ## la prochaine portion de route n'est pas un virage
-            new_traj = nouvelle_traj(new_chemin[0],new_chemin[1],False,road)
-        else : ## la prochaine portion de route est un virage 
-            new_traj = nouvelle_traj(new_chemin[0],new_chemin[1],True,road)
+        # update les propriétés : le chemin
         car.chemin = new_chemin
-        car.trajectoire = new_traj
     else : ## cas où la voiture peut parcourir dm sur la portion de route actuelle
-        f = car.trajectoire
-        sommet1,sommet2 = c[0],c[1]
-        centre,rayon = info_virage(sommet1,sommet2,road)
-        new_pos = f(x,y,z,dm,centre,rayon)
+        start = c[0]
+        end = c[1]
+        virage = est_virage(start,end)
+        new_x,new_y,new_z = trajectoire(x,y,z,dm,start,end,virage,road)
+        new_pos = vector(new_x,new_y,new_z)
         voiture.pos = new_pos
     return()
+    
+#def actualise(car,dt,network,map,road): ## dispawn les voitures, avancer les voitures, les transitions entre les différents noeud du graphe si la voiture nous informe que c'est le cas
+#    c = car.chemin
+#    n = len(c) 
+#    sommet_fin = c[1]
+#    v = car.speed
+#    voiture = car.vehicle ## car est l'élément du module tant dis que voiture est l'objet Vpython
+#    dm = integration(v,pfd_test(voiture,dt,network,map),dt) #distance infinitésimale parcourue par la voiture sur dt
+#    (x,y,z) = (voiture.pos.x,voiture.pos.y,voiture.pos.z)
+#    if distance(sommet_fin,(x,y,z)) < epsilon and #n == 1 : ## cas où la voiture est  proche  (à epsilon près) de son point d'arrivée ; on fait dispawn la voiture
+#        dispawn(voiture#)
+#    elif distance(sommet_fin,(x,y,z)) < epsilon : ## cas où la voiture est proche (à epsilon près) d'une transition de route ; on fait la transition vers a la prochaine route, avec toutes les modifications que cela implique
+#        # update la position
+#        (new_x,new_y,new_z) = c[1]
+#        new_chemin = sous_liste(1,c)
+#        voiture.pos = vector(new_x,new_y,new_z)
+#        # update les propriétés : le chemin, la trajectoire
+#        if est_virage(new_chemin[0],new_chemin[1])== False : ## la prochaine portion de route n'est pas un virage
+#            new_traj = nouvelle_traj(new_chemin[0],new_chemin[1],False,road)
+#        else : ## la prochaine portion de route est un virage 
+#            new_traj = nouvelle_traj(new_chemin[0],new_chemin[1],True,road)
+#        car.chemin = new_chemin
+#        car.trajectoire = new_traj
+#    else : ## cas où la voiture peut parcourir dm sur la portion de route actuelle
+#        f = car.trajectoire
+#        sommet1,sommet2 = c[0],c[1]
+#        centre,rayon = info_virage(sommet1,sommet2,road)
+#        new_pos = f(x,y,z,dm,centre,rayon)
+#        voiture.pos = new_pos
+#    return()
 
     
 def Simulation(dt,liste_bagnoles,network,map,road): ## à faire dans une boucle while true
@@ -450,10 +397,10 @@ def longueur_chemin(chemin,road): ## renvoie la longueur en mètre d'un chemin
 
 ########################################### créer la route
 
-#route0 = Road()
-#route0.ligne((-200,0,0),(-100,0,0))
-#route0.ligne((-100,0,0),(100,0,0))
-#route0.ligne((100,0,0),(200,0,0))
+#route0 = Roads()
+#route0.createLigne((-200,0,0),(-100,0,0))
+#route0.createLigne((-100,0,0),(100,0,0))
+#route0.createLigne((100,0,0),(200,0,0))
 
 #route1 = Road()
 #route1.ligne((-200,0,0),(0,0,0))
@@ -463,7 +410,7 @@ route2 = Roads()
 route2.createVirage((0, 0, 0), (100, 0, 100))
 route2.createLigne((100, 0, 100), (200, 0, 100))
 
-route2.reseau.append((0,0,0),(100,0,100),1,(100,0,0),100)
+#route2.reseau.append((0,0,0),(100,0,100),1,(100,0,0),100)
 
 ########################################### créer le network
 
@@ -504,21 +451,19 @@ map2.addCarOnRoad((0,0,0),(100,0,100),vehicule2)
 ########################################## créer la trajectoire initiale/le chemin associée
 
 #chemin0 = [(-200,0,0),(-100,0,0),(100,0,0),(200,0,0)]
-#trajectoire0 = nouvelle_traj((-200,0,0),(-100,0,0),False)
 
 #chemin1 = [(-200,0,0),(0,0,0),(100,0,-100)]
 #trajectoire1 = nouvelle_traj((-200,0,0),(0,0,0),False)
 
 chemin2 = [(0,0,0),(100,0,100),(150,0,100)]
-trajectoire2 = nouvelle_traj((0,0,0),(100,0,100),True,route2)
 
 ########################################## créer la car initiale
 
 vitesse = 50 ## m/s
 
-#car0 = Car((-200,y_voiture,0), vitesse, vehicule0, trajectoire0, chemin0)
-#car1 = Car((-200,y_voiture,0), vitesse, vehicule1, trajectoire1, chemin1)
-car2 = Car((0,y_voiture,0), vitesse, vehicule2, trajectoire2, chemin2)
+#car0 = Car((-200,y_voiture,0), vitesse, vehicule0, chemin0)
+#car1 = Car((-200,y_voiture,0), vitesse, vehicule1, trajectoire1, chemin1) ###################### test 1 encore à mettre à jour
+car2 = Car((0,y_voiture,0), vitesse, vehicule2, chemin2)
 
 ########################################### créer la liste des cars initiales
 
@@ -529,5 +474,5 @@ L = [car2]
 dt = 1/60
 
 while True:
-    rate(1)
+    rate(60)
     Simulation(dt,L,network2,map2,route2)
