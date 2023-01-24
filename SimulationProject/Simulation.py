@@ -9,6 +9,7 @@ class Simulation:
         self.network = NetworkGraph()
         self.trafficMap = TrafficMap()
         self.view = View()
+        self.carsList = []
 
 
     def create_roads(self, roads_to_create, curved=False):
@@ -23,4 +24,6 @@ class Simulation:
 
     def update(self):
         # TODO : actualiser toutes les voitures
+        for car in self.carsList:
+            car.update()
         pass

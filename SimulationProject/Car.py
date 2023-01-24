@@ -20,7 +20,7 @@ class Car:
     def __str__(self):
         return f"Objet voiture, position : {self.position}"
 
-    def actualise(self, dt, network, map, road):  ## dispawn les voitures, avancer les voitures, les transitions entre les différents noeud du graphe si la voiture nous informe que c'est le cas
+    def update(self, road):  ## dispawn les voitures, avancer les voitures, les transitions entre les différents noeud du graphe si la voiture nous informe que c'est le cas
         c = self.chemin
         n = len(c)
 

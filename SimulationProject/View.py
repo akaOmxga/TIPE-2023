@@ -40,11 +40,11 @@ def arctan_2(y, x):
 
 
 def info_virage(sommet1, sommet2, road):  # renvoie (c,r) le centre et le rayon du virage entre les sommets 1 et 2
-    reseau = road.reseau
-    n = len(reseau)
+    routes = road.routes
+    n = len(routes)
 
     for i in range(n):
-        (s3, s4, route, centre, rayon) = reseau[i]
+        (s3, s4, route, centre, rayon) = routes[i]
         if sommet1 == s3 and sommet2 == s4:
             return ((centre, rayon))
 
@@ -76,7 +76,7 @@ def trajectoire(x, y, z, l, start, end, virage, road):
 class View:
 
     def __init__(self):
-        self.reseau = []
+        self.routes = [] # anciennement "reseau"
 
     def create_road(self, start, end, curved):
         if curved:
@@ -104,7 +104,7 @@ class View:
             rota = Uz.rotate(-theta, vector(0, 1, 0))
             route.rotate(-theta, vector(0, 1, 0))
             route.rotate(-alpha, rota)
-        self.reseau.append((start, end, route, (0, 0, 0), 0))
+        self.routes.append((start, end, route, (0, 0, 0), 0))
 
     def __create_curve(self, start, end):
 
@@ -142,7 +142,7 @@ class View:
         centre_virage = (centre_v.x, centre_v.y, centre_v.z)
         v = extrusion(path=paths.arc(pos=centre_v, radius=r, angle1=alpha, angle2=beta),
                       shape=[shapes.rectangle(width=largeur_reference, height=y_reference)])
-        self.reseau.append((start, sortie_virage, v, centre_virage, r))
+        self.routes.append((start, sortie_virage, v, centre_virage, r))
 
         # Ligne entre sortie-virage et fin
         (d, e, f) = sortie_virage
