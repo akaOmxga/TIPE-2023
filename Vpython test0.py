@@ -193,7 +193,7 @@ class Roads: ## à faire, lorsque l'on créer une ligne ou un virage, il faut aj
 
 delta_f = 10 ## distance avec laquelle on compare la distance entre deux voitures ; pour freiner
 delta_a = 50 ## distance avec laquelle on compare la distance entre deux voitures ; pour accélérer 
-epsilon = 1 ## distance avec laquelle on compare dm, le pas d'actualisation des voitures ; pour les transitions de route // epsilon = 8 minimun
+epsilon = 10 ## distance avec laquelle on compare dm, le pas d'actualisation des voitures ; pour les transitions de route // epsilon = 8 minimun
 ## il faut trouver un équilibre dans cette variable pour que les transitions de routes soit smooth 
         
 
@@ -224,7 +224,14 @@ def distance(point1, point2):
 def arctan_2(y,x):
     return(2*atan(y/(sqrt(x**2 + y**2) + x)))
 
-
+def info_virage(sommet1,sommet2,road): ## renvoie (c,r) le centre et le rayon du virage entre les sommets 1 et 2
+        reseau = road.reseau
+        n = len(reseau)
+        for i in range(n):
+            (s3,s4,route,centre,rayon) = reseau[i]
+            if sommet1 == s3 and sommet2 == s4:
+                return((centre,rayon))
+        return((0,0,0),0)    
 
 def trajectoire(x,y,z,l,start,end,virage,road):
     if virage == False :
@@ -234,15 +241,14 @@ def trajectoire(x,y,z,l,start,end,virage,road):
         return(x + l*(x1-x0)/d, y +l*(y1-y0)/d, z + l*(z1-z0)/d)
     else :
         (centre,rayon) = info_virage(start,end,road)
-        a,b,c = centre
-        v = vector(a,b,c)
+        centre = (0,0,0)
+        v = vector(0,0,0)
         theta = l/rayon
         angle = arctan_2(z-centre[2],x-centre[0]) + theta
         dl = v + vector(rayon*cos(angle),y,rayon*sin(angle))
         return (dl.x,dl.y,dl.z) 
         
 
- 
 def prochain_vehicule(voiture,network,map): ##renvoie le véhicule le plus proche situé devant voiture
     c = voiture.chemin
     sommet_depart = c[0]
@@ -275,17 +281,6 @@ def sous_liste(n,liste): ## renvoie liste[n::]
         rep.append(liste[i])
     return(rep)
     
-def info_virage(sommet1,sommet2,road): ## renvoie (c,r) le centre et le rayon du virage entre les sommets 1 et 2
-    if est_virage(sommet1,sommet2) == False :
-        return((0,0,0),0)
-    else :
-        reseau = road.reseau
-        n = len(reseau)
-        for i in range(n):
-            (s3,s4,route,centre,rayon) = reseau[i]
-            if sommet1 == s3 and sommet2 == s4:
-                return((centre,rayon))
-        return((0,0,0),0)    
     
 #def info_virage(sommet1,sommet2,road): ## renvoie (c,r) le centre et le rayon du virage entre les sommets 1 et 2
 #    if est_virage(sommet1,sommet2) == False :
@@ -302,6 +297,10 @@ def info_virage(sommet1,sommet2,road): ## renvoie (c,r) le centre et le rayon du
 #            if a == u and b == v and c == w and d == x and e == y and f == z :
 #                return((centre,rayon))
 #        return((0,0,0),0)
+
+#def oriente(voiture,position,new_position):
+#    theta = acos(dot(position,new_position)/mag(position)*mag(new_position))
+#    voiture.rotate(theta,vector(0,1,0),position)
     
 def actualise(car,dt,network,map,road): ## dispawn les voitures, avancer les voitures, les transitions entre les différents noeud du graphe si la voiture nous informe que c'est le cas
     c = car.chemin
@@ -326,6 +325,7 @@ def actualise(car,dt,network,map,road): ## dispawn les voitures, avancer les voi
         virage = est_virage(start,end)
         new_x,new_y,new_z = trajectoire(x,y,z,dm,start,end,virage,road)
         new_pos = vector(new_x,new_y,new_z)
+#        oriente(voiture,voiture.pos,new_pos)
         voiture.pos = new_pos
     return()
     
