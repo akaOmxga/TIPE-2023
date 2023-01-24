@@ -1,7 +1,6 @@
 from TrafficMap import *
 from NetworkGraph import *
 from View import *
-from vpython import *
 
 
 class Simulation:
@@ -23,4 +22,5 @@ class Simulation:
         self.view.create_road(start, end, curved)
 
     def update(self):
+        # TODO : actualiser toutes les voitures
         pass
