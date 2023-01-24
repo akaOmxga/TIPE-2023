@@ -126,3 +126,6 @@ dmypy.json
 
 /himite_idm
 test_voiture.py
+.idea/
+External Libraries/
+SimulationProject/vpython_a_copier.py
