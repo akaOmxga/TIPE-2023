@@ -379,10 +379,10 @@ def calcul_chemin(S1,S2,road):
         centre,rayon = info_virage(S1,S2,road)
         (a,b,c) = centre
         (x,y,z) = S2
-        if a + sign(x-a)*r == x :
-            sortie_virage = (a + sign(x-a)*r,b,c)
+        if a + sign(x-a)*rayon == x :
+            sortie_virage = (a + sign(x-a)*rayon,b,c)
         else :
-            sortie_virage = (a,b,c + sign(z-c)*r)
+            sortie_virage = (a,b,c + sign(z-c)*rayon)
         return((pi/2)*rayon + distance(sortie_virage,S2))
     
 
