@@ -103,7 +103,7 @@ class View:
 
         #échelle les voitures font 20 de long soit 5m dans la vraie vie
         #   => 1m = 4
-        #   => 100m = 400
+        #   => 100m = 400;
         #   => 250m = 1000
 
 # Recréer est_virage(start, end)

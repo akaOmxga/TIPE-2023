@@ -10,5 +10,10 @@
             "name": "Two Way Intersection",
             "arguments": ["./SimulationProject/TwoWayIntersection.py"],
         },
+        {
+            "type": "python",
+            "name": "Test Vpython0",
+            "arguments": ["./Vpython test0.py"],
+        },
     ]
 }
