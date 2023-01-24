@@ -245,21 +245,53 @@ def info_virage(sommet1, sommet2, road):  ## renvoie (c,r) le centre et le rayon
     return ((0, 0, 0), 0)
 
 
+#def trajectoire(x, y, z, l, start, end, virage, road):
+#    if virage == False:
+#        (x0, y0, z0) = start
+#        (x1, y1, z1) = end
+#        d = distance(start, end)
+#        return (x + l * (x1 - x0) / d, y + l * (y1 - y0) / d, z + l * (z1 - z0) / d)
+#    else:
+#        centre, rayon = info_virage(start, end, road)
+#        a, b, c = centre
+#        v = vector(a, b, c)
+#        theta = l / rayon
+#        angle = arctan_2(z - centre[2], x - centre[0]) + theta
+#        dl = v + vector(rayon * cos(angle), y, rayon * sin(angle))
+#        return (dl.x, dl.y, dl.z)
+
+def sens(v) :
+    (a,b,c) = v
+    if a == 1 and c == 1 :
+        return -1
+    if a == -1 and c == 1 :
+        return 1
+    if a == 1 and c == -1 :
+        return 1
+    if a == -1 and c == -1 :
+        return -1
+
 def trajectoire(x, y, z, l, start, end, virage, road):
+    (x0, y0, z0) = start
+    (x1, y1, z1) = end
     if virage == False:
-        (x0, y0, z0) = start
-        (x1, y1, z1) = end
         d = distance(start, end)
         return (x + l * (x1 - x0) / d, y + l * (y1 - y0) / d, z + l * (z1 - z0) / d)
-    else:
+    else :
         centre, rayon = info_virage(start, end, road)
-        a, b, c = centre
-        v = vector(a, b, c)
-        theta = l / rayon
-        angle = arctan_2(z - centre[2], x - centre[0]) + theta
-        dl = v + vector(rayon * cos(angle), y, rayon * sin(angle))
-        return (dl.x, dl.y, dl.z)
-
+        (a,b,c) = centre 
+        delta = (sign(x1-x0),sign(y1-y0),sign(z1-z0))
+        signe_angle = sens(delta)
+        theta = signe_angle*(l/rayon)
+        if x == 0 and z > 0 : 
+            phi = theta + pi/2
+        elif x == 0 and z < 0 :
+            phi = theta - pi/2
+        else :
+            phi = theta + atan(y/x)
+        new_z = rayon * sqrt((tan(phi)**2)/1+tan(phi)**2)
+        new_x = sqrt(x**2 + z**2 - new_z**2)
+        return(a + delta[0]*new_x,y,c + delta[2]*new_z)
 
 def prochain_vehicule(voiture, network, map):  ##renvoie le véhicule le plus proche situé devant voiture
     c = voiture.chemin
