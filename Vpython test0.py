@@ -1,5 +1,5 @@
-from numpy import *
-from vpython import *
+Web VPython 3.2
+
 
 #################################################################################       SETUP ET CLASS          #########################################################
 
@@ -28,8 +28,7 @@ fleche_z = arrow(pos=vector(0, 100, 0), axis=vector(0, 0, scalaire), shaftwidth=
 
 class Car:
 
-    def __init__(self, spawnpoint, speed, vehicle,
-                 chemin):  ## trajectoire, une fonction donnant la trajectoire de la voiture dans la simulation (propre à chaque lignes/virages) ; chemin, un chemin du graphe représentant l'ensemble des routes (lignes et virages) que la voitures doit empreinter
+    def __init__(self, spawnpoint, speed, vehicle,chemin):  ## trajectoire, une fonction donnant la trajectoire de la voiture dans la simulation (propre à chaque lignes/virages) ; chemin, un chemin du graphe représentant l'ensemble des routes (lignes et virages) que la voitures doit empreinter
         (x, y, z) = spawnpoint
         self.position = (x, y, z)  # (x,y,z)
         self.speed = speed  # m.s^(-1)
@@ -199,14 +198,7 @@ delta_f = 10  ## distance avec laquelle on compare la distance entre deux voitur
 delta_a = 50  ## distance avec laquelle on compare la distance entre deux voitures ; pour accélérer
 epsilon = 10  ## distance avec laquelle on compare dm, le pas d'actualisation des voitures ; pour les transitions de route // epsilon = 8 minimun
 
-
-## il faut trouver un équilibre dans cette variable pour que les transitions de routes soit smooth
-
-
 ### IMPLEMENTER LES TRAJECTOIRES ET FAIRE AVANCER LES VOITURES LE LONG D'UN GRAPHE ###
-
-## supposons disposer de deux types de données, des graphes G = {S1 = (x1,y1,z1) ; liste d'adjacence = [(voisin = (x,y,z), virage = bool)]} où virage est un booléen valant true si il s'agit d'une liaison virage et false si c'est une ligne 
-
 
 ## permet d'avoir un booléen traduisant si la route reliant start et end est un virage 
 def est_virage(start, end):
@@ -217,11 +209,6 @@ def est_virage(start, end):
     else:
         return (False)
 
-
-## renvoie une fonction trajectoire qui lie les points start et end, en fonction qu'il s'agisse d'un virage ou non
-## la fct trajectoire renvoyée sera de R4 dans R3 /
-##trajectoire((x,y,z),l)) ,où (x,y,z) est la position actuelle et l la distance que la voiture peut parcourir pendant dt selon le modèle (double intégration du pfd selon dt), 
-##renvoie la nouvelle position (x',y',z') / la voiture ait parcouru l depuis (x,y,z)
 def distance(point1, point2):
     a, b, c = point1
     x, y, z = point2
@@ -235,94 +222,53 @@ def arctan_2(y, x):
         return (2 * atan(y / (sqrt(x ** 2 + y ** 2) + x)))
 
 
-def info_virage(sommet1, sommet2, road):  ## renvoie (c,r) le centre et le rayon du virage entre les sommets 1 et 2
-    reseau = road.reseau
-    n = len(reseau)
-    for i in range(n):
-        (s3, s4, route, centre, rayon) = reseau[i]
-        if sommet1 == s3 and sommet2 == s4:
-            return ((centre, rayon))
-    return ((0, 0, 0), 0)
+def info_virage(start, end):  ## renvoie (centre,r) le centre et le rayon du virage entre les sommets 1 et 2
+        (a, b, c), (x, y, z) = start, end
+        delta_x = x - a
+        delta_z = z - c
+        r = min(abs(delta_x), abs(delta_z))
+        if abs(delta_x) < abs(delta_z):
+            centre_v = vector(a, b, c + sign(delta_z) * r)
+        else:
+            centre_v = vector(a + sign(delta_x) * r, b, c)
+        centre_virage = (centre_v.x, centre_v.y, centre_v.z)
+        return(centre_virage,r)
 
 
-#def trajectoire(x, y, z, l, start, end, virage, road):
-#    if virage == False:
-#        (x0, y0, z0) = start
-#        (x1, y1, z1) = end
-#        d = distance(start, end)
-#        return (x + l * (x1 - x0) / d, y + l * (y1 - y0) / d, z + l * (z1 - z0) / d)
-#    else:
-#        centre, rayon = info_virage(start, end, road)
-#        a, b, c = centre
-#        v = vector(a, b, c)
-#        theta = l / rayon
-#        angle = arctan_2(z - centre[2], x - centre[0]) + theta
-#        dl = v + vector(rayon * cos(angle), y, rayon * sin(angle))
-#        return (dl.x, dl.y, dl.z)
-
-def sens(v) :
-    (a,b,c) = v
-    if a == 1 and c == 1 :
-        return -1
-    if a == -1 and c == 1 :
-        return 1
-    if a == 1 and c == -1 :
-        return 1
-    if a == -1 and c == -1 :
-        return -1
-
+## la fct trajectoire renvoyée sera de R4 dans R3 / trajectoire(x,y,z,l...) ,où (x,y,z) est la position actuelle et l la distance que la voiture peut parcourir pendant dt selon le modèle (double intégration du pfd selon dt), renvoie la nouvelle position (x',y',z') / la voiture ait parcouru l depuis (x,y,z)
 def trajectoire(x, y, z, l, start, end, virage, road):
-    (x0, y0, z0) = start
-    (x1, y1, z1) = end
     if virage == False:
+        (x0, y0, z0) = start
+        (x1, y1, z1) = end
         d = distance(start, end)
         return (x + l * (x1 - x0) / d, y + l * (y1 - y0) / d, z + l * (z1 - z0) / d)
-    else :
+    else:
         centre, rayon = info_virage(start, end, road)
-        (a,b,c) = centre 
-        delta = (sign(x1-x0),sign(y1-y0),sign(z1-z0))
-        signe_angle = sens(delta)
-        theta = signe_angle*(l/rayon)
-        if x == 0 and z > 0 : 
-            phi = theta + pi/2
-        elif x == 0 and z < 0 :
-            phi = theta - pi/2
-        else :
-            phi = theta + atan(y/x)
-        new_z = rayon * sqrt((tan(phi)**2)/1+tan(phi)**2)
-        new_x = sqrt(x**2 + z**2 - new_z**2)
-        return(a + delta[0]*new_x,y,c + delta[2]*new_z)
-
-def prochain_vehicule(voiture, network, map):  ##renvoie le véhicule le plus proche situé devant voiture
-    c = voiture.chemin
-    sommet_depart = c[0]
-    if map[sommet_depart] == []:  ## cas où il n'y a pas de voiture sur la route
-        return ()
-    else:  ## sinon
-        return ()
-
+        a,b,c = centre #important , pour def v par la suite, vector(centre) ne fonctionne pas mais il faut écrire vector(a,b,c)
+        v = vector(a,b,c)
+        theta = l / rayon
+        angle = arctan_2(z - c, x - a) + theta
+        dl = v + vector(rayon * cos(angle), y, rayon * sin(angle))
+        return (dl.x, dl.y, dl.z)
 
 def pfd_test(voiture, dt, network, map, contexte=()):
     return (1)
 
 
-def pfd(voiture, dt, network, map,
-        contexte=()):  ## renvoie la l'accélération de la voiture dans les conditions décrites par le contexte (network,map)
+def pfd(voiture, dt, network, map,contexte=()):  ## renvoie la l'accélération de la voiture dans les conditions décrites par le contexte (network,map)
     ## contexte est un élément de la modélisation venant modifié le comportement du véhicule. Ex : les stops, les feux rouges ...
     v = prochain_vehicule(voiture, network, map)
     pos_voiture = (voiture.pos.x, voiture.pos.y, voiture.pos.z)
     pos_prochain_vehicule = (v.pos.x, v.pos.y, v.pos.z)
     if distance(pos_voiture, pos_prochain_vehicule) < delta_f:  ## la voiture doit freiner, autre voiture proche
         return ()
-    elif distance(pos_voiture,
-                  pos_prochain_vehicule) < delta_a:  ## la voiture doit garder le rythme, autre voiture modérément proche
+    elif distance(pos_voiture,pos_prochain_vehicule) < delta_a:  ## la voiture doit garder le rythme, autre voiture modérément proche
         return ()
     else:  ## la voiture doit accélérer
         return ()
 
 
-def integration(v, accel,
-                dt):  ##  modifiable, ici on intégre 2 fois en considérant les conditions initialses v0 = 0 (à réfléchir) et x0=0 (ce qui est nécessaire)
+def integration(v, accel,dt):  ##  modifiable, ici on intégre 2 fois en considérant les conditions initialses v0 = 0 (à réfléchir) et x0=0 (ce qui est nécessaire)
     return ((1 / 2) * accel * dt ** 2 + v * dt)
 
 
@@ -333,28 +279,11 @@ def sous_liste(n, liste):  ## renvoie liste[n::]
     return (rep)
 
 
-# def info_virage(sommet1,sommet2,road): ## renvoie (c,r) le centre et le rayon du virage entre les sommets 1 et 2
-#    if est_virage(sommet1,sommet2) == False :
-#        return((0,0,0),0)
-#    else :
-#        reseau = road.reseau
-#        n = len(reseau)
-#        for i in range(n):
-#            (a,b,c) = sommet1
-#            (d,e,f) = sommet2
-#            (s3,s4,route,centre,rayon) = reseau[i]
-#            (u,v,w) = s3
-#            (x,y,z) = s4
-#            if a == u and b == v and c == w and d == x and e == y and f == z :
-#                return((centre,rayon))
-#        return((0,0,0),0)
-
 # def oriente(voiture,position,new_position):
 #    theta = acos(dot(position,new_position)/mag(position)*mag(new_position))
 #    voiture.rotate(theta,vector(0,1,0),position)
 
-def actualise(car, dt, network, map,
-              road):  ## dispawn les voitures, avancer les voitures, les transitions entre les différents noeud du graphe si la voiture nous informe que c'est le cas
+def actualise(car, dt, network, map, road):  ## dispawn les voitures, avancer les voitures, les transitions entre les différents noeud du graphe si la voiture nous informe que c'est le cas
     c = car.chemin
     n = len(c)
     sommet_fin = c[1]
@@ -362,11 +291,9 @@ def actualise(car, dt, network, map,
     voiture = car.vehicle  ## car est l'élément du module tant dis que voiture est l'objet Vpython
     dm = 1  # integration(v,pfd_test(voiture,dt,network,map),dt) #distance infinitésimale parcourue par la voiture sur dt
     x, y, z = voiture.pos.x, voiture.pos.y, voiture.pos.z
-    if distance(sommet_fin, (x, y,
-                             z)) < epsilon and n == 1:  ## cas où la voiture est  proche  (à epsilon près) de son point d'arrivée ; on fait dispawn la voiture
+    if distance(sommet_fin, (x, y,z)) < epsilon and n == 1:  ## cas où la voiture est  proche  (à epsilon près) de son point d'arrivée ; on fait dispawn la voiture
         dispawn(voiture)
-    elif distance(sommet_fin, (x, y,
-                               z)) < epsilon:  ## cas où la voiture est proche (à epsilon près) d'une transition de route ; on fait la transition vers a la prochaine route, avec toutes les modifications que cela implique
+    elif distance(sommet_fin, (x, y, z)) < epsilon:  ## cas où la voiture est proche (à epsilon près) d'une transition de route ; on fait la transition vers a la prochaine route, avec toutes les modifications que cela implique
         # update la position
         (new_x, new_y, new_z) = c[1]
         new_chemin = sous_liste(1, c)
@@ -377,42 +304,11 @@ def actualise(car, dt, network, map,
         start = c[0]
         end = c[1]
         virage = est_virage(start, end)
-        new_x, new_y, new_z = trajectoire(x, y, z, dm, start, end, virage, road)
+        new_x, new_y, new_z = trajectoire(x, y, z, dm, start, end, virage)
         new_pos = vector(new_x, new_y, new_z)
         #        oriente(voiture,voiture.pos,new_pos)
         voiture.pos = new_pos
     return ()
-
-
-# def actualise(car,dt,network,map,road): ## dispawn les voitures, avancer les voitures, les transitions entre les différents noeud du graphe si la voiture nous informe que c'est le cas
-#    c = car.chemin
-#    n = len(c) 
-#    sommet_fin = c[1]
-#    v = car.speed
-#    voiture = car.vehicle ## car est l'élément du module tant dis que voiture est l'objet Vpython
-#    dm = integration(v,pfd_test(voiture,dt,network,map),dt) #distance infinitésimale parcourue par la voiture sur dt
-#    (x,y,z) = (voiture.pos.x,voiture.pos.y,voiture.pos.z)
-#    if distance(sommet_fin,(x,y,z)) < epsilon and #n == 1 : ## cas où la voiture est  proche  (à epsilon près) de son point d'arrivée ; on fait dispawn la voiture
-#        dispawn(voiture#)
-#    elif distance(sommet_fin,(x,y,z)) < epsilon : ## cas où la voiture est proche (à epsilon près) d'une transition de route ; on fait la transition vers a la prochaine route, avec toutes les modifications que cela implique
-#        # update la position
-#        (new_x,new_y,new_z) = c[1]
-#        new_chemin = sous_liste(1,c)
-#        voiture.pos = vector(new_x,new_y,new_z)
-#        # update les propriétés : le chemin, la trajectoire
-#        if est_virage(new_chemin[0],new_chemin[1])== False : ## la prochaine portion de route n'est pas un virage
-#            new_traj = nouvelle_traj(new_chemin[0],new_chemin[1],False,road)
-#        else : ## la prochaine portion de route est un virage 
-#            new_traj = nouvelle_traj(new_chemin[0],new_chemin[1],True,road)
-#        car.chemin = new_chemin
-#        car.trajectoire = new_traj
-#    else : ## cas où la voiture peut parcourir dm sur la portion de route actuelle
-#        f = car.trajectoire
-#        sommet1,sommet2 = c[0],c[1]
-#        centre,rayon = info_virage(sommet1,sommet2,road)
-#        new_pos = f(x,y,z,dm,centre,rayon)
-#        voiture.pos = new_pos
-#    return()
 
 
 def Simulation(dt, liste_bagnoles, network, map, road):  ## à faire dans une boucle while true
