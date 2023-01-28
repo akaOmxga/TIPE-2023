@@ -236,14 +236,14 @@ def info_virage(start, end):  ## renvoie (centre,r) le centre et le rayon du vir
 
 
 ## la fct trajectoire renvoyée sera de R4 dans R3 / trajectoire(x,y,z,l...) ,où (x,y,z) est la position actuelle et l la distance que la voiture peut parcourir pendant dt selon le modèle (double intégration du pfd selon dt), renvoie la nouvelle position (x',y',z') / la voiture ait parcouru l depuis (x,y,z)
-def trajectoire(x, y, z, l, start, end, virage, road):
+def trajectoire(x, y, z, l, start, end, virage):
     if virage == False:
         (x0, y0, z0) = start
         (x1, y1, z1) = end
         d = distance(start, end)
         return (x + l * (x1 - x0) / d, y + l * (y1 - y0) / d, z + l * (z1 - z0) / d)
     else:
-        centre, rayon = info_virage(start, end, road)
+        centre, rayon = info_virage(start, end)
         a,b,c = centre #important , pour def v par la suite, vector(centre) ne fonctionne pas mais il faut écrire vector(a,b,c)
         v = vector(a,b,c)
         theta = l / rayon
