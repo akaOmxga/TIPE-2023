@@ -7,7 +7,10 @@ Web VPython 3.2
 
 y_reference = 5
 y_voiture = 7
-largeur_reference = 15
+largeur_route = 15
+largeur_voiture = 10
+hauteur_voiture =10
+longueur_voiture = 20
 
 scene.width = scene.height = 1000
 scene.range = 200
@@ -145,7 +148,7 @@ class Roads:  ## à faire, lorsque l'on créer une ligne ou un virage, il faut a
             route.rotate(-alpha, rota)
         self.reseau.append((start, end, route, (0, 0, 0), 0))
 
-    def createVirage(self, start, end):
+    def createVirage(self, start, end, reverse = False):
         (a, b, c), (x, y, z) = start, end
         delta_x = x - a
         delta_z = z - c
@@ -174,17 +177,17 @@ class Roads:  ## à faire, lorsque l'on créer une ligne ou un virage, il faut a
             elif sign(delta_x) > 0 and sign(delta_z) > 0:
                 alpha, beta = pi, 3 * pi / 2
             else:
-                alpha, beta = -pi / 2, 0
+                alpha, beta = -pi / 2, 0 #pi/2 , pi  ## avant 
         centre_virage = (centre_v.x, centre_v.y, centre_v.z)
-        v = extrusion(path=paths.arc(pos=centre_v, radius=r, angle1=alpha, angle2=beta),
-                      shape=[shapes.rectangle(width=largeur_reference, height=y_reference)])
+        ##if et else seulement visuel
+        v = extrusion(path=paths.arc(pos=centre_v, radius=r, angle1=alpha, angle2=beta), shape=[shapes.rectangle(width=largeur_route, height=y_reference)])
         self.reseau.append((start, sortie_virage, v, centre_virage, r))
         ## ligne entre sortie-virage et fin
         (d, e, f) = sortie_virage
         if (d != x) or (e != y) or (f != z):
             longueur = sqrt((x - d) ** 2 + (z - f) ** 2) + 2  # +2 pr rendre smooth la transition
             route = box(pos=vector((d + x) / 2, (e + y) / 2, (f + z) / 2),
-                        size=vector(longueur, y_reference, largeur_reference))
+                        size=vector(longueur, y_reference, largeur_route))
             theta = atan((z - f) / (x - d))
             route.rotate(-theta, vector(0, 1, 0))
             self.reseau.append((sortie_virage, end, route, (0, 0, 0), 0))
@@ -281,29 +284,10 @@ def trajectoire(x, y, z, l, start, end, virage):
         ## le rotate de theta autour de vector(0,1,0) en position centre / ou (0,0,0)
         theta = -sens(start,end)*l/rayon
         new_vecteur_rayon = rotation_y((vecteur_rayon.x,vecteur_rayon.y,vecteur_rayon.z),theta)
-#       vecteur_rayon.rotate(radians(theta),vecteur_rayon) # à voir s'il ne faut pas rotate de radian(theta) ?
         ## calculer le nouveau vecteur position noté v
         v = vecteur_centre + new_vecteur_rayon
         ## update la voiture 
         return(v.x,v.y,v.z)
-        
-#        centre, rayon = info_virage(start, end)
-#        a,b,c = centre #important , pour def v par la suite, vector(centre) ne fonctionne pas mais il faut écrire vector(a,b,c)
-#        v = vector(a,b,c)
-#        theta = l / rayon #angle en valeur absolue à rajouter à l'argument de la position de la voiture dans le référentiel lié au centre du cercle
-#        # donner le sens algébrique de la rotation (faisable par disjonction des cas)
-#        delta = sens(start,end) # delta = +1 ou -1 avec comme convention le sens de rotation trigonométrique -> +1 donc horaire -> -1
-#        #faire les calculs
-#        arg_pos = arctan_2(z, x)
-#        arg_new_pos = arg_pos + delta*theta 
-#        # update la pos
-#        dl = v + vector(rayon * cos(arg_new_pos), y, rayon * sin(arg_new_pos))
-#        return(dl.x,dl.y,dl.z)        
-        
-#        angle = theta
-#        angle = arctan_2(z, x) + theta
-#        dl = v + vector(rayon * cos(angle), y, rayon * sin(angle))
-#        return (dl.x, dl.y, dl.z)
 
 def pfd_test(voiture, dt, network, map, contexte=()):
     return (1)
@@ -332,10 +316,20 @@ def sous_liste(n, liste):  ## renvoie liste[n::]
         rep.append(liste[i])
     return (rep)
 
+def orthogonal_Oxz(v) : ## renvoie le vecteur orthogonal à v dans le plan Oxz
+    (x,y,z) = (v.x,v.y,v.z)
+    alpha = -z
+    beta = y
+    gamma = x
+    v = vector(alpha,beta,gamma)
+    return(longueur_voiture*norm(v))
 
-# def oriente(voiture,position,new_position):
-#    theta = acos(dot(position,new_position)/mag(position)*mag(new_position))
-#    voiture.rotate(theta,vector(0,1,0),position)
+def oriente(voiture,virage): ## oriente la voiture lorsqu'elle tourne dans le virage
+    if virage == False :
+        return(voiture.axis)
+    else :
+        vecteur_orientation = orthogonal_Oxz(voiture.pos)
+        return(vecteur_orientation)
 
 def actualise(car, dt, network, map, road):  ## dispawn les voitures, avancer les voitures, les transitions entre les différents noeud du graphe si la voiture nous informe que c'est le cas
     c = car.chemin
@@ -360,7 +354,8 @@ def actualise(car, dt, network, map, road):  ## dispawn les voitures, avancer le
         virage = est_virage(start, end)
         new_x, new_y, new_z = trajectoire(x, y, z, dm, start, end, virage)
         new_pos = vector(new_x, new_y, new_z)
-        #        oriente(voiture,voiture.pos,new_pos)
+        vecteur_orientation = oriente(voiture,virage)
+        voiture.axis = vecteur_orientation
         voiture.pos = new_pos
     return ()
 
@@ -397,83 +392,106 @@ def longueur_chemin(chemin, road):  ## renvoie la longueur en mètre d'un chemin
     reponse = 0
     for i in range(len(chemin) - 1):
         reponse = reponse + calcul_chemin(chemin[i], chemin[i + 1], road)
-    return (reponse)
+    return(reponse)
 
 
 ###############################################################################             SIMULATION          ####################################################################################
 
 ########################################### créer la route
 
-# route0 = Roads()
-# route0.createLigne((-200,0,0),(-100,0,0))
-# route0.createLigne((-100,0,0),(100,0,0))
-# route0.createLigne((100,0,0),(200,0,0))
+#route0 = Roads()   ## ligne droite 
+#route0.createLigne((-200,0,0),(-100,0,0)) 
+#route0.createLigne((-100,0,0),(100,0,0))
+#route0.createLigne((100,0,0),(200,0,0))
 
-# route1 = Road()
-# route1.ligne((-200,0,0),(0,0,0))
-# route1.virage((100,0,-100),(0,0,0))
+#route1 = Roads() ## ligne droite puis virage 
+#route1.createLigne((-200,0,0),(0,0,0))
+#route1.createVirage((0,0,0),(100,0,-100))
 
-route2 = Roads()
-route2.createVirage((1, 0, 1), (100, 0, 100))
-route2.createLigne((100, 0, 100), (200, 0, 100))
+#route2 = Roads() ## virage puis ligne droite
+#route2.createVirage((1, 0, 1), (100, 0, 100))
+#route2.createLigne((100, 0, 100), (200, 0, 100))
 
-# route2.reseau.append((0,0,0),(100,0,100),1,(100,0,0),100)
+#route3 = Roads()  ## plusieurs voiture sur différentes routes qui ne se croisent pas
+
+#route4 = Roads()  ## plusieurs voitures pas sur le meme reseau
+
+#route5 = Roads()  ## plusieurs voitures sur le meme reseau
+
+## grand rond point centré en 0,0
+rond_point = Roads()
+rond_point.createVirage((0,0,250),(250,0,0),True)
+rond_point.createVirage((-250,0,0),(0,0,250))
+rond_point.createVirage((0,0,-250),(-250,0,0),True)
+rond_point.createVirage((250,0,0),(0,0,-250))
 
 ########################################### créer le network
 
-# network0 = NetworkGraph()
-# network0.addEdge((-200,0,0),(-100,0,0))
-# network0.addEdge((-100,0,0),(100,0,0))
-# network0.addEdge((100,0,0),(200,0,0))
+#network0 = NetworkGraph()
+#network0.addEdge((-200,0,0),(-100,0,0))
+#network0.addEdge((-100,0,0),(100,0,0))
+#network0.addEdge((100,0,0),(200,0,0))
 
-# network1 = NetworkGraph()
-# network1.addEdge((-200,0,0),(0,0,0))
-# network1.addEdge((0,0,0),(100,0,-100))
+#network1 = NetworkGraph()
+#network1.addEdge((-200,0,0),(0,0,0))
+#network1.addEdge((0,0,0),(100,0,-100))
 
-network2 = NetworkGraph()
-network2.addEdge((1, 0, 1), (100, 0, 100), True)
-network2.addEdge((100, 0, 100), (200, 0, 100))
+#network2 = NetworkGraph()
+#network2.addEdge((1, 0, 1), (100, 0, 100), True)
+#network2.addEdge((100, 0, 100), (200, 0, 100))
+
+network_rp = NetworkGraph() ## network du rond_point
+network_rp.addEdge((250,0,0),(0,0,250),True)
+network_rp.addEdge((-250,0,0),(0,0,250),True)
+network_rp.addEdge((-250,0,0),(0,0,-250),True)
+network_rp.addEdge((250,0,0),(0,0,-250),True)
+
 
 ########################################### créer la voiture initiale
 
 y_voiture = 7
-# vehicule0= box(pos=vector(-200,y_voiture,0),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
-# vehicule1= box(pos=vector(-200,y_voiture,0),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
-vehicule2 = box(pos=vector(1, y_voiture, 1), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
-# test = box(pos=vector(-100,0,0),size = vector(5,50,5))
+#vehicule0= box(pos=vector(-200,y_voiture,0),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
+#vehicule1= box(pos=vector(-200,y_voiture,0),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
+#vehicule2 = box(pos=vector(1, y_voiture, 1), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
+vehicule_rp = box(pos=vector(250, y_voiture, 0), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
 
 
 ########################################## créer la traffic_map
 
-# map0 = TrafficMap()
-# map0.addCarOnRoad((-200,0,0),(-100,0,0),vehicule0)
+#map0 = TrafficMap()
+#map0.addCarOnRoad((-200,0,0),(-100,0,0),vehicule0)
 
-# map1 = TrafficMap()
-# map1.addCarOnRoad((-200,0,0),(0,0,0),vehicule1)
+#map1 = TrafficMap()
+#map1.addCarOnRoad((-200,0,0),(0,0,0),vehicule1)
 
-map2 = TrafficMap()
-map2.addCarOnRoad((1, 0, 1), (100, 0, 100), vehicule2)
+#map2 = TrafficMap()
+#map2.addCarOnRoad((1, 0, 1), (100, 0, 100), vehicule2)
+
+map_rp = TrafficMap()
+map_rp.addCarOnRoad(250,0,0)
 
 ########################################## créer la trajectoire initiale/le chemin associée
 
-# chemin0 = [(-200,0,0),(-100,0,0),(100,0,0),(200,0,0)]
+#chemin0 = [(-200,0,0),(-100,0,0),(100,0,0),(200,0,0)]
 
-# chemin1 = [(-200,0,0),(0,0,0),(100,0,-100)]
-# trajectoire1 = nouvelle_traj((-200,0,0),(0,0,0),False)
+#chemin1 = [(-200,0,0),(0,0,0),(100,0,-100)]
 
-chemin2 = [(1, 0, 1), (100, 0, 100), (150, 0, 100)]
+#chemin2 = [(1, 0, 1), (100, 0, 100), (150, 0, 100)]
+
+chemin_rp = [(250,0,0),(0,0,-250),(-250,0,0),(0,0,250),(250,0,0)]
 
 ########################################## créer la car initiale
 
 vitesse = 50  ## m/s
 
-# car0 = Car((-200,y_voiture,0), vitesse, vehicule0, chemin0)
-# car1 = Car((-200,y_voiture,0), vitesse, vehicule1, trajectoire1, chemin1) ###################### test 1 encore à mettre à jour
-car2 = Car((1, y_voiture, 1), vitesse, vehicule2, chemin2)
+#car0 = Car((-200,y_voiture,0), vitesse, vehicule0, chemin0)
+#car1 = Car((-200,y_voiture,0), vitesse, vehicule1, chemin1)
+#car2 = Car((1, y_voiture, 1), vitesse, vehicule2, chemin2)
+car_rp = Car((250,0,0) , vitesse, vehicule_rp, chemin_rp)
 
 ########################################### créer la liste des cars initiales
 
-L = [car2]
+L = [car_rp]
 
 ########################################### actualiser les voitures
 
@@ -481,4 +499,4 @@ dt = 1 / 60
 
 while True:
     rate(60)
-    Simulation(dt, L, network2, map2, route2)
+    Simulation(dt, L, network_rp, map_rp, rond_point)
