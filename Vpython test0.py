@@ -218,6 +218,7 @@ def distance(point1, point2):
 def arctan_2(y, x):
     if (sqrt(x ** 2 + y ** 2) + x == 0):
         return 0
+
     else:
         return (2 * atan(y / (sqrt(x ** 2 + y ** 2) + x)))
 
@@ -234,6 +235,35 @@ def info_virage(start, end):  ## renvoie (centre,r) le centre et le rayon du vir
         centre_virage = (centre_v.x, centre_v.y, centre_v.z)
         return(centre_virage,r)
 
+def sens(start,end) : ## renvoie, pour le virage compris entre start et end, +1 ou -1 selon le sens de rotation de ce virage, avec la convention : rotation trigonométrique -> =1, rotation horaire -> -1
+    centre = info_virage(start,end)
+    (x0,y0,z0) = centre
+    (a,b,c) = start
+    (x,y,z) = end
+    if (a - x > 0) and (c - z < 0) and (c - z0 < 0) : #1
+        return(+1)
+    elif (a - x > 0) and (c - z > 0) and (z - z0 < 0) : #2
+        return(+1)
+    elif (a - x < 0) and (c - z < 0) and (z - z0 > 0) : #3
+        return(+1)
+    elif (a - x < 0) and (c - z < 0) and (c - z0 > 0) : #4
+        return(+1)
+    elif (a - x < 0) and (c - z > 0) and (c - z0 <= 0) : #5
+        return(-1)
+    elif (a - x < 0) and (c - z < 0) and (z - z0 >= 0) : #6
+        return(-1)
+    elif (a - x > 0) and (c - z > 0) and (z - z0 >= 0) : #7
+        return(-1)
+    else : #8
+        return(-1)
+        
+def rotation_y(triplet,theta) : ## renvoie la rotation du vecteur(triplet) d'un angle theta, selon Ux ## angle theta en radian ou en dregre ??
+    (a,b,c) = triplet
+    alpha = a*cos(theta)-c*sin(theta)
+    beta = b
+    gamma = a*sin(theta)+c*cos(theta)
+    return(vector(alpha,beta,gamma))
+
 
 ## la fct trajectoire renvoyée sera de R4 dans R3 / trajectoire(x,y,z,l...) ,où (x,y,z) est la position actuelle et l la distance que la voiture peut parcourir pendant dt selon le modèle (double intégration du pfd selon dt), renvoie la nouvelle position (x',y',z') / la voiture ait parcouru l depuis (x,y,z)
 def trajectoire(x, y, z, l, start, end, virage):
@@ -241,15 +271,39 @@ def trajectoire(x, y, z, l, start, end, virage):
         (x0, y0, z0) = start
         (x1, y1, z1) = end
         d = distance(start, end)
-        return (x + l * (x1 - x0) / d, y + l * (y1 - y0) / d, z + l * (z1 - z0) / d)
+        return (x + l * (x1 - x0) / d, y_voiture, z + l * (z1 - z0) / d) # new_y = y + l * (y1 - y0) / d, ici flm, on considère le cas en 2D
     else:
+        ## prendre le vecteur de centre à pos voiture
         centre, rayon = info_virage(start, end)
         a,b,c = centre #important , pour def v par la suite, vector(centre) ne fonctionne pas mais il faut écrire vector(a,b,c)
-        v = vector(a,b,c)
-        theta = l / rayon
-        angle = arctan_2(z - c, x - a) + theta
-        dl = v + vector(rayon * cos(angle), y, rayon * sin(angle))
-        return (dl.x, dl.y, dl.z)
+        vecteur_centre = vector(a,b,c)
+        vecteur_rayon = vector(x,y,z) - vecteur_centre
+        ## le rotate de theta autour de vector(0,1,0) en position centre / ou (0,0,0)
+        theta = -sens(start,end)*l/rayon
+        new_vecteur_rayon = rotation_y((vecteur_rayon.x,vecteur_rayon.y,vecteur_rayon.z),theta)
+#       vecteur_rayon.rotate(radians(theta),vecteur_rayon) # à voir s'il ne faut pas rotate de radian(theta) ?
+        ## calculer le nouveau vecteur position noté v
+        v = vecteur_centre + new_vecteur_rayon
+        ## update la voiture 
+        return(v.x,v.y,v.z)
+        
+#        centre, rayon = info_virage(start, end)
+#        a,b,c = centre #important , pour def v par la suite, vector(centre) ne fonctionne pas mais il faut écrire vector(a,b,c)
+#        v = vector(a,b,c)
+#        theta = l / rayon #angle en valeur absolue à rajouter à l'argument de la position de la voiture dans le référentiel lié au centre du cercle
+#        # donner le sens algébrique de la rotation (faisable par disjonction des cas)
+#        delta = sens(start,end) # delta = +1 ou -1 avec comme convention le sens de rotation trigonométrique -> +1 donc horaire -> -1
+#        #faire les calculs
+#        arg_pos = arctan_2(z, x)
+#        arg_new_pos = arg_pos + delta*theta 
+#        # update la pos
+#        dl = v + vector(rayon * cos(arg_new_pos), y, rayon * sin(arg_new_pos))
+#        return(dl.x,dl.y,dl.z)        
+        
+#        angle = theta
+#        angle = arctan_2(z, x) + theta
+#        dl = v + vector(rayon * cos(angle), y, rayon * sin(angle))
+#        return (dl.x, dl.y, dl.z)
 
 def pfd_test(voiture, dt, network, map, contexte=()):
     return (1)
