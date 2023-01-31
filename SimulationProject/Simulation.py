@@ -1,5 +1,6 @@
 from TrafficMap import *
 from NetworkGraph import *
+from Car import *
 from View import *
 
 
@@ -10,7 +11,6 @@ class Simulation:
         self.trafficMap = TrafficMap()
         self.view = View()
         self.carsList = []
-
 
     def create_roads(self, roads_to_create, curved=False):
         for road in roads_to_create:
@@ -25,5 +25,14 @@ class Simulation:
     def update(self):
         # TODO : actualiser toutes les voitures
         for car in self.carsList:
-            car.update()
-        pass
+            car.update(self)
+
+    def spawn_car_test(self, coords):
+        chemin = [(250, 0, 0), (0, 0, -250), (-250, 0, 0), (0, 0, 250), (250, 0, 0)]
+        vitesse = 50  ## m/s
+
+        vehicule = spawn_car_test(coords)
+
+        voiture = Car((250, 0, 0), vitesse, vehicule, chemin)
+
+        self.trafficMap.addCarOnRoad(chemin[0], chemin[1], voiture)
