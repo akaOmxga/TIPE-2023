@@ -33,7 +33,7 @@ class Simulation:
 
         vehicule = spawn_car_test(coords)
 
-        voiture = Car((250, 0, 0), vitesse, vehicule, chemin)
+        voiture = Car((250, y_voiture, 0), vitesse, vehicule, chemin)
 
         self.carsList.append(voiture)
         self.trafficMap.addCarOnRoad(chemin[0], chemin[1], voiture)

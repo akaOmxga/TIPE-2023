@@ -1,4 +1,3 @@
-from math import *
 import View
 
 epsilon = 10  # TODO : modif
@@ -6,7 +5,7 @@ epsilon = 10  # TODO : modif
 
 class Car:
 
-    ## trajectoire, une fonction donnant la trajectoire de la voiture dans la simulation (propre à chaque lignes/virages) ; chemin, un chemin du graphe représentant l'ensemble des routes (lignes et virages) que la voitures doit empreinter
+    # trajectoire, une fonction donnant la trajectoire de la voiture dans la simulation (propre à chaque lignes/virages) ; chemin, un chemin du graphe représentant l'ensemble des routes (lignes et virages) que la voitures doit empreinter
     # c.f. Victor si on a un problème
     def __init__(self, spawnpoint, speed, vehicle, chemin):
         (x, y, z) = spawnpoint
@@ -33,16 +32,15 @@ class Car:
 
         dm = 1  # distance infinitésimale parcourue par la voiture sur dt
         x, y, z = voiture.pos.x, voiture.pos.y, voiture.pos.z
-        if View.distance(sommet_fin, (x, y,
-                                      z)) < epsilon:  ## cas où la voiture est proche (à epsilon près) d'une transition de route ; on fait la transition vers a la prochaine route, avec toutes les modifications que cela implique
+        if View.distance(sommet_fin, (x, y, z)) < epsilon:  # cas où la voiture est proche (à epsilon près) d'une transition de route ; on fait la transition vers a la prochaine route, avec toutes les modifications que cela implique
 
             # update la position
-            View.update_car(self, chemin, None)  # dm = none → on change de route
+            View.update_car(self, chemin, None, simulation_object.network)  # dm = none → on change de route
 
             new_chemin = chemin[1::]
             self.chemin = new_chemin
         else:  # cas où la voiture peut parcourir dm sur la portion de route actuelle
-            View.update_car(self, chemin, dm)
+            View.update_car(self, chemin, dm, simulation_object.network)
 
     def dispawn(self, simulation_object):
         # Envoyer les infos à vpython + liste voitures dans TrafficMap

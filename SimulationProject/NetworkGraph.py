@@ -1,7 +1,7 @@
 class NetworkGraph:
 
     def __init__(self):
-        self.network = {} # Graphe (dictionnaire) sous la formé k,v : coordonnées, sommets connectés (liste d'adj)
+        self.network = {}  # Graphe (dictionnaire) sous la formé k,v : coordonnées, sommets connectés (liste d'adj)
 
     def __str__(self):
         return f"{self.network}"
@@ -21,8 +21,8 @@ class NetworkGraph:
     # Créé les arêtes du graphe.
     # Physiquement, cela correspond à une route ou start et end sont les couples de coordonnées de début et fin de route
     # Si un sommet (extrêmité de route n'existe pas -> on le créé avec addSommet)
-    # start et end sont de la formes (x1, y1, z1) et (x2, y2, z2), curved est un boolean (false = route droite)
-    def addEdge(self, start, end, curved = False):
+    # start et end sont de la forme (x1, y1, z1) et (x2, y2, z2), curved est un boolean (false = route droite)
+    def addEdge(self, start, end, curved=False):
         if start == end:
             raise Exception("Erreur : le départ et l'arrivée d'une route ne peuvent pas être confondus")
         if start not in self.network:
@@ -32,6 +32,12 @@ class NetworkGraph:
 
         self.addConnection(start, end, curved)
 
+    def estVirage(self, start, end):
+        for elt in self.network[start]:
+            x, y, z, curved = elt
+            if (x, y, z) == end:
+                return curved
+        return False  # Cas ou le sommet n'existe pas (ne devrait jamais arriver)
 
     # Permet de trouver tous les chemins sans cycles entre start et end (start et end des triplets (x, y, z))
     def find_all_paths(self, start, end):
@@ -42,12 +48,11 @@ class NetworkGraph:
 
         return self.find(start, end, visited, [], [])
 
-
-    def find(current, end, visited, current_path, paths):
+    def find(self, current, end, visited, current_path, paths):
         visited[current] = True
         current_path.append(current)
 
-        if (current == end):
+        if current == end:
             paths.append(current_path.copy())
         else:
             for i in self.network[current]:

@@ -79,8 +79,7 @@ def trajectoire(x, y, z, l, start, end, virage):
         return (v.x, v.y, v.z)
 
 
-def sens(start,
-         end):  # renvoie, pour le virage compris entre start et end, +1 ou -1 selon le sens de rotation de ce virage, avec la convention : rotation trigonométrique -> =1, rotation horaire -> -1
+def sens(start, end):  # renvoie, pour le virage compris entre start et end, +1 ou -1 selon le sens de rotation de ce virage, avec la convention : rotation trigonométrique -> =1, rotation horaire -> -1
     centre, r = info_virage(start, end)
 
     (x0, y0, z0) = centre
@@ -105,8 +104,7 @@ def sens(start,
         return -1
 
 
-def rotation_y(triplet,
-               theta):  # renvoie la rotation du vecteur(triplet) d'un angle theta, selon Ux ## angle theta en radian ou en dregre ??
+def rotation_y(triplet, theta):  # renvoie la rotation du vecteur(triplet) d'un angle theta, selon Ux
     (a, b, c) = triplet
     alpha = a * cos(theta) - c * sin(theta)
     beta = b
@@ -115,7 +113,7 @@ def rotation_y(triplet,
     return vector(alpha, beta, gamma)
 
 
-def orthogonal_Oxz(v):  ## renvoie le vecteur orthogonal à v dans le plan Oxz
+def orthogonal_Oxz(v):  # renvoie le vecteur orthogonal à v dans le plan Oxz
     (x, y, z) = (v.x, v.y, v.z)
     alpha = -z
     beta = y
@@ -132,8 +130,8 @@ def oriente(voiture, virage):  # oriente la voiture lorsqu'elle tourne dans le v
         return vecteur_orientation
 
 
-def update_car(car, chemin, dm):
-    if dm is None and len(chemin) > 1: # chemin devrait toujours être strictement supérieur à 1, mais dans le doute..;
+def update_car(car, chemin, dm, network_graph):
+    if dm is None and len(chemin) > 1:  # chemin devrait toujours être strictement supérieur à 1, mais dans le doute..;
         new_x, new_y, new_z = chemin[1]
         car.vehicle.pos = vector(new_x, new_y, new_z)
         return
@@ -141,7 +139,7 @@ def update_car(car, chemin, dm):
     start = chemin[0]
     end = chemin[1]
 
-    virage = est_virage(start, end)
+    virage = network_graph.estVirage(start, end)
 
     x, y, z = car.position
     new_x, new_y, new_z = trajectoire(x, y, z, dm, start, end, virage)
@@ -154,11 +152,6 @@ def update_car(car, chemin, dm):
 
     vecteur_orientation = oriente(vehicle, virage)
     vehicle.axis = vecteur_orientation
-
-
-# TODO : à dév
-def est_virage(start, end):
-    return True
 
 
 def dispawn_car(vpython_car):
@@ -236,9 +229,8 @@ class View:
                 alpha, beta = pi, 3 * pi / 2
             else:
                 alpha, beta = -pi / 2, 0
-        centre_virage = (centre_v.x, centre_v.y, centre_v.z)
-        v = extrusion(path=paths.arc(pos=centre_v, radius=r, angle1=alpha, angle2=beta),
-                      shape=[shapes.rectangle(width=largeur_route, height=y_reference)])
+        extrusion(path=paths.arc(pos=centre_v, radius=r, angle1=alpha, angle2=beta),
+                  shape=[shapes.rectangle(width=largeur_route, height=y_reference)])
 
         # Ligne entre sortie-virage et fin
         (d, e, f) = sortie_virage
