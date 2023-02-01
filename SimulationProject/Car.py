@@ -19,10 +19,14 @@ class Car:
     def __str__(self):
         return f"Objet voiture, position : {self.position}"
 
-    def update(self,
-               simulation_object):  # dispawn les voitures, avancer les voitures, les transitions entre les différents noeud du graphe si la voiture nous informe que c'est le cas
+    def update(self, simulation_object):  # dispawn les voitures, avancer les voitures, les transitions entre les différents noeud du graphe si la voiture nous informe que c'est le cas
         chemin = self.chemin
         n = len(chemin)
+
+        if n == 1:
+            # On a plus de chemin à parcourir, on a fini la route -> on dispawn
+            self.dispawn(simulation_object)
+            return
 
         sommet_fin = chemin[1]
         voiture = self.vehicle  # car = objet Car, voiture = objet vpython
@@ -31,9 +35,6 @@ class Car:
         x, y, z = voiture.pos.x, voiture.pos.y, voiture.pos.z
         if View.distance(sommet_fin, (x, y,
                                       z)) < epsilon:  ## cas où la voiture est proche (à epsilon près) d'une transition de route ; on fait la transition vers a la prochaine route, avec toutes les modifications que cela implique
-            if n == 1:
-                self.dispawn(simulation_object)
-                return
 
             # update la position
             View.update_car(self, chemin, None)  # dm = none → on change de route

@@ -24,5 +24,6 @@ while True:
     simulation.update()
     i += 1
 
-    if (i >= 120):
+    if (i >= 300):
         simulation.spawn_car_test((250, 10, 0))
+        i = 0

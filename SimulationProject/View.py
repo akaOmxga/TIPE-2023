@@ -133,24 +133,32 @@ def oriente(voiture, virage):  # oriente la voiture lorsqu'elle tourne dans le v
 
 
 def update_car(car, chemin, dm):
-    if dm is None:
-        car.pos = vector(chemin[1])
+    if dm is None and len(chemin) > 1: # chemin devrait toujours être strictement supérieur à 1, mais dans le doute..;
+        new_x, new_y, new_z = chemin[1]
+        car.vehicle.pos = vector(new_x, new_y, new_z)
         return
 
     start = chemin[0]
     end = chemin[1]
 
     virage = est_virage(start, end)
-    new_x, new_y, new_z = trajectoire(car.pos, dm, start, end, virage)
+
+    x, y, z = car.position
+    new_x, new_y, new_z = trajectoire(x, y, z, dm, start, end, virage)
+    car.position = (new_x, new_y, new_z)
+
+    vehicle = car.vehicle
+
     new_pos = vector(new_x, new_y, new_z)
-    vecteur_orientation = oriente(car, virage)
-    car.axis = vecteur_orientation
-    car.pos = new_pos
+    vehicle.pos = new_pos
+
+    vecteur_orientation = oriente(vehicle, virage)
+    vehicle.axis = vecteur_orientation
 
 
 # TODO : à dév
 def est_virage(start, end):
-    pass
+    return True
 
 
 def dispawn_car(vpython_car):
@@ -158,7 +166,8 @@ def dispawn_car(vpython_car):
 
 
 def spawn_car_test(coords):
-    vehicule_rp = box(pos=vector(coords), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
+    x, y, z = coords
+    vehicule_rp = box(pos=vector(x, y, z), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
     return vehicule_rp
 
 
@@ -235,4 +244,3 @@ class View:
         (d, e, f) = sortie_virage
         if (d != x) or (e != y) or (f != z):
             self.__create_line(sortie_virage, end)
-

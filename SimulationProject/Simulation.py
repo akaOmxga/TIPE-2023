@@ -29,10 +29,11 @@ class Simulation:
 
     def spawn_car_test(self, coords):
         chemin = [(250, 0, 0), (0, 0, -250), (-250, 0, 0), (0, 0, 250), (250, 0, 0)]
-        vitesse = 50  ## m/s
+        vitesse = 50  # m/s
 
         vehicule = spawn_car_test(coords)
 
         voiture = Car((250, 0, 0), vitesse, vehicule, chemin)
 
+        self.carsList.append(voiture)
         self.trafficMap.addCarOnRoad(chemin[0], chemin[1], voiture)
