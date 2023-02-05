@@ -224,7 +224,18 @@ def arctan_2(y, x):
 
     else:
         return (2 * atan(y / (sqrt(x ** 2 + y ** 2) + x)))
+    
 
+def info_reverse(start,end,road) :
+    liste = road.reseau
+    (a,b,c) = start
+    (x,y,z) = end
+    for elm in liste :
+        (s1,s2,reverse) = elm
+        (d1,d2,d3) = s1
+        (f1,f2,f3) = s2 
+        if (a == d1) and (b == d2) and (c == d3) and (x == f1) and (y == f2) and (z == f3) :
+            return(reverse)
 
 def info_virage(start, end):  ## renvoie (centre,r) le centre et le rayon du virage entre les sommets 1 et 2
         (a, b, c), (x, y, z) = start, end
