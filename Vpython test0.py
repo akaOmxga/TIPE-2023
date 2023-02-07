@@ -15,7 +15,7 @@ longueur_voiture = 20
 scene.width = scene.height = 1000
 scene.range = 200
 scene.background = color.white
-#scene.center = vector(1000,100,1000)
+scene.center = vector(1000,100,1000)
 
 Ux = vector(1, 0, 0)
 Uy = vector(0, 1, 0)
@@ -245,13 +245,19 @@ def info_virage(start, end):  ## renvoie (centre,r) le centre et le rayon du vir
         r = min(abs(delta_x), abs(delta_z))
         if abs(delta_x) < abs(delta_z):
             centre_v = vector(a, b, c + sign(delta_z) * r)
+            sortie_virage = (a + sign(delta_x) * r, b, c + sign(delta_z) * r)
+        elif abs(delta_x) == abs(delta_z) : ### CAS CRUCIAL
+        
         else:
             centre_v = vector(a + sign(delta_x) * r, b, c)
+            sortie_virage = (a + sign(delta_x) * r, b, c + sign(delta_z) * r)
         centre_virage = (centre_v.x, centre_v.y, centre_v.z)
-        return(centre_virage,r)
+        return(centre_virage,sortie_virage,r)
+
+ 
 
 def sens(start,end) : ## renvoie, pour le virage compris entre start et end, +1 ou -1 selon le sens de rotation de ce virage, avec la convention : rotation trigonométrique -> =1, rotation horaire -> -1
-    centre = info_virage(start,end)
+    centre,sortie,rayon = info_virage(start,end)
     (x0,y0,z0) = centre
     (a,b,c) = start
     (x,y,z) = end
@@ -289,7 +295,7 @@ def trajectoire(x, y, z, l, start, end, virage):
         return (x + l * (x1 - x0) / d, y_voiture, z + l * (z1 - z0) / d) # new_y = y + l * (y1 - y0) / d, ici flm, on considère le cas en 2D
     else:
         ## prendre le vecteur de centre à pos voiture
-        centre, rayon = info_virage(start, end)
+        centre,sortie, rayon = info_virage(start, end)
         a,b,c = centre #important , pour def v par la suite, vector(centre) ne fonctionne pas mais il faut écrire vector(a,b,c)
         vecteur_centre = vector(a,b,c)
         vecteur_rayon = vector(x,y,z) - vecteur_centre
@@ -378,8 +384,16 @@ def actualise(car, dt, network, map, road):  ## dispawn les voitures, avancer le
         start = c[0]
         end = c[1]
         virage = est_virage(start, end)
-        new_x, new_y, new_z = trajectoire(x, y, z, dm, start, end, virage)
-        new_pos = vector(new_x, new_y, new_z)
+        if virage == True :
+            centre,sortie,rayon = info_virage(start,end)
+            if c[1] != sortie :
+                new_chemin = [c[0]] + [sortie] + c[1:]
+                car.chemin = new_chemin
+            new_x, new_y, new_z = trajectoire(x, y, z, dm, start, sortie, virage)
+            new_pos = vector(new_x, new_y, new_z)
+        else :
+            new_x, new_y, new_z = trajectoire(x, y, z, dm, start, end, virage)
+            new_pos = vector(new_x, new_y, new_z)
         vecteur_orientation = oriente(voiture,virage)
         voiture.axis = vecteur_orientation
         voiture.pos = new_pos
@@ -404,7 +418,7 @@ def calcul_chemin(S1, S2, road):
     if est_virage(S1, S2) == False:
         return (distance(S1, S2))
     else:
-        centre, rayon = info_virage(S1, S2, road)
+        centre,sortie, rayon = info_virage(S1, S2, road)
         (a, b, c) = centre
         (x, y, z) = S2
         if a + sign(x - a) * rayon == x:
@@ -446,10 +460,11 @@ def longueur_chemin(chemin, road):  ## renvoie la longueur en mètre d'un chemin
 
 ## grand rond point centré en 0,0
 rond_point = Roads()
-rond_point.createVirage((0,0,250),(250,0,0),True)
-rond_point.createVirage((-250,0,0),(0,0,250))
-rond_point.createVirage((0,0,-250),(-250,0,0),True)
-rond_point.createVirage((250,0,0),(0,0,-250))
+rond_point.createVirage((850,0,1050),(1050,0,1150))
+rond_point.createVirage((1050,0,1150),(1150,0,950))
+rond_point.createVirage((1150,0,950),(950,0,850))
+rond_point.createVirage((950,0,850),(850,0,1050))
+
 
 ## test pfd IDM ligne droite
 #route = Roads()
@@ -471,10 +486,10 @@ rond_point.createVirage((250,0,0),(0,0,-250))
 #network2.addEdge((100, 0, 100), (200, 0, 100))
 
 network_rp = NetworkGraph() ## network du rond_point
-network_rp.addEdge((250,0,0),(0,0,250),True)
-network_rp.addEdge((-250,0,0),(0,0,250),True)
-network_rp.addEdge((-250,0,0),(0,0,-250),True)
-network_rp.addEdge((250,0,0),(0,0,-250),True)
+network_rp.addEdge((850,0,1050),(1050,0,1150),True)
+network_rp.addEdge((1050,0,1150),(1150,0,950),True)
+network_rp.addEdge((1150,0,950),(950,0,850),True)
+network_rp.addEdge((950,0,850),(850,0,1050),True)
 
 #network = NetworkGraph()
 ########################################### créer la voiture initiale
@@ -483,7 +498,7 @@ y_voiture = 7
 #vehicule0= box(pos=vector(-200,y_voiture,0),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
 #vehicule1= box(pos=vector(-200,y_voiture,0),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
 #vehicule2 = box(pos=vector(1, y_voiture, 1), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
-vehicule_rp = box(pos=vector(250, y_voiture, 0), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
+vehicule_rp = box(pos=vector(850, y_voiture, 1050), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
 
 ## test pfd IDM
 #vehicule_test_1 = box(pos=vector(-200,y_voiture,0),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
@@ -501,7 +516,7 @@ vehicule_rp = box(pos=vector(250, y_voiture, 0), size=vector(20, 10, 10), axis=v
 #map2.addCarOnRoad((1, 0, 1), (100, 0, 100), vehicule2)
 
 map_rp = TrafficMap()
-map_rp.addCarOnRoad(250,0,0)
+map_rp.addCarOnRoad((850,0,1050),(1050,0,1150),vehicule_rp)
 
 #map = TrafficMap()
 #map.addCarOnRoad((-200,0,0),(200,0,0),vehicule_test_1)
@@ -515,7 +530,7 @@ map_rp.addCarOnRoad(250,0,0)
 
 #chemin2 = [(1, 0, 1), (100, 0, 100), (150, 0, 100)]
 
-chemin_rp = [(250,0,0),(0,0,-250),(-250,0,0),(0,0,250),(250,0,0)]
+chemin_rp = [(850,0,1050),(1050,0,1150),(1150,0,950),(950,0,850),(850,0,1050)]
 
 #chemin1 = [(-200,0,0),(200,0,0)]
 #chemin2 = [(-200,0,0),(200,0,0)]
@@ -527,7 +542,7 @@ vitesse = 50  ## m/s
 #car0 = Car((-200,y_voiture,0), vitesse, vehicule0, chemin0)
 #car1 = Car((-200,y_voiture,0), vitesse, vehicule1, chemin1)
 #car2 = Car((1, y_voiture, 1), vitesse, vehicule2, chemin2)
-car_rp = Car((250,0,0) , vitesse, vehicule_rp, chemin_rp)
+car_rp = Car((850,0,1050) , vitesse, vehicule_rp, chemin_rp)
 
 #car_test_1 = Car((-200,0,0), 500, vehicule_test_1, chemin1) ## voiture derrière
 #car_test_2 = Car((-200,0,0),3 , vehicule_test_2, chemin2) ## voiture devant
