@@ -303,18 +303,32 @@ def trajectoire(x, y, z, l, start, end, virage):
 def pfd_test(voiture, dt, network, map, contexte=()):
     return (1)
 
+## constante IDM
+acc_max = 1 ## accélération maximale 
+exp_acc = 4 ## coefficient de smoothness
+dec_confortable = 1.5 ## décélération confortable
+dec_max = 10 ## décélération maximale
+speed_max = 50 ## vitesse maximale ; envisageable : la vitesse maximale dépend de la route sur laquelle on circule
+distance_min = 2 ## distance de sécurité, minimale entre deux voitures
+temps_reaction = 1 ## temps de réaction du conducteur
 
-def pfd(voiture, dt, network, map,contexte=()):  ## renvoie la l'accélération de la voiture dans les conditions décrites par le contexte (network,map)
+def distance_securite(vitesse, delta_vitesse) : ## représente s* dans IDM // d'aute modélisation de IDM retourne (distance_min + max(0,v*temps_reaction + v*delta_v/sqrt(2acc_max*dec_confortable=)))
+    return(distance_min + vitesse*temps_reaction + vitesse*delta_vitesse/sqrt(2*acc_max*dec_confortable))
+
+def pfd_IDM(voiture, dt, network, map,contexte=()):  ## renvoie la l'accélération de la voiture dans les conditions décrites par le contexte (network,map)
     ## contexte est un élément de la modélisation venant modifié le comportement du véhicule. Ex : les stops, les feux rouges ...
     v = prochain_vehicule(voiture, network, map)
-    pos_voiture = (voiture.pos.x, voiture.pos.y, voiture.pos.z)
-    pos_prochain_vehicule = (v.pos.x, v.pos.y, v.pos.z)
-    if distance(pos_voiture, pos_prochain_vehicule) < delta_f:  ## la voiture doit freiner, autre voiture proche
-        return ()
-    elif distance(pos_voiture,pos_prochain_vehicule) < delta_a:  ## la voiture doit garder le rythme, autre voiture modérément proche
-        return ()
-    else:  ## la voiture doit accélérer
-        return ()
+    if v = None :
+        acceleration =  acc_max*(1-(voiture.speed/speed_max)**exp_acc)
+    else :
+        pos_voiture = (voiture.pos.x, voiture.pos.y, voiture.pos.z)
+        pos_prochaine_voiture = (v.pos.x, v.pos.y, v.pos.z)
+        acceleration = acc_max*(1-(voiture.speed/speed_max)**exp_acc - (distance_securite(voiture.speed,(v.speed - voiture.speed))/distance(pos_voiture,pos_prochaine_voiture))**2)
+    return (acceleration)
+    
+def pfd_basic(voiture, dt, network, map) :
+    return()
+    
 
 
 def integration(v, accel,dt):  ##  modifiable, ici on intégre 2 fois en considérant les conditions initialses v0 = 0 (à réfléchir) et x0=0 (ce qui est nécessaire)
