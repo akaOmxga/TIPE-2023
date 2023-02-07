@@ -2,19 +2,20 @@ from math import *
 import matplotlib.pyplot as plt
 
 t = 1.0 #temps d'actualisation
-a_max = 1.5
-delta = 1.0
-dec_confort = 1.5
-dec_max = 10.0
-v_max = 50.0
-d_min = 2.0
-temps_reac = 1.0
-l = 2.0
+a_max = 1.5 #acceleration max
+delta = 4.0 #coefficient de smoothness ??
+dec_confort = 1.5 #decceleration confortable
+dec_max = 10.0 #decceleration max
+v_max = 50.0 #vitesse max
+d_min = 2.0 #distance minimale entre deux véhicules
+temps_reac = 1.0 #temps de réaction des usagers
+l = 2.0 #longueur des véhicules
+N = 8 #nombre de voiture
 
-def v_etoile(v,delta_v):
+def v_etoile(v,delta_v): # utile pour IDM
     return (d_min + v*temps_reac + v*delta_v/sqrt(2*a_max*dec_confort))
 
-def acc(V,X):
+def acc(V,X): #calcul des accélérations de chaque voiture avec IDM
     n = len(V)
     L = []
     for k in range(n):
@@ -26,7 +27,7 @@ def acc(V,X):
             L.append(acc)
     return L
 
-def actualise(X,V,A):
+def actualise(X,V,A):  #actualisation de la vitesse et position des voitures
     newX = []
     newV = []
     for k in range(len(V)):
@@ -34,23 +35,27 @@ def actualise(X,V,A):
         newX.append(X[k] + t*newV[k])
     return (newX,newV)
 
-liste_position = [[5*k] for k in range(4)]
-liste_vitesse = [[0] for k in range(4)]
-pos_init = [15,10,5,0]
-vit_init = [0,0,0,0]
+liste_position = [[5*(N-1-k)] for k in range(N)]
+liste_vitesse = [[0] for k in range(N)]
+pos_init = [5*(N-1-k) for k in range(N)]
+vit_init = [0 for k in range(N)]
 A = acc(vit_init,pos_init)
+liste_acc = [[elm] for elm in A]
 
-for k in range(59):
+for k in range(59): #visualisation d l'évolution des données sur 60 secondes
     X,V = actualise(pos_init,vit_init,A)
     pos_init = X
     vit_init = V
     A = acc(vit_init,pos_init)
-    for k in range(4):
+    for k in range(N):
         liste_position[k].append(X[k])
         liste_vitesse[k].append(V[k])
-
+        liste_acc[k].append(A[k])
 T = [k for k in range(60)]
-for k in range(4):
-    plt.plot(T,liste_vitesse[k])
+for k in range(N):
+    plt.plot(T,liste_acc[k])
+
+plt.xlabel('temps en seconde')
+plt.ylabel('vitesse en m/s')
 
 plt.show()
