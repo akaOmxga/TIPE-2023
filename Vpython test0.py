@@ -133,7 +133,7 @@ class Roads:  ## à faire, lorsque l'on créer une ligne ou un virage, il faut a
         (a, b, c), (x, y, z) = start, end
         longueur = sqrt((x - a) ** 2 + (z - c) ** 2)
         route = box(pos=vector((a + x) / 2, (b + y) / 2, (c + z) / 2),
-                    size=vector(longueur, y_reference, largeur_reference))
+                    size=vector(longueur, y_reference, largeur_voiture))
         if x != a:
             theta = atan((z - c) / (x - a))
             alpha = atan((y - b) / (x - a))
@@ -450,6 +450,10 @@ rond_point.createVirage((-250,0,0),(0,0,250))
 rond_point.createVirage((0,0,-250),(-250,0,0),True)
 rond_point.createVirage((250,0,0),(0,0,-250))
 
+## test pfd IDM ligne droite
+#route = Roads()
+#route.createLigne((-200,0,0),(200,0,0))
+
 ########################################### créer le network
 
 #network0 = NetworkGraph()
@@ -471,7 +475,7 @@ network_rp.addEdge((-250,0,0),(0,0,250),True)
 network_rp.addEdge((-250,0,0),(0,0,-250),True)
 network_rp.addEdge((250,0,0),(0,0,-250),True)
 
-
+#network = NetworkGraph()
 ########################################### créer la voiture initiale
 
 y_voiture = 7
@@ -480,6 +484,9 @@ y_voiture = 7
 #vehicule2 = box(pos=vector(1, y_voiture, 1), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
 vehicule_rp = box(pos=vector(250, y_voiture, 0), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
 
+## test pfd IDM
+#vehicule_test_1 = box(pos=vector(-200,y_voiture,0),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
+#vehicule_test_2 = box(pos=vector(-150,y_voiture,0),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
 
 ########################################## créer la traffic_map
 
@@ -495,6 +502,10 @@ vehicule_rp = box(pos=vector(250, y_voiture, 0), size=vector(20, 10, 10), axis=v
 map_rp = TrafficMap()
 map_rp.addCarOnRoad(250,0,0)
 
+#map = TrafficMap()
+#map.addCarOnRoad((-200,0,0),(200,0,0),vehicule_test_1)
+#map.addCarOnRoad((-200,0,0),(200,0,0),vehicule_test_2)
+
 ########################################## créer la trajectoire initiale/le chemin associée
 
 #chemin0 = [(-200,0,0),(-100,0,0),(100,0,0),(200,0,0)]
@@ -505,6 +516,9 @@ map_rp.addCarOnRoad(250,0,0)
 
 chemin_rp = [(250,0,0),(0,0,-250),(-250,0,0),(0,0,250),(250,0,0)]
 
+#chemin1 = [(-200,0,0),(200,0,0)]
+#chemin2 = [(-200,0,0),(200,0,0)]
+
 ########################################## créer la car initiale
 
 vitesse = 50  ## m/s
@@ -514,9 +528,14 @@ vitesse = 50  ## m/s
 #car2 = Car((1, y_voiture, 1), vitesse, vehicule2, chemin2)
 car_rp = Car((250,0,0) , vitesse, vehicule_rp, chemin_rp)
 
+#car_test_1 = Car((-200,0,0), 500, vehicule_test_1, chemin1) ## voiture derrière
+#car_test_2 = Car((-200,0,0),3 , vehicule_test_2, chemin2) ## voiture devant
+
 ########################################### créer la liste des cars initiales
 
 L = [car_rp]
+
+#L_test = [car_test_1,car_test_2]
 
 ########################################### actualiser les voitures
 
