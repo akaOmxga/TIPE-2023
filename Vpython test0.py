@@ -15,6 +15,7 @@ longueur_voiture = 20
 scene.width = scene.height = 1000
 scene.range = 200
 scene.background = color.white
+#scene.center = vector(1000,100,1000)
 
 Ux = vector(1, 0, 0)
 Uy = vector(0, 1, 0)
