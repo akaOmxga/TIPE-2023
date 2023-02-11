@@ -147,7 +147,6 @@ class Roads:  ## à faire, lorsque l'on créer une ligne ou un virage, il faut a
             rota = Uz.rotate(-theta, vector(0, 1, 0))
             route.rotate(-theta, vector(0, 1, 0))
             route.rotate(-alpha, rota)
-        self.reseau.append((start, end, route, (0, 0, 0), 0))
 
     def createVirage(self, start, end, reverse = False):
         (a, b, c), (x, y, z) = start, end
@@ -182,7 +181,6 @@ class Roads:  ## à faire, lorsque l'on créer une ligne ou un virage, il faut a
         centre_virage = (centre_v.x, centre_v.y, centre_v.z)
         ##if et else seulement visuel
         v = extrusion(path=paths.arc(pos=centre_v, radius=r, angle1=alpha, angle2=beta), shape=[shapes.rectangle(width=largeur_route, height=y_reference)])
-        self.reseau.append((start, sortie_virage, v, centre_virage, r))
         ## ligne entre sortie-virage et fin
         (d, e, f) = sortie_virage
         if (d != x) or (e != y) or (f != z):
@@ -191,7 +189,6 @@ class Roads:  ## à faire, lorsque l'on créer une ligne ou un virage, il faut a
                         size=vector(longueur, y_reference, largeur_route))
             theta = atan((z - f) / (x - d))
             route.rotate(-theta, vector(0, 1, 0))
-            self.reseau.append((sortie_virage, end, route, (0, 0, 0), 0))
 
 
 ###############################################################################             MODELISATION        ###################################################################################
@@ -200,7 +197,7 @@ class Roads:  ## à faire, lorsque l'on créer une ligne ou un virage, il faut a
 
 delta_f = 10  ## distance avec laquelle on compare la distance entre deux voitures ; pour freiner
 delta_a = 50  ## distance avec laquelle on compare la distance entre deux voitures ; pour accélérer
-epsilon = 10  ## distance avec laquelle on compare dm, le pas d'actualisation des voitures ; pour les transitions de route // epsilon = 8 minimun
+epsilon = 8  ## distance avec laquelle on compare dm, le pas d'actualisation des voitures ; pour les transitions de route // epsilon = 8 minimun
 
 ### IMPLEMENTER LES TRAJECTOIRES ET FAIRE AVANCER LES VOITURES LE LONG D'UN GRAPHE ###
 
@@ -227,17 +224,6 @@ def arctan_2(y, x):
         return (2 * atan(y / (sqrt(x ** 2 + y ** 2) + x)))
     
 
-def info_reverse(start,end,road) :
-    liste = road.reseau
-    (a,b,c) = start
-    (x,y,z) = end
-    for elm in liste :
-        (s1,s2,reverse) = elm
-        (d1,d2,d3) = s1
-        (f1,f2,f3) = s2 
-        if (a == d1) and (b == d2) and (c == d3) and (x == f1) and (y == f2) and (z == f3) :
-            return(reverse)
-
 def info_virage(start, end):  ## renvoie (centre,r) le centre et le rayon du virage entre les sommets 1 et 2
         (a, b, c), (x, y, z) = start, end
         delta_x = x - a
@@ -246,38 +232,40 @@ def info_virage(start, end):  ## renvoie (centre,r) le centre et le rayon du vir
         if abs(delta_x) < abs(delta_z):
             centre_v = vector(a, b, c + sign(delta_z) * r)
             sortie_virage = (a + sign(delta_x) * r, b, c + sign(delta_z) * r)
-        elif abs(delta_x) == abs(delta_z) : ### CAS CRUCIAL
-        
         else:
             centre_v = vector(a + sign(delta_x) * r, b, c)
             sortie_virage = (a + sign(delta_x) * r, b, c + sign(delta_z) * r)
         centre_virage = (centre_v.x, centre_v.y, centre_v.z)
         return(centre_virage,sortie_virage,r)
-
- 
-
-def sens(start,end) : ## renvoie, pour le virage compris entre start et end, +1 ou -1 selon le sens de rotation de ce virage, avec la convention : rotation trigonométrique -> =1, rotation horaire -> -1
-    centre,sortie,rayon = info_virage(start,end)
+    
+def sens (start,end) : ## renvoie, pour le virage compris entre start et end, +1 ou -1 selon le sens de rotation de ce virage, avec la convention : rotation trigonométrique -> =1, rotation horaire -> -1, CF PHOTO tel victor pour plus de détails dans le sens de chaque virage
+    centre, sortie, rayon = info_virage(start,end)
     (x0,y0,z0) = centre
     (a,b,c) = start
     (x,y,z) = end
-    if (a - x > 0) and (c - z < 0) and (c - z0 < 0) : #1
+    delta_x = x - a
+    delta_z = z - c
+    delta_centre = z0 - c 
+    if (delta_x < 0) and (delta_z > 0) and (delta_centre > 0) : #type de virage n°1
         return(+1)
-    elif (a - x > 0) and (c - z > 0) and (z - z0 < 0) : #2
+    elif (delta_x < 0) and (delta_z < 0) and (delta_centre = 0) : #2
         return(+1)
-    elif (a - x < 0) and (c - z < 0) and (z - z0 > 0) : #3
+    elif (delta_x > 0) and (delta_z > 0) and (delta_centre = 0) : #3  
         return(+1)
-    elif (a - x < 0) and (c - z < 0) and (c - z0 > 0) : #4
+    elif (delta_x > 0) and (delta_z < 0) and (delta_centre < 0) : #4 
         return(+1)
-    elif (a - x < 0) and (c - z > 0) and (c - z0 <= 0) : #5
+    elif (delta_x > 0) and (delta_z < 0) and (delta_centre = 0) : #5 
         return(-1)
-    elif (a - x < 0) and (c - z < 0) and (z - z0 >= 0) : #6
+    elif (delta_x > 0) and (delta_z > 0) and (delta_centre > 0) : #6 
         return(-1)
-    elif (a - x > 0) and (c - z > 0) and (z - z0 >= 0) : #7
+    elif (delta_x < 0) and (delta_z < 0) and (delta_centre < 0) : #7
         return(-1)
-    else : #8
+    elif (delta_x < 0) and (delta_z > 0) and (delta_centre = 0) : #8
         return(-1)
-        
+    else : 
+        return(+1) ## sécurité 
+    
+    
 def rotation_y(triplet,theta) : ## renvoie la rotation du vecteur(triplet) d'un angle theta, selon Ux ## angle theta en radian ou en dregre ??
     (a,b,c) = triplet
     alpha = a*cos(theta)-c*sin(theta)
@@ -295,7 +283,7 @@ def trajectoire(x, y, z, l, start, end, virage):
         return (x + l * (x1 - x0) / d, y_voiture, z + l * (z1 - z0) / d) # new_y = y + l * (y1 - y0) / d, ici flm, on considère le cas en 2D
     else:
         ## prendre le vecteur de centre à pos voiture
-        centre,sortie, rayon = info_virage(start, end)
+        centre,sortie, rayon = info_virage(start,end)
         a,b,c = centre #important , pour def v par la suite, vector(centre) ne fonctionne pas mais il faut écrire vector(a,b,c)
         vecteur_centre = vector(a,b,c)
         vecteur_rayon = vector(x,y,z) - vecteur_centre
@@ -305,7 +293,7 @@ def trajectoire(x, y, z, l, start, end, virage):
         ## calculer le nouveau vecteur position noté v
         v = vecteur_centre + new_vecteur_rayon
         ## update la voiture 
-        return(v.x,v.y,v.z)
+        return(v.x,y_voiture ,v.z)
 
 def pfd_test(voiture, dt, network, map, contexte=()):
     return (1)
@@ -348,19 +336,25 @@ def sous_liste(n, liste):  ## renvoie liste[n::]
         rep.append(liste[i])
     return (rep)
 
-def orthogonal_Oxz(v) : ## renvoie le vecteur orthogonal à v dans le plan Oxz
+def orthogonal_Oxz(v,centre) : ## renvoie le vecteur orthogonal à v dans le plan Oxz par rapport au centre du virage
+    (x0,y0,z0) = centre
     (x,y,z) = (v.x,v.y,v.z)
-    alpha = -z
-    beta = y
-    gamma = x
+    delta_pos = vector(x - x0, y - y0 , z - z0)
+    alpha = -delta_pos.z
+    beta = delta_pos.y
+    gamma = delta_pos.x
     v = vector(alpha,beta,gamma)
     return(longueur_voiture*norm(v))
 
-def oriente(voiture,virage): ## oriente la voiture lorsqu'elle tourne dans le virage
+def oriente(voiture,virage,start,end): ## oriente la voiture lorsqu'elle tourne dans le virage
     if virage == False :
-        return(voiture.axis)
+        (a,b,c) = start
+        (x,y,z) = end
+        v = vector(x-a,y-b,z-c)
+        return(longueur_voiture*norm(v))
     else :
-        vecteur_orientation = orthogonal_Oxz(voiture.pos)
+        centre, sortie, rayon = info_virage(start,end)
+        vecteur_orientation = orthogonal_Oxz(voiture.pos,centre)
         return(vecteur_orientation)
 
 def actualise(car, dt, network, map, road):  ## dispawn les voitures, avancer les voitures, les transitions entre les différents noeud du graphe si la voiture nous informe que c'est le cas
@@ -377,7 +371,7 @@ def actualise(car, dt, network, map, road):  ## dispawn les voitures, avancer le
         # update la position
         (new_x, new_y, new_z) = c[1]
         new_chemin = sous_liste(1, c)
-        voiture.pos = vector(new_x, new_y, new_z)
+        voiture.pos = vector(new_x, y_voiture , new_z)
         # update les propriétés : le chemin
         car.chemin = new_chemin
     else:  ## cas où la voiture peut parcourir dm sur la portion de route actuelle
@@ -389,14 +383,18 @@ def actualise(car, dt, network, map, road):  ## dispawn les voitures, avancer le
             if c[1] != sortie :
                 new_chemin = [c[0]] + [sortie] + c[1:]
                 car.chemin = new_chemin
-            new_x, new_y, new_z = trajectoire(x, y, z, dm, start, sortie, virage)
+            debut = car.chemin[0]
+            fin = car.chemin[2]
+            new_x, new_y, new_z = trajectoire(x, y, z, dm, debut, fin, virage)
             new_pos = vector(new_x, new_y, new_z)
+            vecteur_orientation = oriente(voiture,virage,debut,fin)
         else :
-            new_x, new_y, new_z = trajectoire(x, y, z, dm, start, end, virage)
+            new_x, new_y, new_z = trajectoire(x, y, z, dm, start, end, virage) ## le deuxième start est useless, c'est pour combler
             new_pos = vector(new_x, new_y, new_z)
-        vecteur_orientation = oriente(voiture,virage)
+            vecteur_orientation = oriente(voiture,virage,start,end)
         voiture.axis = vecteur_orientation
         voiture.pos = new_pos
+        voiture.up = vector(0,1,0) ## afin qu'elle reste "plaqué" au sol
     return ()
 
 
