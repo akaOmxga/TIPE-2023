@@ -28,12 +28,12 @@ class Simulation:
             car.update(self)
 
     def spawn_car_test(self, coords):
-        chemin = [(250, 0, 0), (0, 0, -250), (-250, 0, 0), (0, 0, 250), (250, 0, 0)]
+        chemin = [(850, 0, 1050), (1050, 0, 1150), (1150, 0, 950), (950, 0, 850), (850, 0, 1050)]
         vitesse = 50  # m/s
 
-        vehicule = spawn_car_test(coords)
+        vpython_vehicle = spawn_car_test(coords)
 
-        voiture = Car((250, y_voiture, 0), vitesse, vehicule, chemin)
+        voiture = Car((850, y_voiture, 1050), vitesse, vpython_vehicle, chemin)
 
         self.carsList.append(voiture)
         self.trafficMap.addCarOnRoad(chemin[0], chemin[1], voiture)

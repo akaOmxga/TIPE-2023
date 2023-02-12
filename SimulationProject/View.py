@@ -12,6 +12,8 @@ scene.width = scene.height = 1000
 scene.range = 200
 scene.background = color.white
 
+scene.center = vector(1000, 100, 1000)
+
 Ux = vector(1, 0, 0)
 Uy = vector(0, 1, 0)
 Uz = vector(0, 0, 1)
@@ -43,17 +45,29 @@ def arctan_2(y, x):
         return (2 * atan(y / (sqrt(x ** 2 + y ** 2) + x)))
 
 
-def info_virage(start, end):  # renvoie (centre,r) le centre et le rayon du virage entre les sommets 1 et 2
+# renvoie (centre, sortie, r) le centre, la sortie et le rayon du virage entre les sommets 1 et 2
+def info_virage(start, end):
     (a, b, c), (x, y, z) = start, end
     delta_x = x - a
     delta_z = z - c
     r = min(abs(delta_x), abs(delta_z))
     if abs(delta_x) < abs(delta_z):
         centre_v = vector(a, b, c + sign(delta_z) * r)
+        sortie_virage = (int(a + sign(delta_x) * r), b, int(c + sign(delta_z) * r))
     else:
-        centre_v = vector(a + sign(delta_x) * r, b, c)
+        centre_v = vector(int(a + sign(delta_x) * r), b, c)
+        sortie_virage = (int(a + sign(delta_x) * r), b, int(c + sign(delta_z) * r))
     centre_virage = (centre_v.x, centre_v.y, centre_v.z)
-    return (centre_virage, r)
+    return (centre_virage, sortie_virage, r)
+
+
+def est_virage(start, end):
+    (a, b, c) = start
+    (x, y, z) = end
+    if a != x and c != z:
+        return True  # il s'agit d'un virage
+    else:
+        return False
 
 
 # la fct trajectoire renvoyée sera de R4 dans R3 / trajectoire(x,y,z,l...) ,où (x,y,z) est la position actuelle et l la distance que la voiture peut parcourir pendant dt selon le modèle (double intégration du pfd selon dt), renvoie la nouvelle position (x',y',z') / la voiture ait parcouru l depuis (x,y,z)
@@ -66,42 +80,52 @@ def trajectoire(x, y, z, l, start, end, virage):
                 z + l * (z1 - z0) / d)  # new_y = y + l * (y1 - y0) / d, ici flm, on considère le cas en 2D
     else:
         # prendre le vecteur de centre à pos voiture
-        centre, rayon = info_virage(start, end)
+        centre, sortie, rayon = info_virage(start, end)
         a, b, c = centre  # important , pour def v par la suite, vector(centre) ne fonctionne pas mais il faut écrire vector(a,b,c)
         vecteur_centre = vector(a, b, c)
         vecteur_rayon = vector(x, y, z) - vecteur_centre
+
         # le rotate de theta autour de vector(0,1,0) en position centre / ou (0,0,0)
         theta = -sens(start, end) * l / rayon
         new_vecteur_rayon = rotation_y((vecteur_rayon.x, vecteur_rayon.y, vecteur_rayon.z), theta)
+
         # calculer le nouveau vecteur position noté v
         v = vecteur_centre + new_vecteur_rayon
+
         # update la voiture
-        return (v.x, v.y, v.z)
+        return (v.x, y_voiture, v.z)
 
 
-def sens(start, end):  # renvoie, pour le virage compris entre start et end, +1 ou -1 selon le sens de rotation de ce virage, avec la convention : rotation trigonométrique -> =1, rotation horaire -> -1
-    centre, r = info_virage(start, end)
+# renvoie, pour le virage compris entre start et end, +1 ou -1 selon le sens de rotation de ce virage, avec la convention : rotation trigonométrique -> =1, rotation horaire -> -1
+def sens(start, end):
+    centre, sortie, rayon = info_virage(start, end)
 
     (x0, y0, z0) = centre
     (a, b, c) = start
     (x, y, z) = end
 
-    if (a - x > 0) and (c - z < 0) and (c - z0 < 0):  # 1
+    delta_x = x - a
+    delta_z = z - c
+    delta_centre = z0 - c
+
+    if (delta_x < 0) and (delta_z > 0) and (delta_centre > 0):  # type de virage n°1
         return 1
-    elif (a - x > 0) and (c - z > 0) and (z - z0 < 0):  # 2
+    elif (delta_x < 0) and (delta_z < 0) and (delta_centre == 0):  # 2
         return 1
-    elif (a - x < 0) and (c - z < 0) and (z - z0 > 0):  # 3
+    elif (delta_x > 0) and (delta_z > 0) and (delta_centre == 0):  # 3
         return 1
-    elif (a - x < 0) and (c - z < 0) and (c - z0 > 0):  # 4
+    elif (delta_x > 0) and (delta_z < 0) and (delta_centre < 0):  # 4
         return 1
-    elif (a - x < 0) and (c - z > 0) and (c - z0 <= 0):  # 5
+    elif (delta_x > 0) and (delta_z < 0) and (delta_centre == 0):  # 5
         return -1
-    elif (a - x < 0) and (c - z < 0) and (z - z0 >= 0):  # 6
+    elif (delta_x > 0) and (delta_z > 0) and (delta_centre > 0):  # 6
         return -1
-    elif (a - x > 0) and (c - z > 0) and (z - z0 >= 0):  # 7
+    elif (delta_x < 0) and (delta_z < 0) and (delta_centre < 0):  # 7
+        return -1
+    elif (delta_x < 0) and (delta_z > 0) and (delta_centre == 0):  # 8
         return -1
     else:
-        return -1
+        return 1  # sécurité
 
 
 def rotation_y(triplet, theta):  # renvoie la rotation du vecteur(triplet) d'un angle theta, selon Ux
@@ -113,45 +137,66 @@ def rotation_y(triplet, theta):  # renvoie la rotation du vecteur(triplet) d'un 
     return vector(alpha, beta, gamma)
 
 
-def orthogonal_Oxz(v):  # renvoie le vecteur orthogonal à v dans le plan Oxz
+# renvoie le vecteur orthogonal à v dans le plan Oxz par rapport au centre du virage
+def orthogonal_Oxz(v, centre):
+    (x0, y0, z0) = centre
     (x, y, z) = (v.x, v.y, v.z)
-    alpha = -z
-    beta = y
-    gamma = x
+    delta_pos = vector(x - x0, y - y0, z - z0)
+    alpha = -delta_pos.z
+    beta = delta_pos.y
+    gamma = delta_pos.x
     v = vector(alpha, beta, gamma)
-    return (longueur_voiture * norm(v))
+    return longueur_voiture*norm(v)
 
 
-def oriente(voiture, virage):  # oriente la voiture lorsqu'elle tourne dans le virage
+# oriente la voiture lorsqu'elle tourne dans le virage
+def oriente(voiture, virage, start, end):
     if not virage:
-        return voiture.axis
+        (a, b, c) = start
+        (x, y, z) = end
+        v = vector(x-a, y-b, z-c)
+        return longueur_voiture*norm(v)
     else:
-        vecteur_orientation = orthogonal_Oxz(voiture.pos)
+        centre, sortie, rayon = info_virage(start, end)
+        vecteur_orientation = orthogonal_Oxz(voiture.pos, centre)
         return vecteur_orientation
 
 
 def update_car(car, chemin, dm, network_graph):
+    vehicle = car.vehicle
+    x, y, z = car.position
+
     if dm is None and len(chemin) > 1:  # chemin devrait toujours être strictement supérieur à 1, mais dans le doute..;
         new_x, new_y, new_z = chemin[1]
-        car.vehicle.pos = vector(new_x, new_y, new_z)
+        vehicle.pos = vector(new_x, y_voiture, new_z)
         return
 
     start = chemin[0]
     end = chemin[1]
 
-    virage = network_graph.estVirage(start, end)
+    virage = est_virage(start, end)
 
-    x, y, z = car.position
-    new_x, new_y, new_z = trajectoire(x, y, z, dm, start, end, virage)
+    if virage:
+        centre, sortie, rayon = info_virage(start, end)
+        if end != sortie:
+            new_chemin = [start] + [sortie] + chemin[1:]
+            car.chemin = new_chemin
+
+        fin_virage = car.chemin[2]
+
+        new_x, new_y, new_z = trajectoire(x, y, z, dm, start, fin_virage, virage)
+        new_pos = vector(new_x, new_y, new_z)
+        vecteur_orientation = oriente(vehicle, virage, start, fin_virage)
+    else:
+        new_x, new_y, new_z = trajectoire(x, y, z, dm, start, end, virage)  # le deuxième start est useless, c'est pour combler
+        new_pos = vector(new_x, new_y, new_z)
+        vecteur_orientation = oriente(vehicle, virage, start, end)
+
     car.position = (new_x, new_y, new_z)
 
-    vehicle = car.vehicle
-
-    new_pos = vector(new_x, new_y, new_z)
     vehicle.pos = new_pos
-
-    vecteur_orientation = oriente(vehicle, virage)
     vehicle.axis = vecteur_orientation
+    vehicle.up = vector(0, 1, 0)  # afin qu'elle reste "plaqué" au sol
 
 
 def dispawn_car(vpython_car):

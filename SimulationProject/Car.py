@@ -1,6 +1,6 @@
 import View
 
-epsilon = 10  # TODO : modif
+epsilon = 8  # TODO : modif
 
 
 class Car:

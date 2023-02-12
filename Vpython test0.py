@@ -298,7 +298,7 @@ def trajectoire(x, y, z, l, start, end, virage):
 def pfd_test(voiture, dt, network, map, contexte=()):
     return (1)
 
-## constante IDM
+## constante IDM.py
 acc_max = 1 ## accélération maximale 
 exp_acc = 4 ## coefficient de smoothness
 dec_confortable = 1.5 ## décélération confortable
@@ -307,7 +307,7 @@ speed_max = 50 ## vitesse maximale ; envisageable : la vitesse maximale dépend 
 distance_min = 2 ## distance de sécurité, minimale entre deux voitures
 temps_reaction = 1 ## temps de réaction du conducteur
 
-def distance_securite(vitesse, delta_vitesse) : ## représente s* dans IDM // d'aute modélisation de IDM retourne (distance_min + max(0,v*temps_reaction + v*delta_v/sqrt(2acc_max*dec_confortable=)))
+def distance_securite(vitesse, delta_vitesse) : ## représente s* dans IDM.py // d'aute modélisation de IDM.py retourne (distance_min + max(0,v*temps_reaction + v*delta_v/sqrt(2acc_max*dec_confortable=)))
     return(distance_min + vitesse*temps_reaction + vitesse*delta_vitesse/sqrt(2*acc_max*dec_confortable))
 
 def pfd_IDM(voiture, dt, network, map,contexte=()):  ## renvoie la l'accélération de la voiture dans les conditions décrites par le contexte (network,map)
@@ -464,7 +464,7 @@ rond_point.createVirage((1150,0,950),(950,0,850))
 rond_point.createVirage((950,0,850),(850,0,1050))
 
 
-## test pfd IDM ligne droite
+## test pfd IDM.py ligne droite
 #route = Roads()
 #route.createLigne((-200,0,0),(200,0,0))
 
@@ -498,7 +498,7 @@ y_voiture = 7
 #vehicule2 = box(pos=vector(1, y_voiture, 1), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
 vehicule_rp = box(pos=vector(850, y_voiture, 1050), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
 
-## test pfd IDM
+## test pfd IDM.py
 #vehicule_test_1 = box(pos=vector(-200,y_voiture,0),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
 #vehicule_test_2 = box(pos=vector(-150,y_voiture,0),size = vector(20,10,10),axis = vector(0,0,0), color = vector(1,0,0))
 

@@ -32,12 +32,6 @@ class NetworkGraph:
 
         self.addConnection(start, end, curved)
 
-    def estVirage(self, start, end):
-        for elt in self.network[start]:
-            x, y, z, curved = elt
-            if (x, y, z) == end:
-                return curved
-        return False  # Cas ou le sommet n'existe pas (ne devrait jamais arriver)
 
     # Permet de trouver tous les chemins sans cycles entre start et end (start et end des triplets (x, y, z))
     def find_all_paths(self, start, end):
