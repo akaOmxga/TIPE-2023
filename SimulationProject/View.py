@@ -12,7 +12,7 @@ scene.width = scene.height = 1000
 scene.range = 200
 scene.background = color.white
 
-scene.center = vector(1000, 100, 1000)
+scene.center = vector(1100, 100, 1000)
 
 Ux = vector(1, 0, 0)
 Uy = vector(0, 1, 0)
@@ -72,7 +72,7 @@ def est_virage(start, end):
 
 # la fct trajectoire renvoyée sera de R4 dans R3 / trajectoire(x,y,z,l...) ,où (x,y,z) est la position actuelle et l la distance que la voiture peut parcourir pendant dt selon le modèle (double intégration du pfd selon dt), renvoie la nouvelle position (x',y',z') / la voiture ait parcouru l depuis (x,y,z)
 def trajectoire(x, y, z, l, start, end, virage):
-    if virage == False:
+    if not virage:
         (x0, y0, z0) = start
         (x1, y1, z1) = end
         d = distance(start, end)

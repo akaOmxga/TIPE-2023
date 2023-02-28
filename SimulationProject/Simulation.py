@@ -7,6 +7,7 @@ from View import *
 class Simulation:
 
     def __init__(self):
+        self.internal_clock = 0  # Timer interne, perf_counter prenant en compte la latence du PC
         self.network = NetworkGraph()
         self.trafficMap = TrafficMap()
         self.view = View()
@@ -23,7 +24,8 @@ class Simulation:
         self.view.create_road(start, end, curved)
 
     def update(self):
-        # TODO : actualiser toutes les voitures
+        self.internal_clock += 1
+
         for car in self.carsList:
             car.update(self)
 
@@ -33,7 +35,7 @@ class Simulation:
 
         vpython_vehicle = spawn_car_test(coords)
 
-        voiture = Car((850, y_voiture, 1050), vitesse, vpython_vehicle, chemin)
+        voiture = Car((850, y_voiture, 1050), vitesse, vpython_vehicle, chemin, self.internal_clock)
 
         self.carsList.append(voiture)
         self.trafficMap.addCarOnRoad(chemin[0], chemin[1], voiture)
