@@ -1,10 +1,11 @@
-from Simulation import *
+from SimulationProject.Simulation.Simulation import *
 from vpython import *
 
 simulation = Simulation()
 
 straight_roads = [
     ((950, 0, 990), (-1000, 0, 990)),
+
 ]
 
 curved_roads = [

@@ -1,7 +1,7 @@
-from TrafficMap import *
-from NetworkGraph import *
-from Car import *
-from View import *
+from SimulationProject.Simulation.TrafficMap import *
+from SimulationProject.Simulation.NetworkGraph import *
+from SimulationProject.Simulation.Car import *
+from SimulationProject.Simulation.View import *
 from random import randint
 
 

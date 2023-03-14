@@ -1,4 +1,4 @@
-import View
+import SimulationProject.Simulation.View as View
 
 epsilon = 8  # TODO : modif
 
@@ -20,7 +20,7 @@ class Car:
     def __str__(self):
         return f"Objet voiture, position : {self.position}"
 
-    # fait dispawn les voitures, avancer les voitures, transition entre les différents noeuds du graphe
+    # fait dispawn les voitures, avancer les voitures, transition entre les différents nœuds du graphe
     def update(self, simulation_object):
 
         chemin = self.chemin
@@ -42,12 +42,12 @@ class Car:
         if View.distance(sommet_fin, (x, y, z)) < epsilon:
 
             # update la position
-            View.update_car(self, chemin, None, simulation_object.network)  # dm = none → on change de route
+            View.update_car(self, chemin, None)  # dm = none → on change de route
 
             new_chemin = chemin[1::]
             self.chemin = new_chemin
         else:  # cas où la voiture peut parcourir dm sur la portion de route actuelle
-            View.update_car(self, chemin, dm, simulation_object.network)
+            View.update_car(self, chemin, dm)
 
     def dispawn(self, simulation_object):
         # TODO : Transfer perf data to simulation

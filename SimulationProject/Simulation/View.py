@@ -35,14 +35,14 @@ def sign(x):
 def distance(point1, point2):
     a, b, c = point1
     x, y, z = point2
-    return (sqrt((x - a) ** 2 + (y - b) ** 2 + (z - c) ** 2))
+    return sqrt((x - a) ** 2 + (y - b) ** 2 + (z - c) ** 2)
 
 
 def arctan_2(y, x):
-    if (sqrt(x ** 2 + y ** 2) + x == 0):
+    if sqrt(x ** 2 + y ** 2) + x == 0:
         return 0
     else:
-        return (2 * atan(y / (sqrt(x ** 2 + y ** 2) + x)))
+        return 2 * atan(y / (sqrt(x ** 2 + y ** 2) + x))
 
 
 # renvoie (centre, sortie, r) le centre, la sortie et le rayon du virage entre les sommets 1 et 2
@@ -58,7 +58,7 @@ def info_virage(start, end):
         centre_v = vector(int(a + sign(delta_x) * r), b, c)
         sortie_virage = (int(a + sign(delta_x) * r), b, int(c + sign(delta_z) * r))
     centre_virage = (centre_v.x, centre_v.y, centre_v.z)
-    return (centre_virage, sortie_virage, r)
+    return centre_virage, sortie_virage, r
 
 
 def est_virage(start, end):
@@ -70,33 +70,38 @@ def est_virage(start, end):
         return False
 
 
-# la fct trajectoire renvoyée sera de R4 dans R3 / trajectoire(x,y,z,l...) ,où (x,y,z) est la position actuelle et l la distance que la voiture peut parcourir pendant dt selon le modèle (double intégration du pfd selon dt), renvoie la nouvelle position (x',y',z') / la voiture ait parcouru l depuis (x,y,z)
-def trajectoire(x, y, z, l, start, end, virage):
+# la fct trajectoire renvoyée est de R4 dans R3 / trajectoire(x,y,z,l...) ,où (x,y,z) est la position actuelle
+# l la distance que la voiture peut parcourir pendant dt selon le modèle (double intégration du pfd selon dt)
+# Renvoie la nouvelle position (x',y',z') / la voiture ait parcouru l depuis (x,y,z)
+def trajectoire(x, y, z, distance_parcourable, start, end, virage):
     if not virage:
         (x0, y0, z0) = start
         (x1, y1, z1) = end
         d = distance(start, end)
-        return (x + l * (x1 - x0) / d, y_voiture,
-                z + l * (z1 - z0) / d)  # new_y = y + l * (y1 - y0) / d, ici flm, on considère le cas en 2D
+        return (x + distance_parcourable * (x1 - x0) / d, y_voiture,
+                z + distance_parcourable * (z1 - z0) / d)  # new_y = y + l * (y1 - y0) / d, ici on considère le cas 2D
     else:
         # prendre le vecteur de centre à pos voiture
         centre, sortie, rayon = info_virage(start, end)
-        a, b, c = centre  # important , pour def v par la suite, vector(centre) ne fonctionne pas mais il faut écrire vector(a,b,c)
+
+        # important, pour def v par la suite, vector(centre) ne fonctionne pas, mais il faut écrire vector(a,b,c)
+        a, b, c = centre
         vecteur_centre = vector(a, b, c)
         vecteur_rayon = vector(x, y, z) - vecteur_centre
 
         # le rotate de theta autour de vector(0,1,0) en position centre / ou (0,0,0)
-        theta = -sens(start, end) * l / rayon
+        theta = -sens(start, end) * distance_parcourable / rayon
         new_vecteur_rayon = rotation_y((vecteur_rayon.x, vecteur_rayon.y, vecteur_rayon.z), theta)
 
         # calculer le nouveau vecteur position noté v
-        v = vecteur_centre + new_vecteur_rayon
+        nouvelle_pos = vecteur_centre + new_vecteur_rayon
 
         # update la voiture
-        return (v.x, y_voiture, v.z)
+        return nouvelle_pos.x, y_voiture, nouvelle_pos.z
 
 
-# renvoie, pour le virage compris entre start et end, +1 ou -1 selon le sens de rotation de ce virage, avec la convention : rotation trigonométrique -> =1, rotation horaire -> -1
+# Renvoie, pour le virage compris entre start et end, +1 ou -1 selon le sens de rotation de ce virage
+# Convention : rotation trigonométrique -> 1, rotation horaire -> -1
 def sens(start, end):
     centre, sortie, rayon = info_virage(start, end)
 
@@ -137,16 +142,16 @@ def rotation_y(triplet, theta):  # renvoie la rotation du vecteur(triplet) d'un 
     return vector(alpha, beta, gamma)
 
 
-# renvoie le vecteur orthogonal à v dans le plan Oxz par rapport au centre du virage
-def orthogonal_Oxz(v, centre):
+# renvoie le vecteur orthogonal au vecteur appelé vecteur dans le plan Oxz par rapport au centre du virage
+def orthogonal_Oxz(vecteur, centre):
     (x0, y0, z0) = centre
-    (x, y, z) = (v.x, v.y, v.z)
+    (x, y, z) = (vecteur.x, vecteur.y, vecteur.z)
     delta_pos = vector(x - x0, y - y0, z - z0)
     alpha = -delta_pos.z
     beta = delta_pos.y
     gamma = delta_pos.x
-    v = vector(alpha, beta, gamma)
-    return longueur_voiture*norm(v)
+    vecteur = vector(alpha, beta, gamma)
+    return longueur_voiture*norm(vecteur)
 
 
 # oriente la voiture lorsqu'elle tourne dans le virage
@@ -154,15 +159,15 @@ def oriente(voiture, virage, start, end):
     if not virage:
         (a, b, c) = start
         (x, y, z) = end
-        v = vector(x-a, y-b, z-c)
-        return longueur_voiture*norm(v)
+        vecteur = vector(x-a, y-b, z-c)
+        return longueur_voiture*norm(vecteur)
     else:
         centre, sortie, rayon = info_virage(start, end)
         vecteur_orientation = orthogonal_Oxz(voiture.pos, centre)
         return vecteur_orientation
 
 
-def update_car(car, chemin, dm, network_graph):
+def update_car(car, chemin, dm):
     vehicle = car.vehicle
     x, y, z = car.position
 
@@ -190,7 +195,9 @@ def update_car(car, chemin, dm, network_graph):
         new_pos = vector(new_x, new_y, new_z)
         vecteur_orientation = oriente(vehicle, virage, start, fin_virage)
     else:
-        new_x, new_y, new_z = trajectoire(x, y, z, dm, start, end, virage)  # le deuxième start est useless, c'est pour combler
+        # le deuxième start est useless, c'est pour combler
+        new_x, new_y, new_z = trajectoire(x, y, z, dm, start, end, virage)
+
         new_pos = vector(new_x, new_y, new_z)
         vecteur_orientation = oriente(vehicle, virage, start, end)
 
@@ -207,8 +214,8 @@ def dispawn_car(vpython_car):
 
 def spawn_car_test(coords):
     x, y, z = coords
-    vehicule_rp = box(pos=vector(x, y, z), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
-    return vehicule_rp
+    vehicle_rp = box(pos=vector(x, y, z), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
+    return vehicle_rp
 
 
 class View:
@@ -251,14 +258,14 @@ class View:
 
         r = min(abs(delta_x), abs(delta_z))
 
-        # par convention, on tourne d'abord, avec un rayon étant le min des distances, puis ensuite lignes droite
-        # on peut obtenir l'inverse en réalisant virage(end,start) !! penser à le faire
+        # Par convention, on tourne d'abord, avec un rayon étant le min des distances, puis lignes droites
+        # On peut obtenir l'inverse en réalisant virage(end,start) !! penser à le faire
         if abs(delta_x) < abs(delta_z):
             centre_v = vector(a, b, c + sign(delta_z) * r)
             sortie_virage = (a + sign(delta_x) * r, b, c + sign(delta_z) * r)
             if sign(delta_x) > 0 and sign(delta_z) > 0:
                 alpha, beta = 0, pi / 2
-            elif sign(delta_x) < 0 and sign(delta_z) > 0:
+            elif sign(delta_x) < 0 < sign(delta_z):
                 alpha, beta = pi / 2, pi
             elif sign(delta_x) < 0 and sign(delta_z) < 0:
                 alpha, beta = pi, 3 * pi / 2
@@ -270,7 +277,7 @@ class View:
             sortie_virage = (a + sign(delta_x) * r, b, c + sign(delta_z) * r)
             if sign(delta_x) < 0 and sign(delta_z) < 0:
                 alpha, beta = 0, pi / 2
-            elif sign(delta_x) > 0 and sign(delta_z) < 0:
+            elif sign(delta_x) > 0 > sign(delta_z):
                 alpha, beta = pi / 2, pi
             elif sign(delta_x) > 0 and sign(delta_z) > 0:
                 alpha, beta = pi, 3 * pi / 2

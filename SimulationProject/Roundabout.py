@@ -1,4 +1,4 @@
-from Simulation import *
+from SimulationProject.Simulation.Simulation import *
 from vpython import *
 
 simulation = Simulation()
