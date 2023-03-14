@@ -2,6 +2,7 @@ from TrafficMap import *
 from NetworkGraph import *
 from Car import *
 from View import *
+from random import randint
 
 
 class Simulation:
@@ -29,13 +30,30 @@ class Simulation:
         for car in self.carsList:
             car.update(self)
 
-    def spawn_car_test(self, coords):
-        chemin = [(850, 0, 1050), (1050, 0, 1150), (1150, 0, 950), (950, 0, 850), (850, 0, 1050)]
+    def create_car_random_path(self, spawn_points, destination_points):
+        # Trouve un point d'apparition et une destination aléatoires parmi ceux possibles
+        spawn_coords = spawn_points[randint(0, len(spawn_points) - 1)]
+        destination_coords = spawn_coords
+        possible_paths = []
+
+        # On fait en sorte d'avoir un chemin forcément de longueur > 1
+        # TODO : optimize
+        while destination_coords == spawn_coords or len(possible_paths) <= 1:
+            destination_coords = destination_points[randint(0, len(destination_points) - 1)]
+
+            # Trouve les chemins possibles entre les deux
+            possible_paths = self.network.find_all_paths(spawn_coords, destination_coords)
+
+        # On prend un chemin au hasard
+        chemin = possible_paths[0]
+        if len(possible_paths) > 1:
+            chemin = possible_paths[randint(0, len(possible_paths) - 1)]
+
         vitesse = 50  # m/s
 
-        vpython_vehicle = spawn_car_test(coords)
+        vpython_vehicle = spawn_car_test(spawn_coords)
 
-        voiture = Car((850, y_voiture, 1050), vitesse, vpython_vehicle, chemin, self.internal_clock)
+        voiture = Car(spawn_coords, vitesse, vpython_vehicle, chemin, self.internal_clock)
 
         self.carsList.append(voiture)
         self.trafficMap.addCarOnRoad(chemin[0], chemin[1], voiture)

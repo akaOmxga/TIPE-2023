@@ -182,6 +182,8 @@ def update_car(car, chemin, dm, network_graph):
             new_chemin = [start] + [sortie] + chemin[1:]
             car.chemin = new_chemin
 
+        print(car.chemin)
+
         fin_virage = car.chemin[2]
 
         new_x, new_y, new_z = trajectoire(x, y, z, dm, start, fin_virage, virage)
