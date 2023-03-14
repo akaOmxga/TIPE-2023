@@ -12,7 +12,7 @@ scene.width = scene.height = 1000
 scene.range = 200
 scene.background = color.white
 
-scene.center = vector(1100, 100, 1000)
+scene.center = vector(500, 100, 500)
 
 Ux = vector(1, 0, 0)
 Uy = vector(0, 1, 0)
@@ -187,7 +187,6 @@ def update_car(car, chemin, dm):
             new_chemin = [start] + [sortie] + chemin[1:]
             car.chemin = new_chemin
 
-        print(car.chemin)
 
         fin_virage = car.chemin[2]
 

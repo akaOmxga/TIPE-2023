@@ -51,7 +51,7 @@ class Car:
 
     def dispawn(self, simulation_object):
         # TODO : Transfer perf data to simulation
-        print((simulation_object.internal_clock - self.clock) / 60)
+        #print((simulation_object.internal_clock - self.clock) / 60)
 
         # Envoyer les infos à vpython + liste voitures dans TrafficMap
         View.dispawn_car(self.vehicle)

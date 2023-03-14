@@ -8,7 +8,7 @@ class NetworkGraph:
 
     # Créé un sommet correspondant physiquement à l'extrémité d'une route
     # x, y, z sont les coordonnées de l'extrémité de la route
-    # Méthode privée, car on ne doit a priori pas en rajouter un hors de cette classe
+    # Méthode privée car on ne doit a priori pas en rajouter un hors de cette classe
     def __addSommet(self, coords):
         self.network[coords] = []
 
@@ -31,6 +31,7 @@ class NetworkGraph:
             self.__addSommet(end)
 
         self.addConnection(start, end, curved)
+        self.addConnection(end, start, curved)
 
     # Permet de trouver tous les chemins sans cycles entre start et end (start et end des triplets (x, y, z))
     def find_all_paths(self, start, end):
@@ -52,7 +53,7 @@ class NetworkGraph:
                 x, y, z, curved = i  # i est sous la forme (x, y, z, curved), on veut le repasser en x, y, z
                 current_edge = (x, y, z)
 
-                if (visited[current_edge] == False):
+                if not visited[current_edge]:
                     paths = self.__find(current_edge, end, visited, current_path, paths)
 
         current_path.pop()

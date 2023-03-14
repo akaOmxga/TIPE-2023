@@ -30,7 +30,11 @@ class Simulation:
         for car in self.carsList:
             car.update(self)
 
+    # Fait apparaître une voiture avec un chemin choisi au hasard entre
+    # Un point aléatoire dans une liste (spawn_points) et un point d'arrivée aléatoire parmi
+    # une liste de points (destination_points)
     def create_car_random_path(self, spawn_points, destination_points):
+
         # Trouve un point d'apparition et une destination aléatoires parmi ceux possibles
         spawn_coords = spawn_points[randint(0, len(spawn_points) - 1)]
         destination_coords = spawn_coords
@@ -49,11 +53,22 @@ class Simulation:
         if len(possible_paths) > 1:
             chemin = possible_paths[randint(0, len(possible_paths) - 1)]
 
-        vitesse = 50  # m/s
+        vitesse = 100  # m/s
 
         vpython_vehicle = spawn_car_test(spawn_coords)
 
         voiture = Car(spawn_coords, vitesse, vpython_vehicle, chemin, self.internal_clock)
 
         self.carsList.append(voiture)
-        self.trafficMap.addCarOnRoad(chemin[0], chemin[1], voiture)
+        self.trafficMap.add_car_on_road(chemin[0], chemin[1], voiture)
+
+    # Fait apparaître une voiture avec un chemin imposé
+    def create_car(self, chemin):
+        vitesse = 50  # m/s
+
+        vpython_vehicle = spawn_car_test(chemin[0])
+
+        voiture = Car(chemin[0], vitesse, vpython_vehicle, chemin, self.internal_clock)
+
+        self.carsList.append(voiture)
+        self.trafficMap.add_car_on_road(chemin[0], chemin[1], voiture)

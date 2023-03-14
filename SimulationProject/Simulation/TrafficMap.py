@@ -3,13 +3,16 @@
 class TrafficMap:
 
     def __init__(self):
-        self.traffic_map = {} # Dictionnaire sous la formé k,v : (coordonnées début de route, coordonnées fin de route), liste des voitures sur cette route
+        # Dictionnaire sous la forme k, v :
+        # k : (coordonnées début de route, coordonnées fin de route)
+        # v : liste des voitures sur cette route
+        self.traffic_map = {}
 
     def __str__(self):
         return f"{self.traffic_map}"
 
-    # Ajoute la voiture car sur le segment de route donné
-    def addCarOnRoad(self, start_coords, end_coords, car):
+    # Ajoute la voiture "car" sur le segment de route donné
+    def add_car_on_road(self, start_coords, end_coords, car):
 
         # Si la route n'existe pas dans le dico, on la créée
         if (start_coords, end_coords) not in self.traffic_map:
@@ -22,23 +25,23 @@ class TrafficMap:
 
         self.traffic_map[(start_coords, end_coords)] = cars_on_road
 
-    def deleteCarFromRoad(self, start_coords, end_coords, car):
+    def delete_car_from_road(self, start_coords, end_coords, car):
         # Si la route n'existe pas dans le dico, on la créée
         if (start_coords, end_coords) not in self.traffic_map:
             self.traffic_map[(start_coords, end_coords)] = []
 
         cars_on_road = self.traffic_map[(start_coords, end_coords)]
-        if (cars_on_road == []):
+        if not cars_on_road:
             return
-        if (car not in cars_on_road):
+        if car not in cars_on_road:
             raise Exception("Erreur : la voiture n'est pas sur la route")
 
-
-        # Normalement, la voiture qu'on retire se trouve toujours à l'indice 0, mais on traite le cas général dans le doute.
+        # Normalement, la voiture qu'on retire se trouve toujours à l'indice 0
+        # Mais on traite le cas général dans le doute.
         index = cars_on_road.index(car)
         n = len(cars_on_road)
-        if (index != n - 1):
-            for i in range (index, len(cars_on_road) - 1):
+        if index != n - 1:
+            for i in range(index, len(cars_on_road) - 1):
                 cars_on_road[i] = cars_on_road[i + 1]
 
         cars_on_road = cars_on_road[:-1]
