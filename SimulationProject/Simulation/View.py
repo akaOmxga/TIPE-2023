@@ -90,6 +90,8 @@ def trajectoire(x, y, z, distance_parcourable, start, end, virage):
         vecteur_rayon = vector(x, y, z) - vecteur_centre
 
         # le rotate de theta autour de vector(0,1,0) en position centre / ou (0,0,0)
+        if rayon == 0:
+            rayon = 1  # TODO : REMOVE // FOR DEBUGGING PURPOSES ONLY
         theta = -sens(start, end) * distance_parcourable / rayon
         new_vecteur_rayon = rotation_y((vecteur_rayon.x, vecteur_rayon.y, vecteur_rayon.z), theta)
 

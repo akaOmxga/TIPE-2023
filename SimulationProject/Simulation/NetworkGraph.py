@@ -20,7 +20,7 @@ class NetworkGraph:
 
     # Créé les arêtes du graphe.
     # Physiquement, cela correspond à une route ou start et end sont les couples de coordonnées de début et fin de route
-    # Si un sommet (extrêmité de route n'existe pas -> on le créé avec addSommet)
+    # Si un sommet (extrémité de route) n'existe pas, on le créé avec addSommet
     # start et end sont de la forme (x1, y1, z1) et (x2, y2, z2), curved est un boolean (false = route droite)
     def addEdge(self, start, end, curved=False):
         if start == end:

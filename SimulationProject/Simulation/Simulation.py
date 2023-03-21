@@ -33,7 +33,7 @@ class Simulation:
     # Fait apparaître une voiture avec un chemin choisi au hasard entre
     # Un point aléatoire dans une liste (spawn_points) et un point d'arrivée aléatoire parmi
     # une liste de points (destination_points)
-    def create_car_random_path(self, spawn_points, destination_points):
+    def create_car_random_path(self, spawn_points, destination_points, vitesse):
 
         # Trouve un point d'apparition et une destination aléatoires parmi ceux possibles
         spawn_coords = spawn_points[randint(0, len(spawn_points) - 1)]
@@ -52,8 +52,6 @@ class Simulation:
         chemin = possible_paths[0]
         if len(possible_paths) > 1:
             chemin = possible_paths[randint(0, len(possible_paths) - 1)]
-
-        vitesse = 100  # m/s
 
         vpython_vehicle = spawn_car_test(spawn_coords)
 

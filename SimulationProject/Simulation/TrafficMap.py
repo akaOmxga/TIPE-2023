@@ -47,3 +47,9 @@ class TrafficMap:
         cars_on_road = cars_on_road[:-1]
 
         self.traffic_map[(start_coords, end_coords)] = cars_on_road
+
+    def get_cars_on_road(self, start_coords, end_coords):
+        if (start_coords, end_coords) in self.traffic_map:
+            return self.traffic_map[(start_coords, end_coords)]
+        else:
+            None  # Ne devrait pas arriver

@@ -40,20 +40,40 @@ class Car:
         # Cas où la voiture est proche (à epsilon près) d'une transition de route
         # → on fait la transition vers la prochaine route
         if View.distance(sommet_fin, (x, y, z)) < epsilon:
-
             # update la position
             View.update_car(self, chemin, None)  # dm = none → on change de route
 
             new_chemin = chemin[1::]
             self.chemin = new_chemin
+
+            # On se supprime de la portion de route dans trafficMap
+            simulation_object.trafficMap.delete_car_from_road(chemin[0], sommet_fin, self)
         else:  # cas où la voiture peut parcourir dm sur la portion de route actuelle
             View.update_car(self, chemin, dm)
 
     def dispawn(self, simulation_object):
         # TODO : Transfer perf data to simulation
-        #print((simulation_object.internal_clock - self.clock) / 60)
+        # print((simulation_object.internal_clock - self.clock) / 60)
 
         # Envoyer les infos à vpython + liste voitures dans TrafficMap
         View.dispawn_car(self.vehicle)
         simulation_object.carsList.remove(self)
         del self
+
+    def get_next_car(self, simulation_object):
+        cars = simulation_object.trafficMap.get_cars_on_road(self.chemin[0], self.chemin[1])
+
+        if cars:
+
+            # Si cars[0] est self, alors on est la première voiture sur la route
+            # Dans ce cas, on regarde sur les routes suivantes
+            if cars[0] == self:
+                if len(self.chemin) > 2:
+                    prochaines_voitures = simulation_object.trafficMap.get_cars_on_road(self.chemin[1], self.chemin[2])
+
+                    if prochaines_voitures is not None and prochaines_voitures != []:
+                        return prochaines_voitures[len(prochaines_voitures) - 1]
+            else:
+                return cars[0]
+
+        return None
