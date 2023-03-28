@@ -1,4 +1,4 @@
-import Simulation.View as View
+import SimulationProject.Simulation.View as View
 
 epsilon = 8  # TODO : modif
 dt = 1/60

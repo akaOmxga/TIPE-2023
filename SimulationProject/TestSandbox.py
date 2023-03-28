@@ -3,6 +3,7 @@ from vpython import *
 
 simulation = Simulation()
 
+# Cordonnées des routes droites
 straight_roads = [
     ((0, 0, 0), (0, 0, 300)),
     ((0, 0, 300), (0, 0, 600)),
@@ -15,6 +16,7 @@ straight_roads = [
     ((200, 0, 700), (200, 0, 600))
 ]
 
+# Coordonnées des virages
 curved_roads = [
     ((0, 0, 300), (200, 0, 400)),
     ((0, 0, 600), (200, 0, 700)),
@@ -34,23 +36,40 @@ destination_points = [
     (200, 0, 600)
 ]
 
-car_spawn_cooldown_range = (1, 2)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
+# CRÉATION DES ROUTES #
 
 simulation.create_roads(straight_roads)
 simulation.create_roads(curved_roads, True)
 
+
+# STATISTIQUES ET PERFORMANCES #
+
+simulation_run_time = 60 * 10  # Temps (60*temps en secondes) que va durer la simulation avant de s'arrêter
+
+
+# APPARITION DES VOITURES #
+
 i = 0
+car_spawn_cooldown_range = (2, 5)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
 next_spawn_time = 60
 
-# sans ça, le côté vpython sort 1010^1010^1010 erreurs/s
-while True:
-    rate(60)
-    simulation.update()
 
-    i += 1
-    if i >= next_spawn_time:
-        i = 0
-        next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
-        # TODO : spawn car
-        # test
-        simulation.create_car_random_path(spawn_points, destination_points, randint(50, 100))
+# LA SIMULATION #
+
+while True:
+
+    # Si on arrive à la fin de la simulation, on change juste de cas
+    # ça permet de ne pas couper la boucle, et de ne pas générer d'erreurs venant de vpython
+    # On change rate à 1 pour soulager python (i.e. moins d'actualisations/seconde)
+    if simulation.internal_clock >= simulation_run_time:
+        rate(1)
+    else:
+        rate(60)
+        simulation.update()
+
+        i += 1
+        if i >= next_spawn_time:
+            i = 0
+            next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
+            # TODO : spawn car
+            simulation.create_car_random_path(spawn_points, destination_points, randint(50, 100))
