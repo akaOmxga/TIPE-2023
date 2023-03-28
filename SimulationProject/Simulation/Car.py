@@ -1,6 +1,7 @@
 import Simulation.View as View
 
 epsilon = 8  # TODO : modif
+dt = 1/60
 
 
 class Car:
@@ -22,6 +23,9 @@ class Car:
 
     # fait dispawn les voitures, avancer les voitures, transition entre les différents nœuds du graphe
     def update(self, simulation_object):
+        network = simulation_object.network
+        map = simulation_object.trafficMap
+
 
         chemin = self.chemin
         n = len(chemin)
@@ -34,7 +38,7 @@ class Car:
         sommet_fin = chemin[1]
         voiture = self.vehicle  # car = objet Car, voiture = objet vpython
 
-        dm = 1  # distance infinitésimale parcourue par la voiture sur dt
+        dm = View.integration(self.speed,View.pfd_IDM(self, dt, network, map),dt) # distance infinitésimale parcourue par la voiture sur dt
         x, y, z = voiture.pos.x, voiture.pos.y, voiture.pos.z
 
         # Cas où la voiture est proche (à epsilon près) d'une transition de route
