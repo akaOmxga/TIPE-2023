@@ -52,4 +52,5 @@ while True:
         i = 0
         next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
         # TODO : spawn car
+        # test
         simulation.create_car_random_path(spawn_points, destination_points, randint(50, 100))
