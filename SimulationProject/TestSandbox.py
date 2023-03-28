@@ -28,12 +28,12 @@ curved_roads = [
 
 # Points d'apparitions possibles des voitures
 spawn_points = [
-    (0, 0, 0)
+    (0, 0, 300)
 ]
 
 # Points de "destination" possibles pour les voitures
 destination_points = [
-    (200, 0, 600)
+    (200, 0, 700)
 ]
 
 # CRÉATION DES ROUTES #
@@ -41,18 +41,15 @@ destination_points = [
 simulation.create_roads(straight_roads)
 simulation.create_roads(curved_roads, True)
 
-
 # STATISTIQUES ET PERFORMANCES #
 
-simulation_run_time = 60 * 10  # Temps (60*temps en secondes) que va durer la simulation avant de s'arrêter
-
+simulation_run_time = 60 * 100  # Temps (60*temps en secondes) que va durer la simulation avant de s'arrêter
 
 # APPARITION DES VOITURES #
 
 i = 0
-car_spawn_cooldown_range = (2, 5)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
+car_spawn_cooldown_range = (1, 2)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
 next_spawn_time = 60
-
 
 # LA SIMULATION #
 

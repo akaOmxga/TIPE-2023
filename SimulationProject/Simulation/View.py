@@ -19,13 +19,13 @@ Uy = vector(0, 1, 0)
 Uz = vector(0, 0, 1)
 
 ## constante IDM.py
-acc_max = 1 ## accélération maximale 
-exp_acc = 4 ## coefficient de smoothness
-dec_confortable = 1.5 ## décélération confortable
-dec_max = 10 ## décélération maximale
-speed_max = 50 ## vitesse maximale ; envisageable : la vitesse maximale dépend de la route sur laquelle on circule
-distance_min = 2 ## distance de sécurité, minimale entre deux voitures
-temps_reaction = 1 ## temps de réaction du conducteur
+acc_max = 1  ## accélération maximale
+exp_acc = 4  ## coefficient de smoothness
+dec_confortable = 1.5  ## décélération confortable
+dec_max = 10  ## décélération maximale
+speed_max = 50  ## vitesse maximale ; envisageable : la vitesse maximale dépend de la route sur laquelle on circule
+distance_min = 2  ## distance de sécurité, minimale entre deux voitures
+temps_reaction = 1  ## temps de réaction du conducteur
 
 
 # Petit helper pour avoir le signe de la variable passée
@@ -162,7 +162,7 @@ def orthogonal_Oxz(vecteur, centre):
     beta = delta_pos.y
     gamma = delta_pos.x
     vecteur = vector(alpha, beta, gamma)
-    return longueur_voiture*norm(vecteur)
+    return longueur_voiture * norm(vecteur)
 
 
 # oriente la voiture lorsqu'elle tourne dans le virage
@@ -170,8 +170,8 @@ def oriente(voiture, virage, start, end):
     if not virage:
         (a, b, c) = start
         (x, y, z) = end
-        vecteur = vector(x-a, y-b, z-c)
-        return longueur_voiture*norm(vecteur)
+        vecteur = vector(x - a, y - b, z - c)
+        return longueur_voiture * norm(vecteur)
     else:
         centre, sortie, rayon = info_virage(start, end)
         vecteur_orientation = orthogonal_Oxz(voiture.pos, centre)
@@ -197,7 +197,6 @@ def update_car(car, chemin, dm):
         if end != sortie:
             new_chemin = [start] + [sortie] + chemin[1:]
             car.chemin = new_chemin
-
 
         fin_virage = car.chemin[2]
 
@@ -228,21 +227,26 @@ def spawn_car_test(coords):
     return vehicle_rp
 
 
-def integration(v, accel,dt):  ##  modifiable, ici on intégre 2 fois en considérant les conditions initialses v0 = 0 (à réfléchir) et x0=0 (ce qui est nécessaire)
+def integration(v, accel,
+                dt):  ##  modifiable, ici on intégre 2 fois en considérant les conditions initialses v0 = 0 (à réfléchir) et x0=0 (ce qui est nécessaire)
     return ((1 / 2) * accel * dt ** 2 + v * dt)
 
-def pfd_IDM(voiture, dt, simulation_object):  ## renvoie la l'accélération de la voiture dans les conditions décrites par le contexte (network,map)
-    ## contexte est un élément de la modélisation venant modifié le comportement du véhicule. Ex : les stops, les feux rouges ...
-    network, map = simulation_object.network, simulation_object.trafficMap
 
-    next_voiture = voiture.get_next_car(voiture, network, map)
-    if next_voiture == None :
-        acceleration =  acc_max*(1-(voiture.speed/speed_max)**exp_acc)
-    else :
+## renvoie la l'accélération de la voiture dans les conditions décrites par le contexte (network,map)
+# contexte est un élément de la modélisation venant modifié le comportement du véhicule. Ex : les stops,
+# les feux rouges ...
+
+def pfd_IDM(voiture, dt, simulation_object):
+    next_voiture = voiture.get_next_car(voiture, simulation_object)
+    if next_voiture == None:
+        acceleration = acc_max * (1 - (voiture.speed / speed_max) ** exp_acc)
+    else:
         pos_voiture = (voiture.pos.x, voiture.pos.y, voiture.pos.z)
         pos_prochaine_voiture = (next_voiture.pos.x, next_voiture.pos.y, next_voiture.pos.z)
-        acceleration = acc_max*(1-(voiture.speed/speed_max)**exp_acc - (distance_securite(voiture.speed,(next_voiture.speed - voiture.speed))/distance(pos_voiture,pos_prochaine_voiture))**2)
-    return (acceleration)
+        acceleration = acc_max * (1 - (voiture.speed / speed_max) ** exp_acc - (distance_securite(voiture.speed, (next_voiture.speed - voiture.speed)) / distance(pos_voiture,
+                                                                                                      pos_prochaine_voiture)) ** 2)
+    return acceleration
+
 
 class View:
 
@@ -316,5 +320,3 @@ class View:
         (d, e, f) = sortie_virage
         if (d != x) or (e != y) or (f != z):
             self.__create_line(sortie_virage, end)
-
-
