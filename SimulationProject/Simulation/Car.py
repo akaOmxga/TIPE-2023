@@ -1,4 +1,4 @@
-import SimulationProject.Simulation.View as View
+import Simulation.View as View
 
 epsilon = 8  # TODO : modif
 
