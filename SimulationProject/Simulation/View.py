@@ -183,10 +183,10 @@ def update_car(car, chemin, dm):
     vehicle = car.vehicle
     x, y, z = car.position
 
-    if dm is None and len(chemin) > 1:  # chemin devrait toujours être strictement supérieur à 1, mais dans le doute..;
+    '''if dm is None and len(chemin) > 1:  # chemin devrait toujours être strictement supérieur à 1, mais dans le doute..;
         new_x, new_y, new_z = chemin[1]
         vehicle.pos = vector(new_x, y_voiture, new_z)
-        return
+        return'''
 
     start = chemin[0]
     end = chemin[1]
