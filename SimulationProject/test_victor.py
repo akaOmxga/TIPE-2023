@@ -8,23 +8,27 @@ scene.center = vector(0, 200, 200)
 simulation = Simulation()
 
 # Cordonnées des routes droites
+# Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
+# Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
 straight_roads = [
-    ((-500,0,0), (0,0,0)),
-    ((0,0,0), (500,0,0))
+    ((-500, 0, 0), (0, 0, 0), 5, 15),
+    ((0, 0, 0), (500, 0, 0), 5, 15)
 ]
 
 # Coordonnées des virages
+# Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
+# Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
 curved_roads = [
 ]
 
 # Points d'apparitions possibles des voitures
 spawn_points = [
-    (-500,0,0)
+    (-500, 0, 0)
 ]
 
 # Points de "destination" possibles pour les voitures
 destination_points = [
-    (500,0,0)
+    (500, 0, 0)
 ]
 
 # CRÉATION DES ROUTES #
@@ -38,8 +42,13 @@ simulation_run_time = 60 * 100  # Temps (60*temps en secondes) que va durer la s
 
 # APPARITION DES VOITURES #
 
+<<<<<<< HEAD
 i = 0 # compteur
 car_spawn_cooldown_range = (1, 2)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
+=======
+i = 0  # compteur
+car_spawn_cooldown_range = (2, 3)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
+>>>>>>> 89ea4f89506696f7979d10be59288a4035f30882
 next_spawn_time = 60
 
 # LA SIMULATION #

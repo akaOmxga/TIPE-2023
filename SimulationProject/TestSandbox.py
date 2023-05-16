@@ -8,6 +8,8 @@ scene.center = vector(500, 100, 500)
 simulation = Simulation()
 
 # Cordonnées des routes droites
+# Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse)
+# Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
 straight_roads = [
     ((0, 0, 0), (0, 0, 300)),
     ((0, 0, 300), (0, 0, 600)),
