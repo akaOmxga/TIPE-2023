@@ -18,14 +18,14 @@ Ux = vector(1, 0, 0)
 Uy = vector(0, 1, 0)
 Uz = vector(0, 0, 1)
 
-## constante IDM.py
-acc_max = 1  ## accélération maximale
-exp_acc = 4  ## coefficient de smoothness
-dec_confortable = 1.5  ## décélération confortable
-dec_max = 10  ## décélération maximale
-speed_max = 50  ## vitesse maximale ; envisageable : la vitesse maximale dépend de la route sur laquelle on circule
-distance_min = 2  ## distance de sécurité, minimale entre deux voitures
-temps_reaction = 1  ## temps de réaction du conducteur
+# constante IDM.py
+acc_max = 1  # accélération maximale
+exp_acc = 4  # coefficient de smoothness
+dec_confortable = 1.5  # décélération confortable
+dec_max = 10  # décélération maximale
+speed_max = 50  # vitesse maximale ; envisageable : la vitesse maximale dépend de la route sur laquelle on circule
+distance_min = 2  # distance de sécurité, minimale entre deux voitures
+temps_reaction = 1  # temps de réaction du conducteur
 
 
 # Petit helper pour avoir le signe de la variable passée
@@ -227,12 +227,12 @@ def spawn_car_test(coords):
     return vehicle_rp
 
 
-def integration(v, accel,
-                dt):  ##  modifiable, ici on intégre 2 fois en considérant les conditions initialses v0 = 0 (à réfléchir) et x0=0 (ce qui est nécessaire)
-    return ((1 / 2) * accel * dt ** 2 + v * dt)
+# Ici on intégre 2 fois en considérant les conditions initialses v0 = 0 (à réfléchir) et x0=0 (ce qui est nécessaire)
+def integration(v, accel, dt):
+    return (1 / 2) * accel * dt ** 2 + v * dt
 
 
-## renvoie la l'accélération de la voiture dans les conditions décrites par le contexte (network,map)
+# renvoie la l'accélération de la voiture dans les conditions décrites par le contexte (network,map)
 # contexte est un élément de la modélisation venant modifié le comportement du véhicule. Ex : les stops,
 # les feux rouges ...
 
