@@ -23,10 +23,10 @@ acc_max = 30 # accélération maximale : m/s^2
 exp_acc = 7  # coefficient de smoothness
 dec_confortable = 1.5  # décélération confortable : m/s^2
 dec_max = 30  # décélération maximale : m/s^2
-speed_max = 60  # vitesse maximale ; envisageable : la vitesse maximale dépendra de la route sur laquelle on circule : m/s
 distance_min = 20  # distance de sécurité, minimale entre deux voitures : en mètre schant que les voitures en mesure 20
 distance_interaction = 100 # distance au-delà de laquelle IDM ne s'active pas
 temps_reaction = 1  # temps de réaction du conducteur
+coef_embouteillages = 2 # de combien diminue la limitation de vitesse par voiture supplémentaire : m/s
 
 
 # Petit helper pour avoir le signe de la variable passée
@@ -240,17 +240,28 @@ def integration(v, accel, dt):
 def distance_securite(vitesse, delta_vitesse) : ## représente s* dans IDM.py // d'aute modélisation de IDM.py retourne (distance_min + max(0,v*temps_reaction + v*delta_v/sqrt(2acc_max*dec_confortable=)))
     return(distance_min + vitesse*temps_reaction + vitesse*delta_vitesse/sqrt(2*acc_max*dec_confortable))
 
+def speed_on_road(voiture,simulation_object): # calcul la limitation de vitesse relative ! à un instant donné sur la route 
+    network = simulation_object.network
+    traffic = simulation_object.trafficMap
+    start, end = voiture.chemin[0], voiture.chemin[1]
+    curved, threshold,speed_limit = network.get_road_parameters(start,end) 
+    if len(traffic[(start,end)]) >= threshold :
+        limitation_vitesse = speed_limit - coef_embouteillages*threshold
+    else :
+        limitation_vitesse = speed_limit - coef_embouteillages*(len(traffic[(start,end)]))
+    return limitation_vitesse
+
 def pfd_IDM(voiture, dt, simulation_object):
     next_voiture = voiture.get_next_car(simulation_object)
     if (next_voiture == None) :
-        acceleration = acc_max * (1 - (voiture.speed / speed_max) ** exp_acc)
+        acceleration = acc_max * (1 - (voiture.speed /speed_on_road(voiture,simulation_object)) ** exp_acc)
     else :
         pos_voiture = voiture.position
         pos_prochaine_voiture = next_voiture.position
         if (distance(pos_voiture,pos_prochaine_voiture) > distance_interaction) :
-            acceleration = acc_max * (1 - (voiture.speed / speed_max) ** exp_acc)
+            acceleration = acc_max * (1 - (voiture.speed / speed_on_road(voiture,simulation_object)) ** exp_acc)
         else:
-            acceleration = acc_max * (1 - (voiture.speed / speed_max) ** exp_acc - (distance_securite(voiture.speed, (next_voiture.speed - voiture.speed)) / distance(pos_voiture,
+            acceleration = acc_max * (1 - (voiture.speed / speed_on_road(voiture,simulation_object)) ** exp_acc - (distance_securite(voiture.speed, (next_voiture.speed - voiture.speed)) / distance(pos_voiture,
                                                                                                       pos_prochaine_voiture)) ** 2)
     return acceleration
 
