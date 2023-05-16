@@ -1,6 +1,6 @@
 import Simulation.View as View
 
-epsilon = 8  # TODO : modif
+epsilon = 5  # TODO : modif
 dt = 1/60
 
 
@@ -47,9 +47,9 @@ class Car:
 
         # Cas où la voiture est proche (à epsilon près) d'une transition de route
         # → on fait la transition vers la prochaine route
-        if View.distance(sommet_fin, (x, y, z)) < epsilon:
+        if View.distance(sommet_fin, (x, y, z)) < epsilon + 5:
             # update la position
-            View.update_car(self, chemin, None)  # dm = none → on change de route
+            View.update_car(self, chemin, dm)
 
             new_chemin = chemin[1::]
             self.chemin = new_chemin
