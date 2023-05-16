@@ -3,41 +3,28 @@
 from Simulation.Simulation import *
 from vpython import *
 
-scene.center = vector(500, 100, 500)
+scene.center = vector(0, 200, 200)
 
 simulation = Simulation()
 
 # Cordonnées des routes droites
 straight_roads = [
-    ((0, 0, 0), (0, 0, 300)),
-    ((0, 0, 300), (0, 0, 600)),
-    ((200, 0, 400), (200, 0, 600)),
-    ((500, 0, 100), (500, 0, 400)),
-    ((500, 0, 400), (500, 0, 600)),
-    ((0, 0, 0), (300, 0, 0)),
-    ((200, 0, 400), (500, 0, 400)),
-    ((200, 0, 700), (400, 0, 700)),
-    ((200, 0, 700), (200, 0, 600))
+    ((-500,0,0), (0,0,0)),
+    ((0,0,0), (500,0,0))
 ]
 
 # Coordonnées des virages
 curved_roads = [
-    ((0, 0, 300), (200, 0, 400)),
-    ((0, 0, 600), (200, 0, 700)),
-    ((500, 0, 100), (300, 0, 0)),
-    ((200, 0, 700), (300, 0, 600)),
-    ((400, 0, 700), (300, 0, 600)),
-    ((500, 0, 600), (400, 0, 700)),
 ]
 
 # Points d'apparitions possibles des voitures
 spawn_points = [
-    (0, 0, 300)
+    (-500,0,0)
 ]
 
 # Points de "destination" possibles pour les voitures
 destination_points = [
-    (200, 0, 700)
+    (500,0,0)
 ]
 
 # CRÉATION DES ROUTES #
@@ -51,8 +38,8 @@ simulation_run_time = 60 * 100  # Temps (60*temps en secondes) que va durer la s
 
 # APPARITION DES VOITURES #
 
-i = 0
-car_spawn_cooldown_range = (1, 2)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
+i = 0 # compteur
+car_spawn_cooldown_range = (2, 3)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
 next_spawn_time = 60
 
 # LA SIMULATION #
@@ -73,4 +60,5 @@ while True:
             i = 0
             next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
             # TODO : spawn car
-            simulation.create_car_random_path(spawn_points, destination_points, randint(50, 100))
+            simulation.create_car_random_path(spawn_points, destination_points, randint(60, 120))
+            
