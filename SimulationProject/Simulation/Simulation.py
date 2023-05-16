@@ -44,7 +44,9 @@ class Simulation:
 
         # On fait en sorte d'avoir un chemin forcément de longueur > 1
         # TODO : optimize
-        while destination_coords == spawn_coords or len(possible_paths) <= 1:
+        while destination_coords == spawn_coords or len(possible_paths) < 1:
+            print(destination_coords == spawn_coords)
+            print(len(possible_paths))
             destination_coords = destination_points[randint(0, len(destination_points) - 1)]
 
             # Trouve les chemins possibles entre les deux
@@ -64,7 +66,7 @@ class Simulation:
 
     # Fait apparaître une voiture avec un chemin imposé
     def create_car(self, chemin):
-        vitesse = 50  # m/s
+        vitesse = 13,9  # m/s
 
         vpython_vehicle = spawn_car_test(chemin[0])
 

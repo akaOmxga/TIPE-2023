@@ -19,11 +19,11 @@ Uy = vector(0, 1, 0)
 Uz = vector(0, 0, 1)
 
 # constante IDM.py
-acc_max = 1  # accélération maximale
+acc_max = -1 # accélération maximale : m/s^2
 exp_acc = 4  # coefficient de smoothness
-dec_confortable = 1.5  # décélération confortable
-dec_max = 10  # décélération maximale
-speed_max = 50  # vitesse maximale ; envisageable : la vitesse maximale dépend de la route sur laquelle on circule
+dec_confortable = 1.5  # décélération confortable : m/s^2
+dec_max = 10  # décélération maximale : m/s^2
+speed_max = 13.9  # vitesse maximale ; envisageable : la vitesse maximale dépendra de la route sur laquelle on circule : m/s
 distance_min = 2  # distance de sécurité, minimale entre deux voitures
 temps_reaction = 1  # temps de réaction du conducteur
 
@@ -223,7 +223,7 @@ def dispawn_car(vpython_car):
 
 def spawn_car_test(coords):
     x, y, z = coords
-    vehicle_rp = box(pos=vector(x, y, z), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
+    vehicle_rp = box(pos=vector(x, y, z), size=vector(5, 2.5, 2.5), axis=vector(0, 0, 0), color=vector(1, 0, 0))
     return vehicle_rp
 
 
