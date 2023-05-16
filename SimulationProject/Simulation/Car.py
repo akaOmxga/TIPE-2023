@@ -39,6 +39,8 @@ class Car:
         voiture = self.vehicle  # car = objet Car, voiture = objet vpython
 
         accel = View.pfd_IDM(self, dt, simulation_object)
+        new_speed = self.speed + dt*accel
+        self.speed = new_speed
 
         dm = View.integration(self.speed, accel, dt)  # distance infinitésimale parcourue par la voiture sur dt
         x, y, z = voiture.pos.x, voiture.pos.y, voiture.pos.z

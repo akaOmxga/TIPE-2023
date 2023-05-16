@@ -42,8 +42,13 @@ simulation_run_time = 60 * 100  # Temps (60*temps en secondes) que va durer la s
 
 # APPARITION DES VOITURES #
 
+<<<<<<< HEAD
+i = 0 # compteur
+car_spawn_cooldown_range = (1, 2)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
+=======
 i = 0  # compteur
 car_spawn_cooldown_range = (2, 3)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
+>>>>>>> 89ea4f89506696f7979d10be59288a4035f30882
 next_spawn_time = 60
 
 # LA SIMULATION #
@@ -64,5 +69,5 @@ while True:
             i = 0
             next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
             # TODO : spawn car
-            simulation.create_car_random_path(spawn_points, destination_points, randint(60, 120))
+            simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
             
