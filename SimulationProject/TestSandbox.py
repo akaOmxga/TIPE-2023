@@ -1,3 +1,5 @@
+#coding: utf8
+
 from Simulation.Simulation import *
 from vpython import *
 

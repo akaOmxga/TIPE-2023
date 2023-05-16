@@ -1,3 +1,5 @@
+#coding: utf8
+
 from SimulationProject.Simulation.TrafficMap import *
 from SimulationProject.Simulation.NetworkGraph import *
 from SimulationProject.Simulation.Car import *
