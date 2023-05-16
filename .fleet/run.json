@@ -2,18 +2,8 @@
     "configurations": [
         {
             "type": "python",
-            "name": "Highway On Ramp",
-            "arguments": ["./SimulationProject/HighWayOnRamp.py"],
-        },
-        {
-            "type": "python",
-            "name": "Two Way Intersection",
-            "arguments": ["./SimulationProject/TwoWayIntersection.py"],
-        },
-        {
-            "type": "python",
-            "name": "Test Vpython0",
-            "arguments": ["./Vpython test0.py"],
+            "name": "Test SandBox",
+            "arguments": ["./SimulationProject/TestSandbox.py"],
         },
     ]
 }

@@ -8,7 +8,7 @@ class NetworkGraph:
 
     # Créé un sommet correspondant physiquement à l'extrémité d'une route
     # x, y, z sont les coordonnées de l'extrémité de la route
-    # Méthode privée car on ne doit a priori pas en rajouter un hors de cette classe
+    # Méthode privée car on ne doit a priori pas rajouter un sommet hors de cette classe
     def __addSommet(self, coords):
         self.network[coords] = []
 
