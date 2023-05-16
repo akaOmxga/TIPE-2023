@@ -22,8 +22,8 @@ class Simulation:
 
     # Road : (coords départ, coords arrivée) curved = courbe (True) ou ligne droite (False)
     def __create_road(self, road, curved):
-        start, end = road
-        self.network.addEdge(start, end, curved)
+        start, end, threshold, speed_limit = road
+        self.network.addEdge(start, end, threshold, speed_limit, curved)
         self.view.create_road(start, end, curved)
 
     def update(self):
@@ -45,8 +45,6 @@ class Simulation:
         # On fait en sorte d'avoir un chemin forcément de longueur > 1
         # TODO : optimize
         while destination_coords == spawn_coords or len(possible_paths) < 1:
-            print(destination_coords == spawn_coords)
-            print(len(possible_paths))
             destination_coords = destination_points[randint(0, len(destination_points) - 1)]
 
             # Trouve les chemins possibles entre les deux
