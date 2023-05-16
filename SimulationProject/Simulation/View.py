@@ -244,8 +244,8 @@ def pfd_IDM(voiture, dt, simulation_object):
     if next_voiture == None:
         acceleration = acc_max * (1 - (voiture.speed / speed_max) ** exp_acc)
     else:
-        pos_voiture = (voiture.pos.x, voiture.pos.y, voiture.pos.z)
-        pos_prochaine_voiture = (next_voiture.pos.x, next_voiture.pos.y, next_voiture.pos.z)
+        pos_voiture = voiture.position
+        pos_prochaine_voiture = next_voiture.position
         acceleration = acc_max * (1 - (voiture.speed / speed_max) ** exp_acc - (distance_securite(voiture.speed, (next_voiture.speed - voiture.speed)) / distance(pos_voiture,
                                                                                                       pos_prochaine_voiture)) ** 2)
     return acceleration
