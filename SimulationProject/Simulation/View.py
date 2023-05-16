@@ -236,8 +236,11 @@ def integration(v, accel, dt):
 # contexte est un élément de la modélisation venant modifié le comportement du véhicule. Ex : les stops,
 # les feux rouges ...
 
+def distance_securite(vitesse, delta_vitesse) : ## représente s* dans IDM.py // d'aute modélisation de IDM.py retourne (distance_min + max(0,v*temps_reaction + v*delta_v/sqrt(2acc_max*dec_confortable=)))
+    return(distance_min + vitesse*temps_reaction + vitesse*delta_vitesse/sqrt(2*acc_max*dec_confortable))
+
 def pfd_IDM(voiture, dt, simulation_object):
-    next_voiture = voiture.get_next_car(voiture, simulation_object)
+    next_voiture = voiture.get_next_car(simulation_object)
     if next_voiture == None:
         acceleration = acc_max * (1 - (voiture.speed / speed_max) ** exp_acc)
     else:
