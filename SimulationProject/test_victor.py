@@ -42,13 +42,9 @@ simulation_run_time = 60 * 100  # Temps (60*temps en secondes) que va durer la s
 
 # APPARITION DES VOITURES #
 
-<<<<<<< HEAD
 i = 0 # compteur
 car_spawn_cooldown_range = (1, 2)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
-=======
-i = 0  # compteur
-car_spawn_cooldown_range = (2, 3)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
->>>>>>> 89ea4f89506696f7979d10be59288a4035f30882
+
 next_spawn_time = 60
 
 # LA SIMULATION #
