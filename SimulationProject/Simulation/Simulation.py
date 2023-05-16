@@ -23,7 +23,7 @@ class Simulation:
     # Road : (coords départ, coords arrivée) curved = courbe (True) ou ligne droite (False)
     def __create_road(self, road, curved):
         start, end, threshold, speed_limit = road
-        self.network.addEdge(start, end, threshold, speed_limit, curved)
+        self.network.add_edge(start, end, threshold, speed_limit, curved)
         self.view.create_road(start, end, curved)
 
     def update(self):

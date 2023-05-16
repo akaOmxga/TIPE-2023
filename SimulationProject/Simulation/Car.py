@@ -40,7 +40,7 @@ class Car:
 
         accel = View.pfd_IDM(self, dt, simulation_object)
 
-        dm = View.integration(self.speed, accel, dt) # distance infinitésimale parcourue par la voiture sur dt
+        dm = View.integration(self.speed, accel, dt)  # distance infinitésimale parcourue par la voiture sur dt
         x, y, z = voiture.pos.x, voiture.pos.y, voiture.pos.z
 
         # Cas où la voiture est proche (à epsilon près) d'une transition de route
