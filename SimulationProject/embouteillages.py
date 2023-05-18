@@ -17,6 +17,12 @@ N_departementale = 20
 v_ville = 50
 N_ville = 10
 
+## de ce fait, en embouteillage, comme (cf View) coef_embouteillage = 2 (en metre par seconde voiture)
+# sur l'autoroute, v appartient [30,130]km/h (en embouteillage pour 30 et au maximun 130)
+# sur la nationale, v [40,100]
+# sur la departementale, v [30,70]
+# en ville, v [30,50]
+
 list_middle_straight = [((-400,0,0),(400,0,0),N_autoroute,v_autoroute),((-250,0,150),(250,0,150),N_nationale,v_nationale),((-250,0,-150),(250,0,-150),N_nationale,v_nationale),
 ((400,0,0),(550,0,50),N_departementale,v_departementale),((400,0,0),(550,0,-50),N_departementale,v_departementale),((-550,0,50),(-400,0,0),N_departementale,v_departementale),((-550,0,-50),(-400,0,0),N_departementale,v_departementale),
 ((250,0,150),(550,0,50),N_nationale,v_nationale),((250,0,-150),(550,0,-50),N_nationale,v_nationale),((-550,0,50),(-250,0,150),N_nationale,v_nationale),((-550,0,-50),(-250,0,-150),N_nationale,v_nationale),
@@ -145,4 +151,5 @@ while True:
             next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
             # TODO : spawn car
             simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
+            simulation.stat.voiture_apparues += 1
             

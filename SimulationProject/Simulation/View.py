@@ -26,7 +26,7 @@ dec_max = 30  # décélération maximale : m/s^2
 distance_min = 20  # distance de sécurité, minimale entre deux voitures : en mètre schant que les voitures en mesure 20
 distance_interaction = 100 # distance au-delà de laquelle IDM ne s'active pas
 temps_reaction = 1  # temps de réaction du conducteur
-coef_embouteillages = 2 # de combien diminue la limitation de vitesse par voiture supplémentaire : m/s
+coef_embouteillages = 2 # de combien diminue la limitation de vitesse par voiture supplémentaire : m/(s*voiture)
 
 
 # Petit helper pour avoir le signe de la variable passée
