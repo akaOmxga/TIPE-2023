@@ -1,7 +1,8 @@
 class NetworkGraph:
 
     def __init__(self):
-        self.network = {}  # Graphe (dictionnaire) sous la formé k,v : coordonnées, sommets connectés (liste d'adj)
+        # Graphe (implémenté par dictionnaire) sous la formé k,v : coordonnées, sommets connectés (liste d'adj)
+        self.network = {}
 
     def __str__(self):
         return f"{self.network}"

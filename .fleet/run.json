@@ -5,5 +5,11 @@
             "name": "Test SandBox",
             "arguments": ["./SimulationProject/TestSandbox.py"],
         },
+
+        {
+            "type": "python",
+            "name": "Embouteillages",
+            "arguments": ["./SimulationProject/embouteillages.py"],
+        },
     ]
 }
