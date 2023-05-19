@@ -3,7 +3,7 @@
 from Simulation.Simulation import *
 from vpython import *
 
-scene.center = vector(0, 200, 200)
+scene.center = vector(0, 300, 300)
 
 simulation = Simulation()
 
@@ -11,8 +11,8 @@ simulation = Simulation()
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
 # Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
 straight_roads = [
-    ((-500, 0, 0), (0, 0, 0), 5, 15),
-    ((0, 0, 0), (500, 0, 0), 5, 15)
+    ((-500, 0, 0), (0, 0, 0), 10, 30),
+    ((0, 0, 0), (500, 0, 0), 10, 30)
 ]
 
 # Coordonnées des virages
@@ -43,7 +43,7 @@ simulation_run_time = 60 * 100  # Temps (60*temps en secondes) que va durer la s
 # APPARITION DES VOITURES #
 
 i = 0 # compteur
-car_spawn_cooldown_range = (1, 2)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
+car_spawn_cooldown_range = (2, 3)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
 
 next_spawn_time = 60
 
