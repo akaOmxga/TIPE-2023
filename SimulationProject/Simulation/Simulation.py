@@ -11,7 +11,7 @@ from random import randint
 class Simulation:
 
     def __init__(self):
-        self.internal_clock = 0  # Timer interne, perf_counter prenant en compte la latence du PC
+        self.internal_clock = 0  # Timer interne (la fonction perf_counter par défaut prend en compte la latence du PC)
         self.network = NetworkGraph()
         self.trafficMap = TrafficMap()
         self.view = View()
@@ -45,7 +45,7 @@ class Simulation:
         possible_paths = []
 
         # On fait en sorte d'avoir un chemin forcément de longueur > 1
-        # TODO : optimize
+        # TODO : Voir si possible d'optimiser encore
         while destination_coords == spawn_coords or len(possible_paths) < 1:
             destination_coords = destination_points[randint(0, len(destination_points) - 1)]
 

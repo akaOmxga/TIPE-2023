@@ -88,8 +88,7 @@ def trajectoire(x, y, z, distance_parcourable, start, end, virage):
         (x0, y0, z0) = start
         (x1, y1, z1) = end
         d = distance(start, end)
-        return (x + distance_parcourable * (x1 - x0) / d, y_voiture,
-                z + distance_parcourable * (z1 - z0) / d)  # new_y = y + l * (y1 - y0) / d, ici on considère le cas 2D
+        return (x + distance_parcourable * (x1 - x0) / d, y_voiture, z + distance_parcourable * (z1 - z0) / d)  # new_y = y + l * (y1 - y0) / d, ici on considère le cas 2D
     else:
         # prendre le vecteur de centre à pos voiture
         centre, sortie, rayon = info_virage(start, end)
@@ -144,8 +143,8 @@ def sens(start, end):
     else:
         return 1  # sécurité
 
-
-def rotation_y(triplet, theta):  # renvoie la rotation du vecteur(triplet) d'un angle theta, selon Ux
+# renvoie la rotation du vecteur(triplet) d'un angle theta, selon Ux
+def rotation_y(triplet, theta):
     (a, b, c) = triplet
     alpha = a * cos(theta) - c * sin(theta)
     beta = b
@@ -220,6 +219,8 @@ def update_car(car, chemin, dm):
 
 def dispawn_car(vpython_car):
     vpython_car.visible = False
+    # TODO : voir si on peut totalement supprimer la voiture de vpython
+    return
 
 
 def spawn_car_test(coords):
@@ -237,10 +238,12 @@ def integration(v, accel, dt):
 # contexte est un élément de la modélisation venant modifié le comportement du véhicule. Ex : les stops,
 # les feux rouges ...
 
-def distance_securite(vitesse, delta_vitesse) : ## représente s* dans IDM.py // d'aute modélisation de IDM.py retourne (distance_min + max(0,v*temps_reaction + v*delta_v/sqrt(2acc_max*dec_confortable=)))
+# représente s* dans IDM.py // d'aute modélisation de IDM.py retourne (distance_min + max(0,v*temps_reaction + v*delta_v/sqrt(2acc_max*dec_confortable=)))
+def distance_securite(vitesse, delta_vitesse):
     return(distance_min + vitesse*temps_reaction + vitesse*delta_vitesse/sqrt(2*acc_max*dec_confortable))
 
-def speed_on_road(voiture,simulation_object): # calcul la limitation de vitesse relative ! à un instant donné sur la route 
+# calcul la limitation de vitesse relative ! à un instant donné sur la route
+def speed_on_road(voiture,simulation_object):
     network = simulation_object.network
     traffic = simulation_object.trafficMap
     start, end = voiture.chemin[0], voiture.chemin[1]
@@ -261,9 +264,10 @@ def pfd_IDM(voiture, dt, simulation_object):
         if (distance(pos_voiture,pos_prochaine_voiture) > distance_interaction) :
             acceleration = acc_max * (1 - (voiture.speed / speed_on_road(voiture,simulation_object)) ** exp_acc)
         else:
-            acceleration = acc_max * (1 - (voiture.speed / speed_on_road(voiture,simulation_object)) ** exp_acc - (distance_securite(voiture.speed, (next_voiture.speed - voiture.speed)) / distance(pos_voiture,
-                                                                                                      pos_prochaine_voiture)) ** 2)
+            acceleration = acc_max * (1 - (voiture.speed / speed_on_road(voiture,simulation_object)) ** exp_acc - (distance_securite(voiture.speed, (next_voiture.speed - voiture.speed)) / distance(pos_voiture, pos_prochaine_voiture)) ** 2)
     return acceleration
+
+
 
 
 class View:
@@ -278,11 +282,9 @@ class View:
             self.__create_line(start, end)
 
     def __create_line(self, start, end):
-
         (a, b, c), (x, y, z) = start, end
         longueur = sqrt((x - a) ** 2 + (z - c) ** 2)
-        route = box(pos=vector((a + x) / 2, (b + y) / 2, (c + z) / 2),
-                    size=vector(longueur, y_reference, largeur_route))
+        route = box(pos=vector((a + x) / 2, (b + y) / 2, (c + z) / 2), size=vector(longueur, y_reference, largeur_route))
 
         if x != a:
             theta = atan((z - c) / (x - a))
@@ -299,7 +301,6 @@ class View:
             route.rotate(-alpha, rota)
 
     def __create_curve(self, start, end):
-
         (a, b, c), (x, y, z) = start, end
         delta_x = x - a
         delta_z = z - c
@@ -331,8 +332,7 @@ class View:
                 alpha, beta = pi, 3 * pi / 2
             else:
                 alpha, beta = -pi / 2, 0
-        extrusion(path=paths.arc(pos=centre_v, radius=r, angle1=alpha, angle2=beta),
-                  shape=[shapes.rectangle(width=largeur_route, height=y_reference)])
+        extrusion(path = paths.arc(pos = centre_v, radius = r, angle1 = alpha, angle2 = beta), shape = [shapes.rectangle(width = largeur_route, height = y_reference)])
 
         # Ligne entre sortie-virage et fin
         (d, e, f) = sortie_virage

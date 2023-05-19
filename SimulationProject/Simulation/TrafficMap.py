@@ -11,7 +11,7 @@ class TrafficMap:
     def __str__(self):
         return f"{self.traffic_map}"
 
-    # Ajoute la voiture "car" sur le segment de route donné
+    # Ajoute l'objet voiture "car" sur le segment de route donné
     def add_car_on_road(self, start_coords, end_coords, car):
 
         # Si la route n'existe pas dans le dico, on la créée
@@ -25,6 +25,7 @@ class TrafficMap:
 
         self.traffic_map[(start_coords, end_coords)] = cars_on_road
 
+    # Supprime l'objet voiture "car" de la route donnée
     def delete_car_from_road(self, start_coords, end_coords, car):
         # Si la route n'existe pas dans le dico, on la créée
         if (start_coords, end_coords) not in self.traffic_map:

@@ -1,6 +1,6 @@
 import Simulation.View as View
 
-epsilon = 5  # TODO : modif
+epsilon = 5  # TODO : Trouver une valeur correcte
 dt = 1/60
 
 
@@ -60,7 +60,7 @@ class Car:
             View.update_car(self, chemin, dm)
 
     def dispawn(self, simulation_object):
-        # TODO : Transfer perf data to simulation
+        # TODO : Transférer les données de la voiture au module PerformanceStats
         # print((simulation_object.internal_clock - self.clock) / 60)
 
         # Envoyer les infos à vpython + liste voitures dans TrafficMap

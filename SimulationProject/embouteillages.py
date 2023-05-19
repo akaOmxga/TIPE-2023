@@ -7,7 +7,7 @@ scene.center = vector(0, 800, 1200)
 
 simulation = Simulation()
 
-# constantes de routes : limitation de vitesse (en m/s) et nombre de voitures maximal sur ...
+# Constantes de routes : limitation de vitesse (en m/s) et nombre de voitures maximal sur ...
 v_autoroute = 130 
 N_autoroute = 50
 v_nationale = 100 
@@ -17,7 +17,7 @@ N_departementale = 20
 v_ville = 50
 N_ville = 10
 
-## de ce fait, en embouteillage, comme (cf View) coef_embouteillage = 2 (en metre par seconde voiture)
+# En embouteillage, comme (cf View) coef_embouteillage = 2 (en metre par seconde voiture)
 # sur l'autoroute, v appartient [30,130]km/h (en embouteillage pour 30 et au maximun 130)
 # sur la nationale, v [40,100]
 # sur la departementale, v [30,70]
@@ -116,14 +116,17 @@ spawn_points = spawn_points_mid + spawn_points_top + spawn_points_bot
 # Points de "destination" possibles pour les voitures
 destination_points = destination_points_mid + destination_points_top + destination_points_bot
 
+
 # CRÉATION DES ROUTES #
 
 simulation.create_roads(straight_roads)
 simulation.create_roads(curved_roads, True)
 
+
 # STATISTIQUES ET PERFORMANCES #
 
 simulation_run_time = 60 * 100  # Temps (60*temps en secondes) que va durer la simulation avant de s'arrêter
+
 
 # APPARITION DES VOITURES #
 
@@ -131,6 +134,7 @@ i = 0 # compteur
 car_spawn_cooldown_range = (2, 3)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
 
 next_spawn_time = 60
+
 
 # LA SIMULATION #
 
@@ -149,7 +153,7 @@ while True:
         if i >= next_spawn_time:
             i = 0
             next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
-            # TODO : spawn car
+
             simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
             simulation.stat.voiture_apparues += 1
             

@@ -31,31 +31,36 @@ class Perfs:
         self.vitesse_ville = [] # liste contenant les vitesse moyennes de chaque véhicule pendant leur parcourt en ville
         self.densite_max_autoroute = 0 # densité maximale du réseau d'autoroute pendant la simulation (il est envisageable de faire de même avec le min et les autres types de route), l'objectif de l'optimisation étant de minimiser (indirectement) cette densité
 
-
-    def temps_moy(self) : # temps moyen de parcourt : s
+    # temps moyen de parcourt (en secondes)
+    def temps_moy(self):
         temps_total = 0
         for temps_individuel in temps_reel : 
             temps_total += temps_individuel
-        return(temps_total/self.voitures_apparues)
+        return temps_total/self.voitures_apparues
 
-    def retard_moy(self) : # l'écart-type du temps de parcours / moyenne du retard (moyenne de la différence entre temps de parcourt réel et idéal) : s
+    # l'écart-type du temps de parcours / moyenne du retard (moyenne de la différence entre temps de parcourt réel et idéal) (en s)
+    def retard_moy(self):
         retard_total = 0
         N = len(self.temps_reel)
         for i in range(N) :
             retard_total += (self.temps_reel[i] - self.temps_ideal[i])
-        return(retard_total/self.voitures_apparues)
+        return retard_total/self.voitures_apparues
 
-    def vitesse_moy(self) : # vitesse moyenne de parcourt : m/s
+    # vitesse moyenne de parcourt (en m/s)
+    def vitesse_moy(self):
         vitesse_total = 0
         for vitesse in self.vitesse :
             vitesse_total += vitesse
-        return(vitesse_total/self.voitures_apparues)
+        return vitesse_total/self.voitures_apparues
 
-    def flux_moy(self) : # flux moyen de parcourt : nombre de voiture/s 
-        return(self.voitures_apparues/self.simulation_time)
+    # flux moyen de parcourt (nombre de voiture/s)
+    def flux_moy(self):
+        return self.voitures_apparues/self.simulation_time
 
-    def indice_congestion(self) : # pourcentage de temps passer en "congestion" avec pour norme : congestion ssi v < 70% limitation de vitesse
+    # pourcentage de temps passer en "congestion" avec pour norme : congestion ssi v < 70% limitation de vitesse
+    def indice_congestion(self):
         temps_total = 0
         for temps_individuel in self.temps_reel : 
             temps_total += temps_individuel
-        return (self.congestion_time/temps_total)
+        return self.congestion_time/temps_total
+    
