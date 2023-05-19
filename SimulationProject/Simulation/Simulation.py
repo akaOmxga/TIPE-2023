@@ -4,6 +4,7 @@ from Simulation.TrafficMap import *
 from Simulation.NetworkGraph import *
 from Simulation.Car import *
 from Simulation.View import *
+from Simulation.PerformanceStats import *
 from random import randint
 
 
@@ -14,6 +15,7 @@ class Simulation:
         self.network = NetworkGraph()
         self.trafficMap = TrafficMap()
         self.view = View()
+        self.stat = Perfs()
         self.carsList = []
 
     def create_roads(self, roads_to_create, curved=False):
