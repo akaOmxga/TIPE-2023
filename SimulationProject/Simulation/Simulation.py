@@ -38,6 +38,8 @@ class Simulation:
     # Un point aléatoire dans une liste (spawn_points) et un point d'arrivée aléatoire parmi
     # une liste de points (destination_points)
     def create_car_random_path(self, spawn_points, destination_points, vitesse):
+        # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
+        self.stat.voitures_apparues += 1
 
         # Trouve un point d'apparition et une destination aléatoires parmi ceux possibles
         spawn_coords = spawn_points[randint(0, len(spawn_points) - 1)]
@@ -66,6 +68,11 @@ class Simulation:
 
     # Fait apparaître une voiture avec un chemin imposé
     def create_car(self, chemin):
+        # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
+        self.stat.voitures_apparues += 1
+        
+        # 
+
         vitesse = 13,9  # m/s
 
         vpython_vehicle = spawn_car_test(chemin[0])
@@ -74,3 +81,5 @@ class Simulation:
 
         self.carsList.append(voiture)
         self.trafficMap.add_car_on_road(chemin[0], chemin[1], voiture)
+
+    

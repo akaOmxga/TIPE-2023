@@ -42,11 +42,24 @@ def sign(x):
 # la distance que la voiture peut parcourir pendant dt selon le modèle (double intégration du pfd selon dt),
 # renvoie la nouvelle position (x',y',z') / la voiture a parcouru l depuis (x,y,z)
 
-def distance(point1, point2):
+def distance(point1, point2): # renvoie la distance entre le point1 et le point2
     a, b, c = point1
     x, y, z = point2
     return sqrt((x - a) ** 2 + (y - b) ** 2 + (z - c) ** 2)
 
+def longueur_chemin(chemin): # renvoie la longueur du chemin : somme des distances entre les point successifs
+    N = len(chemin)
+    longueur = 0
+    for i in range(N-1) :
+        longueur += distance(chemin[i],chemin[i+1])
+    return longueur
+
+def temps_chemin(chemin,simulation_object): # renvoie le temps idéal pour parcourir un chemin donnée (par idéal on entend minimal, à la vitesse maximale)
+    N = len(chemin)
+    temps = 0
+    for i in range(N-1):
+        temps += distance(chemin[i],chemin[i+1])/simulation_object.network.get_road_speed_limit(chemin[i],chemin[i+1])
+    return(temps)
 
 def arctan_2(y, x):
     if sqrt(x ** 2 + y ** 2) + x == 0:

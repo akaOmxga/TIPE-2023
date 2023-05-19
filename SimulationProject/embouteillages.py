@@ -155,5 +155,5 @@ while True:
             next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
 
             simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
-            simulation.stat.voiture_apparues += 1
+            
             

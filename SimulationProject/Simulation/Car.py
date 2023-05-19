@@ -14,9 +14,12 @@ class Car:
 
         self.position = spawn_coordinates  # (x,y,z)
         self.speed = speed  # m.s^(-1)
+        self.speed_data = [] # liste dans laquelle on ajoute de façon régulière la vitesse la voiture afin d'en mesurer la vitesse moyenne pendant le trajet
         self.accel = 0  # m.s^(-2), 0 par défaut, car en mouvement rectiligne et uniforme
-        self.vehicle = vehicle
-        self.chemin = chemin
+        self.vehicle = vehicle # objet vpython
+        self.chemin = chemin # liste de sommet (x,y,z)
+        self.chemin_init = chemin # chemin initiale que l'on ne modifiera pas 
+        self.congestion_time = 0 # nombre de tic passés en mode congestion avec la convention : congestion ssi v < 70% limitation vitesse
 
     def __str__(self):
         return f"Objet voiture, position : {self.position}"
@@ -41,6 +44,15 @@ class Car:
         accel = View.pfd_IDM(self, dt, simulation_object)
         new_speed = self.speed + dt*accel
         self.speed = new_speed
+        # si new_speed < 70%*limitation de vitesse : alors nous sommes en congestion, on ajoute un tic d'update à congestion_time : 
+        
+        start = self.chemin[0]
+        end = self.chemin[1]
+
+        if new_speed < (70/100)*simulation_object.network.get_road_speed_limit(start,end) :
+            self.congestion_time += 1
+
+        #
 
         dm = View.integration(self.speed, accel, dt)  # distance infinitésimale parcourue par la voiture sur dt
         x, y, z = voiture.pos.x, voiture.pos.y, voiture.pos.z
@@ -60,8 +72,13 @@ class Car:
             View.update_car(self, chemin, dm)
 
     def dispawn(self, simulation_object):
-        # TODO : Transférer les données de la voiture au module PerformanceStats
-        # print((simulation_object.internal_clock - self.clock) / 60)
+        # Transférer les données de la voiture au module PerformanceStats
+        simulation_object.stat.voiture_arrivees += 1
+        simulation_object.stat.congestion_time += self.congestion_time/60
+        simulation_object.stat.distance += View.longueur_chemin(self.chemin_init)
+        simulation_object.stat.temps_reel.append(self.clock/60)
+        simulation_object.stat.temps_ideal.append(View.temps_chemin(self.chemin_init,simulation_object))
+       # simulation_object.stat.
 
         # Envoyer les infos à vpython + liste voitures dans TrafficMap
         View.dispawn_car(self.vehicle)

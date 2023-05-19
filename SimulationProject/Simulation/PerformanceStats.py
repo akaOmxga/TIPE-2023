@@ -25,11 +25,13 @@ class Perfs:
         self.temps_reel = [] # liste contenant le temps mis par chaque véhicule pour effectuer leur trajet
         self.temps_ideal = [] # liste contenant le temps minimal de chaque véhicule pour effectuer leur trajet
         self.vitesse = [] # liste contenant les vitesse moyennes de chaque véhicule pendant leur parcourt
-        self.vitesse_autoroute = [] # liste contenant les vitesse moyennes de chaque véhicule pendant leur parcourt sur autoroute
-        self.vitesse_nationale = [] # liste contenant les vitesse moyennes de chaque véhicule pendant leur parcourt sur nationale
-        self.vitesse_departementale = [] # liste contenant les vitesse moyennes de chaque véhicule pendant leur parcourt sur departementale
-        self.vitesse_ville = [] # liste contenant les vitesse moyennes de chaque véhicule pendant leur parcourt en ville
-        self.densite_max_autoroute = 0 # densité maximale du réseau d'autoroute pendant la simulation (il est envisageable de faire de même avec le min et les autres types de route), l'objectif de l'optimisation étant de minimiser (indirectement) cette densité
+      #  self.densite_max_autoroute = 0 # densité maximale du réseau d'autoroute pendant la simulation (il est envisageable de faire de même avec le min et les autres types de route), l'objectif de l'optimisation étant de minimiser (indirectement) cette densité
+        ### envisageable ultérieurement (l'implémentation rencontrera probablement des problèmes de complexité mémoire ...)
+      #  self.vitesse_autoroute = [] # liste contenant les vitesse moyennes de chaque véhicule pendant leur parcourt sur autoroute
+      #  self.vitesse_nationale = [] # liste contenant les vitesse moyennes de chaque véhicule pendant leur parcourt sur nationale
+      #  self.vitesse_departementale = [] # liste contenant les vitesse moyennes de chaque véhicule pendant leur parcourt sur departementale
+      #  self.vitesse_ville = [] # liste contenant les vitesse moyennes de chaque véhicule pendant leur parcourt en ville
+      
 
     # temps moyen de parcourt (en secondes)
     def temps_moy(self):
