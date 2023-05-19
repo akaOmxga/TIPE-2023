@@ -52,7 +52,13 @@ class Car:
         if new_speed < (70/100)*simulation_object.network.get_road_speed_limit(start,end) :
             self.congestion_time += 1
 
-        #
+        # si le délai delta_t est écouler, on prélève la vitesse de la voiture dans speed_data :
+
+        delta_t = 30 # échelle : delta_t = 60 => toutes les secondes 
+        if (simulation_object.internal_clock)%(delta_t) == 1 :
+            self.speed_data.append(self.speed)
+
+        # update de la position :
 
         dm = View.integration(self.speed, accel, dt)  # distance infinitésimale parcourue par la voiture sur dt
         x, y, z = voiture.pos.x, voiture.pos.y, voiture.pos.z
@@ -78,7 +84,7 @@ class Car:
         simulation_object.stat.distance += View.longueur_chemin(self.chemin_init)
         simulation_object.stat.temps_reel.append(self.clock/60)
         simulation_object.stat.temps_ideal.append(View.temps_chemin(self.chemin_init,simulation_object))
-       # simulation_object.stat.
+        simulation_object.stat.vitesse.append(View.moyenne(self.speed_data))
 
         # Envoyer les infos à vpython + liste voitures dans TrafficMap
         View.dispawn_car(self.vehicle)

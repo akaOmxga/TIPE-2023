@@ -61,6 +61,13 @@ def temps_chemin(chemin,simulation_object): # renvoie le temps idéal pour parco
         temps += distance(chemin[i],chemin[i+1])/simulation_object.network.get_road_speed_limit(chemin[i],chemin[i+1])
     return(temps)
 
+def moyenne(data): # renvoie la moyenne des valeurs contenues dans la liste data
+    N = len(data)
+    reponse = 0
+    for i in data :
+        reponse += i
+    return(reponse/N)
+
 def arctan_2(y, x):
     if sqrt(x ** 2 + y ** 2) + x == 0:
         return 0
