@@ -34,7 +34,7 @@ class Perfs:
     # temps moyen de parcourt (en secondes)
     def temps_moy(self):
         temps_total = 0
-        for temps_individuel in temps_reel : 
+        for temps_individuel in self.temps_reel : 
             temps_total += temps_individuel
         return temps_total/self.voitures_apparues
 
