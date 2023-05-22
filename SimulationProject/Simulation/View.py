@@ -91,15 +91,6 @@ def info_virage(start, end):
     return centre_virage, sortie_virage, r
 
 
-def est_virage(start, end):
-    (a, b, c) = start
-    (x, y, z) = end
-    if a != x and c != z:
-        return True  # il s'agit d'un virage
-    else:
-        return False
-
-
 # la fct trajectoire renvoyée est de R4 dans R3 / trajectoire(x,y,z,l...) ,où (x,y,z) est la position actuelle
 # l la distance que la voiture peut parcourir pendant dt selon le modèle (double intégration du pfd selon dt)
 # Renvoie la nouvelle position (x',y',z') / la voiture ait parcouru l depuis (x,y,z)
@@ -198,7 +189,7 @@ def oriente(voiture, virage, start, end):
         return vecteur_orientation
 
 
-def update_car(car, chemin, dm):
+def update_car(car, chemin, dm, simulation_object):
     vehicle = car.vehicle
     x, y, z = car.position
 
@@ -210,29 +201,26 @@ def update_car(car, chemin, dm):
     start = chemin[0]
     end = chemin[1]
 
-    virage = est_virage(start, end)
-    print("Est virage : " + str(virage) + " départ : " + str(start) + " arrivée : " + str(end))
+    est_virage, _, _ = simulation_object.network.get_road_parameters(start, end)
 
-    if virage:
+    if est_virage:
+        print("#View - ON A UN VIRAGE WTF : ", start, " ", end)
         centre, sortie, rayon = info_virage(start, end)
         if end != sortie:
-            #print(chemin)
-            #new_chemin = [start] + [sortie] + chemin[1:]
-            #print(new_chemin)
-            #car.chemin = new_chemin
-            pass
+            new_chemin = [start] + [sortie] + chemin[1:]
+            car.chemin = new_chemin
 
         fin_virage = car.chemin[2]
 
-        new_x, new_y, new_z = trajectoire(x, y, z, dm, start, fin_virage, virage)
+        new_x, new_y, new_z = trajectoire(x, y, z, dm, start, fin_virage, est_virage)
         new_pos = vector(new_x, new_y, new_z)
-        vecteur_orientation = oriente(vehicle, virage, start, fin_virage)
+        vecteur_orientation = oriente(vehicle, est_virage, start, fin_virage)
     else:
         # le deuxième start est useless, c'est pour combler
-        new_x, new_y, new_z = trajectoire(x, y, z, dm, start, end, virage)
+        new_x, new_y, new_z = trajectoire(x, y, z, dm, start, end, est_virage)
 
         new_pos = vector(new_x, new_y, new_z)
-        vecteur_orientation = oriente(vehicle, virage, start, end)
+        vecteur_orientation = oriente(vehicle, est_virage, start, end)
 
     car.position = (new_x, new_y, new_z)
 
@@ -274,12 +262,8 @@ def speed_on_road(voiture, simulation_object):
 
     curved, threshold, speed_limit = network.get_road_parameters(start, end)
 
-    cars_on_road = traffic.get_cars_on_road(start, end)
-    print(cars_on_road)
-    longueur_temp = len(cars_on_road)
-    print(longueur_temp)
-    
-    if (longueur_temp >= threshold):
+
+    if (len(traffic.get_cars_on_road(start, end)) >= threshold):
         limitation_vitesse = speed_limit - coef_embouteillages * threshold
     else:
         limitation_vitesse = speed_limit - coef_embouteillages * len(traffic.get_cars_on_road(start,end))

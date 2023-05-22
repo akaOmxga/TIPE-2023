@@ -67,7 +67,7 @@ class Car:
         # → on fait la transition vers la prochaine route
         if distance(sommet_fin, (x, y, z)) < epsilon + 5:
             # update la position
-            update_car(self, chemin, dm)
+            update_car(self, chemin, dm, simulation_object)
 
             new_chemin = chemin[1::]
             self.chemin = new_chemin
@@ -75,7 +75,7 @@ class Car:
             # On se supprime de la portion de route dans trafficMap
             simulation_object.trafficMap.delete_car_from_road(chemin[0], sommet_fin, self)
         else:  # cas où la voiture peut parcourir dm sur la portion de route actuelle
-            update_car(self, chemin, dm)
+            update_car(self, chemin, dm, simulation_object)
 
     def dispawn(self, simulation_object):
         # Transférer les données de la voiture au module PerformanceStats

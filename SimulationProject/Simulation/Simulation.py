@@ -50,16 +50,16 @@ class Simulation:
         # TODO : Voir si possible d'optimiser encore
         while (destination_coords == spawn_coords or len(possible_paths) == 0) and destination_points != []:
             destination_coords = destination_points[randint(0, len(destination_points) - 1)]
-            print("Voiture en création entre ", spawn_coords," et ", destination_coords)
-            destination_points.remove(destination_coords)
+            destination_points.remove(destination_coords) # On retire le point des destinations possibles
+            # ça évite de retomber dessus et de faire des calculs inutiles
 
             # Trouve les chemins possibles entre les deux
             possible_paths = self.network.find_all_paths(spawn_coords, destination_coords)
 
         # On prend un chemin au hasard
-        chemin = possible_paths[randint(0, len(possible_paths) - 1)]
-
-        print("Voiture créée, premier chemin : ", chemin[0], chemin[1])
+        chemin = possible_paths[0]
+        if (len(possible_paths) > 1):
+            chemin = possible_paths[randint(0, len(possible_paths) - 1)]
 
         vpython_vehicle = spawn_car_test(spawn_coords)
 

@@ -153,7 +153,8 @@ while True:
         rate(60)
         simulation.update()
 
-        i += 1
+        #i += 1 
+        i = 60 # Pour faire spawn une seule voiture en attendant d'opti les chemins
         if i >= next_spawn_time:
             i = 0
             next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
@@ -167,5 +168,6 @@ while True:
             #simulation.create_car_random_gps(self,start,end,vitesse)
             #ou 
             start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
-            simulation.create_car_shortest_path(start,end,vitesse)
+            new_start = [(-1000,0,50)] # idem, en attendant d'opti les chemins
+            simulation.create_car_random_path(new_start, destination_points, vitesse)
         
