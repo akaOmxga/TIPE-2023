@@ -55,9 +55,7 @@ class Simulation:
             possible_paths = self.network.find_all_paths(spawn_coords, destination_coords)
 
         # On prend un chemin au hasard
-        chemin = possible_paths[0]
-        if len(possible_paths) > 1:
-            chemin = possible_paths[randint(0, len(possible_paths) - 1)]
+        chemin = possible_paths[randint(0, len(possible_paths) - 1)]
 
         print("Voiture créée, chemin : ", chemin)
 
@@ -83,5 +81,61 @@ class Simulation:
 
         self.carsList.append(voiture)
         self.trafficMap.add_car_on_road(chemin[0], chemin[1], voiture)
+
+    # Fait apparaître une voiture avec un point de spawn et de destination imposé, chemin random:
+
+    def create_car_random_gps(self,start,end,vitesse) :
+        # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
+        self.stat.voitures_apparues += 1
+
+        #  point d'apparition et une destination 
+        spawn_coords = start
+        destination_coords = end
+
+        # Trouve les chemins possibles entre les deux
+        possible_paths = self.network.find_all_paths(spawn_coords, destination_coords)
+
+        # On prend un chemin au hasard
+        chemin = possible_paths[randint(0, len(possible_paths) - 1)]
+
+        vpython_vehicle = spawn_car_test(spawn_coords)
+
+        voiture = Car(spawn_coords, vitesse, vpython_vehicle, chemin, self.internal_clock)
+
+        self.carsList.append(voiture)
+        self.trafficMap.add_car_on_road(chemin[0], chemin[1], voiture)
+        return
+
+    # Fait apparaître une voiture avec un point de spawn et de destination imposé, qui passe par le chemin le plus court :
+
+    def create_car_shortest_path(self,start,end) :
+        # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
+        self.stat.voitures_apparues += 1
+
+        #  point d'apparition et une destination 
+        spawn_coords = start
+        destination_coords = end
+
+        # Trouve les chemins possibles entre les deux
+        possible_paths = self.network.find_all_paths(spawn_coords, destination_coords)
+
+        # On teste le chemin le plus court parmi ceux de possible_paths
+        chemin = possible_paths[0]
+        minimun_longueur = View.longueur_chemin(chemin)
+        for path in possible_paths :
+            if View.longueur_chemin(i) < minimun_longueur :
+                chemin = path
+
+        # on spawn la voiture :
+
+        vpython_vehicle = spawn_car_test(spawn_coords)
+
+        voiture = Car(spawn_coords, vitesse, vpython_vehicle, chemin, self.internal_clock)
+
+        self.carsList.append(voiture)
+        self.trafficMap.add_car_on_road(chemin[0], chemin[1], voiture)
+        return
+
+
 
     
