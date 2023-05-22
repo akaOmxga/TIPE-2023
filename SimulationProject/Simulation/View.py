@@ -211,12 +211,16 @@ def update_car(car, chemin, dm):
     end = chemin[1]
 
     virage = est_virage(start, end)
+    print("Est virage : " + str(virage) + " départ : " + str(start) + " arrivée : " + str(end))
 
     if virage:
         centre, sortie, rayon = info_virage(start, end)
         if end != sortie:
-            new_chemin = [start] + [sortie] + chemin[1:]
-            car.chemin = new_chemin
+            #print(chemin)
+            #new_chemin = [start] + [sortie] + chemin[1:]
+            #print(new_chemin)
+            #car.chemin = new_chemin
+            pass
 
         fin_virage = car.chemin[2]
 
@@ -267,10 +271,15 @@ def speed_on_road(voiture, simulation_object):
     network = simulation_object.network
     traffic = simulation_object.trafficMap
     start, end = voiture.chemin[0], voiture.chemin[1]
-    print(start, end)
-    print(voiture)
+
     curved, threshold, speed_limit = network.get_road_parameters(start, end)
-    if (len(traffic.get_cars_on_road(start, end)) >= threshold):
+
+    cars_on_road = traffic.get_cars_on_road(start, end)
+    print(cars_on_road)
+    longueur_temp = len(cars_on_road)
+    print(longueur_temp)
+    
+    if (longueur_temp >= threshold):
         limitation_vitesse = speed_limit - coef_embouteillages * threshold
     else:
         limitation_vitesse = speed_limit - coef_embouteillages * len(traffic.get_cars_on_road(start,end))

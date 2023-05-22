@@ -82,8 +82,8 @@ class Car:
         simulation_object.stat.voiture_arrivees += 1
         simulation_object.stat.congestion_time += self.congestion_time/60
         simulation_object.stat.distance += View.longueur_chemin(self.chemin_init)
-        simulation_object.stat.temps_reel.append(self.clock/60)
-        simulation_object.stat.temps_ideal.append(View.temps_chemin(self.chemin_init,simulation_object))
+        simulation_object.stat.temps_reel.append((simulation_object.internal_clock - self.clock) / 60)
+        simulation_object.stat.temps_ideal.append(View.temps_chemin(self.chemin_init, simulation_object))
         simulation_object.stat.vitesse.append(View.moyenne(self.speed_data))
 
         # Envoyer les infos à vpython + liste voitures dans TrafficMap
