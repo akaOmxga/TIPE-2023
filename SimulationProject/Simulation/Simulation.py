@@ -59,6 +59,8 @@ class Simulation:
         if len(possible_paths) > 1:
             chemin = possible_paths[randint(0, len(possible_paths) - 1)]
 
+        print("Voiture créée, chemin : ", chemin)
+
         vpython_vehicle = spawn_car_test(spawn_coords)
 
         voiture = Car(spawn_coords, vitesse, vpython_vehicle, chemin, self.internal_clock)
