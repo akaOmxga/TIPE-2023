@@ -1,10 +1,10 @@
 #coding: utf8
 
-from Simulation.TrafficMap import *
-from Simulation.NetworkGraph import *
-from Simulation.Car import *
-from Simulation.View import *
-from Simulation.PerformanceStats import *
+from TrafficMap import *
+from NetworkGraph import *
+from Car import *
+from View import *
+from PerformanceStats import *
 from random import randint
 
 
