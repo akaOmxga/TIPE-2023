@@ -121,9 +121,9 @@ class Simulation:
 
         # On teste le chemin le plus court parmi ceux de possible_paths
         chemin = possible_paths[0]
-        minimun_longueur = View.longueur_chemin(chemin)
+        minimun_longueur = longueur_chemin(chemin)
         for path in possible_paths :
-            if View.longueur_chemin(path) < minimun_longueur :
+            if longueur_chemin(path) < minimun_longueur :
                 chemin = path
 
         # on spawn la voiture :
