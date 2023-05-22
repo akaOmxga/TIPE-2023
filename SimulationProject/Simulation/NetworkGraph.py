@@ -41,13 +41,13 @@ class NetworkGraph:
         if start not in self.network:
             start, end = end, start
             if start not in self.network:
-                raise Exception("Erreur : la route n'est pas valide")
+                raise Exception("Erreur : la route n'est pas valide (Start : ", start,", End : ", end, ")")
 
         for edge in self.network[start]:
             x, y, z, curved, threshold, speed_limit = edge
             if end == (x, y, z):
                 return curved, threshold, speed_limit
-        raise Exception("Erreur : la route n'est pas valide")
+        raise Exception("Erreur : la route n'est pas valide (Start : ", start,", End : ", end, ")")
 
     def get_road_threshold(self, start, end):
         _, threshold, _ = self.get_road_parameters(start, end)

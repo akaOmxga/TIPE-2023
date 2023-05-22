@@ -71,7 +71,7 @@ class Car:
 
             new_chemin = chemin[1::]
             self.chemin = new_chemin
-
+            
             # On se supprime de la portion de route dans trafficMap
             simulation_object.trafficMap.delete_car_from_road(chemin[0], sommet_fin, self)
         else:  # cas où la voiture peut parcourir dm sur la portion de route actuelle
