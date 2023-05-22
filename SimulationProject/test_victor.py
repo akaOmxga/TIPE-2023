@@ -65,5 +65,5 @@ while True:
             i = 0
             next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
             # TODO : spawn car
-            simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
+            simulation.create_car_shortest_path(spawn_points, destination_points, randint(10, 50))
             
