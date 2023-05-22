@@ -1,5 +1,3 @@
-
-
 epsilon = 5  # TODO : Trouver une valeur correcte
 dt = 1/60
 
