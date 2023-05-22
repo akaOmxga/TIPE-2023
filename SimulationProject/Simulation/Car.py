@@ -1,4 +1,4 @@
-import Simulation.View as View
+
 
 epsilon = 5  # TODO : Trouver une valeur correcte
 dt = 1/60
