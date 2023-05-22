@@ -48,7 +48,8 @@ list_top_straight = [((-400,0,-350),(400,0,-350),N_autoroute,v_autoroute),((-250
                      ((800,0,-700),(550,0,-700),N_ville,v_ville),((-550,0,-700),(-800,0,-700),N_ville,v_ville),
                      ((800,0,-400),(1000,0,-450),N_departementale,v_departementale),((-1000,0,-450),(-800,0,-400),N_departementale,v_departementale),
                      ((800,0,-550),(1000,0,-600),N_departementale,v_departementale),((-1000,0,-600),(-800,0,-550),N_departementale,v_departementale),
-                     ((800,0,-700),(1000,0,-750),N_departementale,v_departementale),((-1000,0,-750),(-800,0,-700),N_departementale,v_departementale)
+                     ((800,0,-700),(1000,0,-750),N_departementale,v_departementale),((-1000,0,-750),(-800,0,-700),N_departementale,v_departementale),
+                     ((550,0,-400),(550,0,-250),N_nationale,v_nationale),((800,0,-250),(800,0,-400),N_nationale,v_nationale)
                      ]
 list_top_curved = []
 list_bot_straight = [((-400,0,350),(400,0,350),N_autoroute,v_autoroute),((-250,0,550),(250,0,550),N_autoroute,v_autoroute),
@@ -61,7 +62,8 @@ list_bot_straight = [((-400,0,350),(400,0,350),N_autoroute,v_autoroute),((-250,0
                     ((800,0,400),(550,0,400),N_ville,v_ville),((-550,0,400),(-800,0,400),N_ville,v_ville),
                     ((800,0,400),(1000,0,450),N_departementale,v_departementale),((-1000,0,450),(-800,0,400),N_departementale,v_departementale),
                     ((800,0,550),(1000,0,600),N_departementale,v_departementale),((-1000,0,600),(-800,0,550),N_departementale,v_departementale),
-                    ((800,0,700),(1000,0,750),N_departementale,v_departementale),((-1000,0,750),(-800,0,700),N_departementale,v_departementale)
+                    ((800,0,700),(1000,0,750),N_departementale,v_departementale),((-1000,0,750),(-800,0,700),N_departementale,v_departementale),
+                    ((550,0,250),(550,0,400),N_nationale,v_nationale),((800,0,400),(800,0,250),N_nationale,v_nationale)
                      ]
 list_bot_curved = []
 spawn_points_mid = [(-1000,0,-250),(-1000,0,-150),(-1000,0,-50),(-1000,0,50),(-1000,0,150),(-1000,0,250)]
@@ -130,6 +132,8 @@ simulation_run_time = 60 * 100  # Temps (60*temps en secondes) que va durer la s
 
 # APPARITION DES VOITURES #
 
+vitesse = 13.9
+
 i = 0 # compteur
 car_spawn_cooldown_range = (2, 3)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
 
@@ -154,6 +158,14 @@ while True:
             i = 0
             next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
 
-            simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
-            
-            
+            #simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
+            #ou
+            #chemin = ...
+            #simulation.create_car(chemin):
+            #ou
+            #start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
+            #simulation.create_car_random_gps(self,start,end,vitesse)
+            #ou 
+            start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
+            simulation.create_car_shortest_path(start,end,vitesse)
+        
