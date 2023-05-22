@@ -53,4 +53,4 @@ class TrafficMap:
         if (start_coords, end_coords) in self.traffic_map:
             return self.traffic_map[(start_coords, end_coords)]
         else:
-            return None  # Ne devrait pas arriver
+            return []  # Ne devrait pas arriver
