@@ -10,13 +10,15 @@ from random import randint
 
 class Simulation:
 
-    def __init__(self):
+    def __init__(self, max_length):
         self.internal_clock = 0  # Timer interne (la fonction perf_counter par défaut prend en compte la latence du PC)
         self.network = NetworkGraph()
         self.trafficMap = TrafficMap()
         self.view = View()
         self.stat = Perfs()
         self.carsList = []
+        self.max_length = max_length
+        
 
     def create_roads(self, roads_to_create, curved=False):
         for road in roads_to_create:
@@ -57,7 +59,7 @@ class Simulation:
             # ça évite de retomber dessus et de faire des calculs inutiles
 
             # Trouve les chemins possibles entre les deux
-            possible_paths = self.network.find_all_paths(spawn_coords, destination_coords)
+            possible_paths = self.network.find_all_paths(spawn_coords, destination_coords,self.max_length)
 
         if len(possible_paths) == 0:
             print("Pas de chemin depuis ", spawn_coords, " on retente avec des nouveaux points randoms")
@@ -105,7 +107,7 @@ class Simulation:
         destination_coords = end
 
         # Trouve les chemins possibles entre les deux
-        possible_paths = self.network.find_all_paths(spawn_coords, destination_coords)
+        possible_paths = self.network.find_all_paths(spawn_coords, destination_coords,self.max_length)
 
         # On prend un chemin au hasard
         chemin = possible_paths[randint(0, len(possible_paths) - 1)]
@@ -129,7 +131,7 @@ class Simulation:
         destination_coords = end
 
         # Trouve les chemins possibles entre les deux
-        possible_paths = self.network.find_all_paths(spawn_coords, destination_coords)
+        possible_paths = self.network.find_all_paths(spawn_coords, destination_coords,self.max_length)
 
         # On teste le chemin le plus court parmi ceux de possible_paths
         chemin = possible_paths[0]
@@ -158,7 +160,7 @@ class Simulation:
         spawn_coords = start
         destination_coords = end
         # Trouve les chemins possibles entre les deux
-        possible_paths = self.network.find_all_paths(spawn_coords, destination_coords)
+        possible_paths = self.network.find_all_paths(spawn_coords, destination_coords,self.max_length)
         # On teste le chemin le plus court parmi ceux de possible_paths
         chemin = possible_paths[0]
         minimun_temps = temps_chemin(chemin)

@@ -5,7 +5,7 @@ from vpython import *
 
 scene.center = vector(0, 300, 300)
 
-simulation = Simulation()
+simulation = Simulation(max_length = 13)
 
 # Cordonnées des routes droites
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)

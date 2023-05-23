@@ -100,16 +100,14 @@ destination_points = destination_points_mid #+ destination_points_top + destinat
 
 ### hypothèse : autant de spawn que de destination numéroté par leur indice dans les listes spawn et destination
 # renvoie une matrice m / m[i][j] contient une liste all_paths entre le start i et la destination j
-def matrix_all_paths(max_len_paths,spawn_points,destination_points,simulation_object) :
+def matrix_all_paths(spawn_points,destination_points,simulation_object) :
     matrix = [[]]
     graph = simulation_object.network
     for i in range(len(spawn_points)) :
         for j in range(len(destination_points)) :
             start = spawn_points[i]
             end = destination_points[j]
-            matrix[i][j] = graph.find_all_paths(start,end)
+            matrix[i][j] = graph.find_all_paths(start,end,simulation_object.max_length)
     return matrix
 
 ### la matrice : 
-
-matrix_paths = matrix_all_paths(15,spawn_points,destination_points,simulation_object)

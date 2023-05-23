@@ -5,7 +5,7 @@ from vpython import *
 
 scene.center = vector(0, 800, 1200)
 
-simulation = Simulation()
+simulation = Simulation(max_length=13)
 
 # Constantes de routes : limitation de vitesse (en m/s) et nombre de voitures maximal sur ...
 v_autoroute = 130 
