@@ -87,7 +87,7 @@ class Simulation:
         
         # 
 
-        vitesse = 13,9  # m/s
+        vitesse = 13.9  # m/s
 
         vpython_vehicle = spawn_car_test(chemin[0])
 

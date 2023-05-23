@@ -109,18 +109,18 @@ dp12 = sphere(pos = vector(1000,50,750), radius = 20, color = vector(1,0,0))
 # Cordonnées des routes droites
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
 # Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
-straight_roads = list_middle_straight #+ list_top_straight + list_bot_straight
+straight_roads = list_middle_straight + list_top_straight + list_bot_straight
 
 # Coordonnées des virages
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
 # Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
-curved_roads = list_middle_curved #+ list_top_curved + list_bot_curved
+curved_roads = list_middle_curved + list_top_curved + list_bot_curved
 
 # Points d'apparitions possibles des voitures
-spawn_points = spawn_points_mid #+ spawn_points_top + spawn_points_bot
+spawn_points = spawn_points_mid + spawn_points_top + spawn_points_bot
 
 # Points de "destination" possibles pour les voitures
-destination_points = destination_points_mid #+ destination_points_top + destination_points_bot
+destination_points = destination_points_mid + destination_points_top + destination_points_bot
 
 
 # CRÉATION DES ROUTES #
@@ -139,7 +139,7 @@ simulation_run_time = 60 * 100  # Temps (60*temps en secondes) que va durer la s
 vitesse = 13.9
 
 i = 0 # compteur
-car_spawn_cooldown_range = (2, 3)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
+car_spawn_cooldown_range = (1, 2)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
 
 next_spawn_time = 60
 
