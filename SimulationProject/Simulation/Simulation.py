@@ -37,10 +37,12 @@ class Simulation:
     # Fait apparaître une voiture avec un chemin choisi au hasard entre
     # Un point aléatoire dans une liste (spawn_points) et un point d'arrivée aléatoire parmi
     # une liste de points (destination_points)
-    def create_car_random_path(self, spawn_points, destination_points, vitesse):
+    def create_car_random_path(self, spawn_points, destination_points_to_copy, vitesse):
         # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
         self.stat.voitures_apparues += 1
 
+
+        destination_points = destination_points_to_copy.copy()
         # Trouve un point d'apparition et une destination aléatoires parmi ceux possibles
         spawn_coords = spawn_points[randint(0, len(spawn_points) - 1)]
         destination_coords = spawn_coords
@@ -51,10 +53,16 @@ class Simulation:
         while (destination_coords == spawn_coords or len(possible_paths) == 0) and destination_points != []:
             destination_coords = destination_points[randint(0, len(destination_points) - 1)]
             destination_points.remove(destination_coords) # On retire le point des destinations possibles
+
             # ça évite de retomber dessus et de faire des calculs inutiles
 
             # Trouve les chemins possibles entre les deux
             possible_paths = self.network.find_all_paths(spawn_coords, destination_coords)
+
+        if len(possible_paths) == 0:
+            print("Pas de chemin depuis ", spawn_coords, " on retente avec des nouveaux points randoms")
+            #self.create_car_random_path(spawn_points, destination_points, vitesse)
+            return
 
         # On prend un chemin au hasard
         if possible_paths == [] :
@@ -143,3 +151,23 @@ class Simulation:
 
 
     
+    def create_car_shortest_path_time(self,start,end,vitesse) :
+        # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
+        self.stat.voitures_apparues += 1
+        #  point d'apparition et une destination 
+        spawn_coords = start
+        destination_coords = end
+        # Trouve les chemins possibles entre les deux
+        possible_paths = self.network.find_all_paths(spawn_coords, destination_coords)
+        # On teste le chemin le plus court parmi ceux de possible_paths
+        chemin = possible_paths[0]
+        minimun_temps = temps_chemin(chemin)
+        for path in possible_paths :
+            if temps_chemin(path) < minimun_temps :
+                chemin = path
+        # on spawn la voiture :
+        vpython_vehicle = spawn_car_test(spawn_coords)
+        voiture = Car(spawn_coords, vitesse, vpython_vehicle, chemin, self.internal_clock)
+        self.carsList.append(voiture)
+        self.trafficMap.add_car_on_road(chemin[0], chemin[1], voiture)
+        return
