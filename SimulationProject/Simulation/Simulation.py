@@ -147,3 +147,23 @@ class Simulation:
 
 
     
+    def create_car_shortest_path_time(self,start,end,vitesse) :
+        # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
+        self.stat.voitures_apparues += 1
+        #  point d'apparition et une destination 
+        spawn_coords = start
+        destination_coords = end
+        # Trouve les chemins possibles entre les deux
+        possible_paths = self.network.find_all_paths(spawn_coords, destination_coords)
+        # On teste le chemin le plus court parmi ceux de possible_paths
+        chemin = possible_paths[0]
+        minimun_temps = temps_chemin(chemin)
+        for path in possible_paths :
+            if temps_chemin(path) < minimun_temps :
+                chemin = path
+        # on spawn la voiture :
+        vpython_vehicle = spawn_car_test(spawn_coords)
+        voiture = Car(spawn_coords, vitesse, vpython_vehicle, chemin, self.internal_clock)
+        self.carsList.append(voiture)
+        self.trafficMap.add_car_on_road(chemin[0], chemin[1], voiture)
+        return
