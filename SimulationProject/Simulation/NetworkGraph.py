@@ -70,9 +70,9 @@ class NetworkGraph:
         visited[current] = True
         current_path.append(current)
 
-        if current == end and len(current_path) < 13:
+        if current == end:
             paths.append(current_path.copy())
-        elif len(current_path) < 13:
+        elif len(current_path) < 10:
             for i in self.network[current]:
                 # i est sous la forme (x, y, z, curved), on veut le repasser en x, y, z
                 x, y, z, curved, threshold, speed_limit = i

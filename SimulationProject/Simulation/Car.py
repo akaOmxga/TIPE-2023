@@ -10,7 +10,7 @@ class Car:
     # lignes/virages) ; chemin, un chemin du graphe représentant l'ensemble des routes (lignes et virages) que la
     # voiture doit emprunter c.f. Victor si on a un problème
     def __init__(self, spawn_coordinates, speed, vehicle, chemin, start_clock):
-        self.clock = start_clock
+        self.start_clock = start_clock
 
         self.position = spawn_coordinates  # (x,y,z)
         self.speed = speed  # m.s^(-1)
@@ -79,12 +79,15 @@ class Car:
 
     def dispawn(self, simulation_object):
         # Transférer les données de la voiture au module PerformanceStats
-        simulation_object.stat.voitures_arrivees += 1
-        simulation_object.stat.congestion_time += self.congestion_time/60
-        simulation_object.stat.distance += longueur_chemin(self.chemin_init)
-        simulation_object.stat.temps_reel.append(self.clock/60)
-        simulation_object.stat.temps_ideal.append(temps_chemin(self.chemin_init,simulation_object))
-        simulation_object.stat.vitesse.append(moyenne(self.speed_data))
+        stats_object = simulation_object.stats
+        stats_object.voitures_arrivees += 1
+        stats_object.congestion_time += round(self.congestion_time / 60, 2)
+        stats_object.distance += round(longueur_chemin(self.chemin_init), 2)
+        stats_object.temps_reel.append(round((simulation_object.internal_clock - self.start_clock)/60, 2))
+        stats_object.temps_ideal.append(round(temps_chemin(self.chemin_init, simulation_object), 2))
+        stats_object.vitesse.append(round(moyenne(self.speed_data), 2))
+
+        print("#Car-90 - Voiture dépop, stats :\n\n", stats_object)
 
         # Envoyer les infos à vpython + liste voitures dans TrafficMap
         dispawn_car(self.vehicle)

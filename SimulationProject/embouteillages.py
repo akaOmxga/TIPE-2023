@@ -152,12 +152,14 @@ while True:
     # ça permet de ne pas couper la boucle, et de ne pas générer d'erreurs venant de vpython
     # On change rate à 1 pour soulager python (i.e. moins d'actualisations/seconde)
     if simulation.internal_clock >= simulation_run_time:
+        if (simulation.internal_clock == simulation_run_time):
+            print("\n\n\nSIMULATION TERMINÉE\n\n\n")
         rate(1)
     else:
         rate(60)
         simulation.update()
 
-        i += 1 
+        i += 1
         if i >= next_spawn_time:
             i = 0
             next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
