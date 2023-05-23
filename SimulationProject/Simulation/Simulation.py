@@ -57,6 +57,8 @@ class Simulation:
             possible_paths = self.network.find_all_paths(spawn_coords, destination_coords)
 
         # On prend un chemin au hasard
+        if possible_paths == [] :
+            return
         chemin = possible_paths[0]
         if (len(possible_paths) > 1):
             chemin = possible_paths[randint(0, len(possible_paths) - 1)]
