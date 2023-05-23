@@ -56,6 +56,10 @@ class Simulation:
             # Trouve les chemins possibles entre les deux
             possible_paths = self.network.find_all_paths(spawn_coords, destination_coords)
 
+        if len(possible_paths) == 0:
+            print("Pas de chemin depuis ", spawn_coords)
+            return
+
         # On prend un chemin au hasard
         chemin = possible_paths[0]
         if (len(possible_paths) > 1):

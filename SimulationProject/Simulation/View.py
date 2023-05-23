@@ -271,6 +271,7 @@ def speed_on_road(voiture, simulation_object):
 
 def pfd_IDM(voiture, dt, simulation_object):
     next_voiture = voiture.get_next_car(simulation_object)
+
     if (next_voiture == None) :
         acceleration = acc_max * (1 - (voiture.speed / speed_on_road(voiture, simulation_object)) ** exp_acc)
     else :

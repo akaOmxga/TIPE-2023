@@ -79,7 +79,7 @@ class Car:
 
     def dispawn(self, simulation_object):
         # Transférer les données de la voiture au module PerformanceStats
-        simulation_object.stat.voiture_arrivees += 1
+        simulation_object.stat.voitures_arrivees += 1
         simulation_object.stat.congestion_time += self.congestion_time/60
         simulation_object.stat.distance += longueur_chemin(self.chemin_init)
         simulation_object.stat.temps_reel.append(self.clock/60)
