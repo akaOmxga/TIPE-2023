@@ -58,21 +58,21 @@ class NetworkGraph:
         return speed_limit
 
     # Permet de trouver tous les chemins sans cycles entre start et end (start et end des triplets (x, y, z))
-    def find_all_paths(self, start, end):
+    def find_all_paths(self, start, end, max_length):
         visited = {}
 
         for k in self.network.keys():
             visited[k] = False
 
-        return self.__find(start, end, visited, [], [])
+        return self.__find(start, end, visited, [], [], max_length)
 
-    def __find(self, current, end, visited, current_path, paths):
+    def __find(self, current, end, visited, current_path, paths, max_length):
         visited[current] = True
         current_path.append(current)
 
-        if current == end:
+        if current == end and len(current_path) < max_length:
             paths.append(current_path.copy())
-        elif len(current_path) < 10:
+        elif len(current_path) < max_length:
             for i in self.network[current]:
                 # i est sous la forme (x, y, z, curved), on veut le repasser en x, y, z
                 x, y, z, curved, threshold, speed_limit = i
@@ -80,7 +80,7 @@ class NetworkGraph:
                 current_edge = (x, y, z)
 
                 if not visited[current_edge]:
-                    paths = self.__find(current_edge, end, visited, current_path, paths)
+                    paths = self.__find(current_edge, end, visited, current_path, paths, max_length)
 
         current_path.pop()
         visited[current] = False
