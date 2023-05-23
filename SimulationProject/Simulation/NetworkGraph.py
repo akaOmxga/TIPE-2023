@@ -71,9 +71,8 @@ class NetworkGraph:
         current_path.append(current)
 
         if current == end:
-            paths.append(current_path.copy())
-        elif len(current_path) > 15 :
-            return []
+            if (len(current_path) < 16):
+                paths.append(current_path.copy())
         else:
             for i in self.network[current]:
                 # i est sous la forme (x, y, z, curved), on veut le repasser en x, y, z

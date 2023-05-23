@@ -51,13 +51,15 @@ class Simulation:
         while (destination_coords == spawn_coords or len(possible_paths) == 0) and destination_points != []:
             destination_coords = destination_points[randint(0, len(destination_points) - 1)]
             destination_points.remove(destination_coords) # On retire le point des destinations possibles
+
             # ça évite de retomber dessus et de faire des calculs inutiles
 
             # Trouve les chemins possibles entre les deux
             possible_paths = self.network.find_all_paths(spawn_coords, destination_coords)
 
         if len(possible_paths) == 0:
-            print("Pas de chemin depuis ", spawn_coords)
+            print("Pas de chemin depuis ", spawn_coords, " on retente avec des nouveaux points randoms")
+            #self.create_car_random_path(spawn_points, destination_points, vitesse)
             return
 
         # On prend un chemin au hasard
