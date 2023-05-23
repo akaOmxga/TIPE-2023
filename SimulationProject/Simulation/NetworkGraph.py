@@ -80,7 +80,7 @@ class NetworkGraph:
                 current_edge = (x, y, z)
 
                 if not visited[current_edge]:
-                    paths = self.__find(current_edge, end, visited, current_path, paths)
+                    paths = self.__find(current_edge, end, visited, current_path, paths, max_length)
 
         current_path.pop()
         visited[current] = False
