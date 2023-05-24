@@ -15,7 +15,7 @@ class Simulation:
         self.network = NetworkGraph()
         self.trafficMap = TrafficMap()
         self.view = View()
-        self.stat = Perfs()
+        self.stats = PerformanceStats(self)
         self.carsList = []
         self.max_length = max_length
         
@@ -41,7 +41,7 @@ class Simulation:
     # une liste de points (destination_points)
     def create_car_random_path(self, spawn_points, destination_points_to_copy, vitesse):
         # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
-        self.stat.voitures_apparues += 1
+        self.stats.voitures_apparues += 1
 
         destination_points = destination_points_to_copy.copy()
         # Trouve un point d'apparition et une destination aléatoires parmi ceux possibles
@@ -78,7 +78,7 @@ class Simulation:
     # Fait apparaître une voiture avec un chemin imposé
     def create_car(self, chemin):
         # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
-        self.stat.voitures_apparues += 1
+        self.stats.voitures_apparues += 1
         
         # on fait spawn la voiture
         vitesse = 13.9  # m/
@@ -91,7 +91,7 @@ class Simulation:
 
     def create_car_random_gps(self,start,end,vitesse) :
         # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
-        self.stat.voitures_apparues += 1
+        self.stats.voitures_apparues += 1
 
         #  point d'apparition et une destination 
         spawn_coords = start
@@ -122,7 +122,7 @@ class Simulation:
 
     def create_car_shortest_path_length(self,start,end,vitesse) :
         # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
-        self.stat.voitures_apparues += 1
+        self.stats.voitures_apparues += 1
 
         #  point d'apparition et une destination 
         spawn_coords = start
@@ -154,7 +154,6 @@ class Simulation:
     def create_car_shortest_path_time(self,start,end,vitesse) :
         # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
         self.stat.voitures_apparues += 1
-
         #  point d'apparition et une destination 
         spawn_coords = start
         destination_coords = end
