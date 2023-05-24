@@ -111,3 +111,8 @@ def matrix_all_paths(spawn_points,destination_points,simulation_object) :
     return matrix
 
 ### la matrice : 
+
+matrix = matrix_all_paths(spawn_points,destination_points,simulation_object)
+
+with open("matric.txt","w") as filout :
+    filout.write("matrix")
