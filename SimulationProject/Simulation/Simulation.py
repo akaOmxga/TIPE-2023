@@ -184,11 +184,24 @@ class Simulation:
     ### hypothèse : autant de spawn que de destination numéroté par leur indice dans les listes spawn et destination
     # renvoie une matrice m / m[i][j] contient une liste all_paths entre le start i et la destination j
     def matrix_all_paths(self,spawn_points,destination_points) :
-        matrix = [[]]
-        graph = self.network
+        matrix = [[[]for i in range(len(spawn_points)-1) ] for j in range(len(destination_points)-1)]
+        for i in range(len(spawn_points)-1) :
+            for j in range(len(destination_points)-1) :
+                start = spawn_points[i]
+                end = destination_points[j]
+                matrix[i][j] = self.network.find_all_paths(start,end,self.max_length)
+        return matrix
+    
+    def matrix_all_paths_shortest(self,spawn_points,destination_points) :
+        matrix = [[[]for i in range(len(spawn_points)) ] for j in range(len(destination_points))]
         for i in range(len(spawn_points)) :
             for j in range(len(destination_points)) :
                 start = spawn_points[i]
                 end = destination_points[j]
-                matrix[i][j] = graph.find_all_paths(start,end,self.max_length)
+                liste_chemins = self.network.find_all_paths(start,end,self.max_length)
+                pc_chemin = liste_chemins[0]
+                for path in liste_chemins :
+                    if temps_chemin(path,self) < temps_chemin(pc_chemin,self) :
+                        pc_chemin = path
+                matrix[i][j] = pc_chemin
         return matrix

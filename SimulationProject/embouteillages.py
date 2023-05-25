@@ -5,7 +5,7 @@ from Simulation.Simulation import *
 from vpython import *
 
 scene.center = vector(0, 800, 1200)
-simulation = Simulation(max_length = 13)
+simulation = Simulation(max_length = 20)
 
 # Constantes de routes : limitation de vitesse (en m/s) et nombre de voitures maximal sur ...
 v_autoroute = 130 
@@ -142,13 +142,6 @@ i = 0 # compteur
 car_spawn_cooldown_range = (0, 1)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
 
 next_spawn_time = 60
-
-# matrice des chemins :
-
-#m = Simulation.matrix_all_paths(spawn_points,destination_points,simulation)
-
-#with open("python matrix path","w") as filout :
-#    filout.write(m)
 
 # LA SIMULATION #
 
