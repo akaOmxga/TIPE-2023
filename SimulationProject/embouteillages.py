@@ -1,11 +1,11 @@
 #coding: utf8
 
+#from Simulation.matrix import *
 from Simulation.Simulation import *
 from vpython import *
 
 scene.center = vector(0, 800, 1200)
-
-simulation = Simulation(max_length=13)
+simulation = Simulation(max_length = 13)
 
 # Constantes de routes : limitation de vitesse (en m/s) et nombre de voitures maximal sur ...
 v_autoroute = 130 
@@ -139,10 +139,16 @@ simulation_run_time = 60 * 100  # Temps (60*temps en secondes) que va durer la s
 vitesse = 13.9
 
 i = 0 # compteur
-car_spawn_cooldown_range = (2, 3)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
+car_spawn_cooldown_range = (0, 1)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
 
 next_spawn_time = 60
 
+# matrice des chemins :
+
+#m = Simulation.matrix_all_paths(spawn_points,destination_points,simulation)
+
+#with open("python matrix path","w") as filout :
+#    filout.write(m)
 
 # LA SIMULATION #
 
@@ -162,8 +168,8 @@ while True:
         i += 1
         if i >= next_spawn_time:
             i = 0
-            next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
-            simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
+            #next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
+            #simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
             #ou
             #chemin = ...
             #simulation.create_car(chemin):
@@ -171,5 +177,5 @@ while True:
             #start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
             #simulation.create_car_random_gps(start,end,vitesse)
             #ou 
-            #start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
-            #simulation.create_car_shortest_path_time(start,end,vitesse)
+            start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
+            simulation.create_car_shortest_path_time(start,end,vitesse)

@@ -153,7 +153,7 @@ class Simulation:
     
     def create_car_shortest_path_time(self,start,end,vitesse) :
         # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
-        self.stat.voitures_apparues += 1
+        self.stats.voitures_apparues += 1
         #  point d'apparition et une destination 
         spawn_coords = start
         destination_coords = end
@@ -179,3 +179,16 @@ class Simulation:
         self.carsList.append(voiture)
         self.trafficMap.add_car_on_road(chemin[0], chemin[1], voiture)
         return
+    # fonction création de la matrice des chemins:
+
+    ### hypothèse : autant de spawn que de destination numéroté par leur indice dans les listes spawn et destination
+    # renvoie une matrice m / m[i][j] contient une liste all_paths entre le start i et la destination j
+    def matrix_all_paths(self,spawn_points,destination_points) :
+        matrix = [[]]
+        graph = self.network
+        for i in range(len(spawn_points)) :
+            for j in range(len(destination_points)) :
+                start = spawn_points[i]
+                end = destination_points[j]
+                matrix[i][j] = graph.find_all_paths(start,end,self.max_length)
+        return matrix

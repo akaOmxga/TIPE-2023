@@ -4,8 +4,7 @@ from Simulation.Simulation import *
 from vpython import *
 
 scene.center = vector(0, 800, 1200)
-
-simulation = Simulation()
+simulation = Simulation(max_length = 13)
 
 # Constantes de routes : limitation de vitesse (en m/s) et nombre de voitures maximal sur ...
 v_autoroute = 130 
@@ -77,42 +76,77 @@ destination_points_mid = [(1000,0,-250),(1000,0,-150),(1000,0,-50),(1000,0,50),(
 destination_points_top = [(1000,0,-450),(1000,0,-600),(1000,0,-750)]
 destination_points_bot = [(1000,0,450),(1000,0,600),(1000,0,750)]
 
+### détails simulation :
+# sphère verte : spawn_point
+sp1 = sphere(pos = vector(-1000,50,-750), radius = 20, color = vector(0,1,0))
+sp2 = sphere(pos = vector(-1000,50,-600), radius = 20, color = vector(0,1,0))
+sp3 = sphere(pos = vector(-1000,50,-450), radius = 20, color = vector(0,1,0))
+sp4 = sphere(pos = vector(-1000,50,-250), radius = 20, color = vector(0,1,0))
+sp5 = sphere(pos = vector(-1000,50,-150), radius = 20, color = vector(0,1,0))
+sp6 = sphere(pos = vector(-1000,50,-50), radius = 20, color = vector(0,1,0))
+sp7 = sphere(pos = vector(-1000,50,50), radius = 20, color = vector(0,1,0))
+sp8 = sphere(pos = vector(-1000,50,150), radius = 20, color = vector(0,1,0))
+sp9 = sphere(pos = vector(-1000,50,250), radius = 20, color = vector(0,1,0))
+sp10 = sphere(pos = vector(-1000,50,450), radius = 20, color = vector(0,1,0))
+sp11 = sphere(pos = vector(-1000,50,600), radius = 20, color = vector(0,1,0))
+sp12 = sphere(pos = vector(-1000,50,750), radius = 20, color = vector(0,1,0))
 
+# sphère rouge : destination_point 
+dp1 = sphere(pos = vector(1000,50,-750), radius = 20, color = vector(1,0,0))
+dp2 = sphere(pos = vector(1000,50,-600), radius = 20, color = vector(1,0,0))
+dp3 = sphere(pos = vector(1000,50,-450), radius = 20, color = vector(1,0,0))
+dp4 = sphere(pos = vector(1000,50,-250), radius = 20, color = vector(1,0,0))
+dp5 = sphere(pos = vector(1000,50,-150), radius = 20, color = vector(1,0,0))
+dp6 = sphere(pos = vector(1000,50,-50), radius = 20, color = vector(1,0,0))
+dp7 = sphere(pos = vector(1000,50,50), radius = 20, color = vector(1,0,0))
+dp8 = sphere(pos = vector(1000,50,150), radius = 20, color = vector(1,0,0))
+dp9 = sphere(pos = vector(1000,50,250), radius = 20, color = vector(1,0,0))
+dp10 = sphere(pos = vector(1000,50,450), radius = 20, color = vector(1,0,0))
+dp11 = sphere(pos = vector(1000,50,600), radius = 20, color = vector(1,0,0))
+dp12 = sphere(pos = vector(1000,50,750), radius = 20, color = vector(1,0,0))
 
 # Cordonnées des routes droites
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
 # Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
-straight_roads = list_middle_straight #+ list_top_straight + list_bot_straight
+straight_roads = list_middle_straight + list_top_straight + list_bot_straight
 
 # Coordonnées des virages
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
 # Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
-curved_roads = list_middle_curved #+ list_top_curved + list_bot_curved
+curved_roads = list_middle_curved + list_top_curved + list_bot_curved
 
 # Points d'apparitions possibles des voitures
-spawn_points = spawn_points_mid #+ spawn_points_top + spawn_points_bot
+spawn_points = spawn_points_mid + spawn_points_top + spawn_points_bot
 
 # Points de "destination" possibles pour les voitures
-destination_points = destination_points_mid #+ destination_points_top + destination_points_bot
+destination_points = destination_points_mid + destination_points_top + destination_points_bot
 
 
-## fonction création de la matrice :
+# CRÉATION DES ROUTES #
 
-### hypothèse : autant de spawn que de destination numéroté par leur indice dans les listes spawn et destination
-# renvoie une matrice m / m[i][j] contient une liste all_paths entre le start i et la destination j
-def matrix_all_paths(spawn_points,destination_points,simulation_object) :
-    matrix = [[]]
-    graph = simulation_object.network
-    for i in range(len(spawn_points)) :
-        for j in range(len(destination_points)) :
-            start = spawn_points[i]
-            end = destination_points[j]
-            matrix[i][j] = graph.find_all_paths(start,end,simulation_object.max_length)
-    return matrix
+simulation.create_roads(straight_roads)
+simulation.create_roads(curved_roads, True)
 
-### la matrice : 
 
-matrix = matrix_all_paths(spawn_points,destination_points,simulation_object)
+# STATISTIQUES ET PERFORMANCES #
 
-with open("matric.txt","w") as filout :
-    filout.write("matrix")
+simulation_run_time = 60 * 100  # Temps (60*temps en secondes) que va durer la simulation avant de s'arrêter
+
+
+# APPARITION DES VOITURES #
+
+vitesse = 13.9
+
+i = 0 # compteur
+car_spawn_cooldown_range = (0, 1)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
+
+next_spawn_time = 60
+
+# matrice des chemins :
+
+#m = Simulation.matrix_all_paths(spawn_points,destination_points,simulation)
+
+f = open("python_matrix _path.txt","a") 
+f.write(" my name is victor")
+#f.write(m)
+f.close()
