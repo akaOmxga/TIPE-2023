@@ -5,7 +5,7 @@ from vpython import *
 
 scene.center = vector(0, 300, 300)
 
-simulation = Simulation()
+simulation = Simulation(max_length = 13)
 
 # Cordonnées des routes droites
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
@@ -45,7 +45,7 @@ simulation_run_time = 60 * 100  # Temps (60*temps en secondes) que va durer la s
 vitesse = 13.9
 
 i = 0 # compteur
-car_spawn_cooldown_range = (2, 3)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
+car_spawn_cooldown_range = (3, 4)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
 
 next_spawn_time = 60
 

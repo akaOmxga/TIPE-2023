@@ -1,11 +1,11 @@
 #coding: utf8
 
+#from Simulation.matrix import *
 from Simulation.Simulation import *
 from vpython import *
 
 scene.center = vector(0, 800, 1200)
-
-simulation = Simulation()
+simulation = Simulation(max_length = 13)
 
 # Constantes de routes : limitation de vitesse (en m/s) et nombre de voitures maximal sur ...
 v_autoroute = 130 
@@ -109,18 +109,18 @@ dp12 = sphere(pos = vector(1000,50,750), radius = 20, color = vector(1,0,0))
 # Cordonnées des routes droites
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
 # Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
-straight_roads = list_middle_straight #+ list_top_straight + list_bot_straight
+straight_roads = list_middle_straight + list_top_straight + list_bot_straight
 
 # Coordonnées des virages
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
 # Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
-curved_roads = list_middle_curved #+ list_top_curved + list_bot_curved
+curved_roads = list_middle_curved + list_top_curved + list_bot_curved
 
 # Points d'apparitions possibles des voitures
-spawn_points = spawn_points_mid #+ spawn_points_top + spawn_points_bot
+spawn_points = spawn_points_mid + spawn_points_top + spawn_points_bot
 
 # Points de "destination" possibles pour les voitures
-destination_points = destination_points_mid #+ destination_points_top + destination_points_bot
+destination_points = destination_points_mid + destination_points_top + destination_points_bot
 
 
 # CRÉATION DES ROUTES #
@@ -139,10 +139,16 @@ simulation_run_time = 60 * 100  # Temps (60*temps en secondes) que va durer la s
 vitesse = 13.9
 
 i = 0 # compteur
-car_spawn_cooldown_range = (2, 3)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
+car_spawn_cooldown_range = (0, 1)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
 
 next_spawn_time = 60
 
+# matrice des chemins :
+
+#m = Simulation.matrix_all_paths(spawn_points,destination_points,simulation)
+
+#with open("python matrix path","w") as filout :
+#    filout.write(m)
 
 # LA SIMULATION #
 
@@ -152,26 +158,32 @@ while True:
     # ça permet de ne pas couper la boucle, et de ne pas générer d'erreurs venant de vpython
     # On change rate à 1 pour soulager python (i.e. moins d'actualisations/seconde)
     if simulation.internal_clock >= simulation_run_time:
+        if (simulation.internal_clock == simulation_run_time):
+            print("\n\n\nSIMULATION TERMINÉE\n\n\n")
         rate(1)
     else:
         rate(60)
         simulation.update()
 
-        i += 1 
+        i += 1
         if i >= next_spawn_time:
             i = 0
-            next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
-            simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
-
+            #next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
+            #simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
             #ou
             #chemin = ...
             #simulation.create_car(chemin):
             #ou
             #start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
-            #simulation.create_car_random_gps(self,start,end,vitesse)
+            #simulation.create_car_random_gps(start,end,vitesse)
             #ou 
+<<<<<<< HEAD
             #start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
             new_start = [(-1000,0,50)] # idem, en attendant d'opti les chemins
             simulation.create_car_random_path(new_start, destination_points, vitesse)
 
 
+=======
+            start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
+            simulation.create_car_shortest_path_time(start,end,vitesse)
+>>>>>>> 0832aa5f805555abde41a0f0a32587c41981acf5

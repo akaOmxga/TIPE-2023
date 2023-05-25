@@ -14,10 +14,10 @@
 #  -
 
 
-class Perfs:
+class PerformanceStats:
 
-    def __init__(self):
-        self.simulation_time = 0 # durée de la simulation
+    def __init__(self, simulation_object):
+        self.simulation_object = simulation_object # Objet Simulation
         self.congestion_time = 0 # somme des temps individuel passés en "congestion" avec pour norme : congestion ssi v < 70% limitation de vitesse 
         self.voitures_apparues = 0 # nombre de voitures ayant apparues
         self.voitures_arrivees = 0 # nombre de voitures étant arrivées (len(n'importe quelle liste succédant ceci))
@@ -32,6 +32,15 @@ class Perfs:
       #  self.vitesse_departementale = [] # liste contenant les vitesse moyennes de chaque véhicule pendant leur parcourt sur departementale
       #  self.vitesse_ville = [] # liste contenant les vitesse moyennes de chaque véhicule pendant leur parcourt en ville
       
+    def __str__(self):
+        return("Durée simu : " + str(self.simulation_object.internal_clock) +
+            "\nTemps de congestion : " + str(self.congestion_time) +
+            "\nVoitures apparues : " + str(self.voitures_apparues) +
+            "\nVoitures arrivées : " + str(self.voitures_arrivees) +
+            "\nDistance totale parcourue : " + str(self.distance) +
+            "\nTemps réel total : " + str(self.temps_reel) +
+            "\nTemps idéal total : " + str(self.temps_ideal) +
+            "\nVitesses moyennes : " + str(self.vitesse))
 
     # temps moyen de parcourt (en secondes)
     def temps_moy(self):
@@ -57,7 +66,7 @@ class Perfs:
 
     # flux moyen de parcourt (nombre de voiture/s)
     def flux_moy(self):
-        return self.voitures_apparues/self.simulation_time
+        return self.voitures_apparues / self.simulation_object.internal_clock
 
     # pourcentage de temps passer en "congestion" avec pour norme : congestion ssi v < 70% limitation de vitesse
     def indice_congestion(self):
