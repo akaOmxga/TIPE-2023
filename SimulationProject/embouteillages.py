@@ -1,11 +1,14 @@
 #coding: utf8
 
-#from Simulation.matrix import *
+
 from Simulation.Simulation import *
 from vpython import *
+#from matrix import matrix_embouteillages_all_paths <- nécessaire pour les spawn avec matrices, mais semble engendrer beaucoup de lag à import 
 
 scene.center = vector(0, 800, 1200)
-simulation = Simulation(max_length = 20)
+#scene.center = vector(-1300,700,0)
+#scene.center = vector(1200,750,1200)
+simulation = Simulation(max_length = 13)
 
 # Constantes de routes : limitation de vitesse (en m/s) et nombre de voitures maximal sur ...
 v_autoroute = 130 
@@ -162,7 +165,7 @@ while True:
         if i >= next_spawn_time:
             i = 0
             #next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
-            #simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
+            simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
             #ou
             #chemin = ...
             #simulation.create_car(chemin):
@@ -170,13 +173,8 @@ while True:
             #start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
             #simulation.create_car_random_gps(start,end,vitesse)
             #ou 
-<<<<<<< HEAD
             #start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
-            new_start = [(-1000,0,50)] # idem, en attendant d'opti les chemins
-            simulation.create_car_random_path(new_start, destination_points, vitesse)
-
-
-=======
-            start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
-            simulation.create_car_shortest_path_time(start,end,vitesse)
->>>>>>> 0832aa5f805555abde41a0f0a32587c41981acf5
+            #simulation.create_car_shortest_path_time(start,end,vitesse)
+            
+            ########## avec les matrices de chemin :
+            #simulation.create_car_matrix_all_paths(matrix_embouteillages_all_paths)

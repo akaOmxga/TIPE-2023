@@ -205,3 +205,25 @@ class Simulation:
                         pc_chemin = path
                 matrix[i][j] = pc_chemin
         return matrix
+    
+    # spawn les voitures grâce aux matrices de chemin :
+
+    def create_car_matrix_all_paths(self, matrice) :
+        # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
+        self.stats.voitures_apparues += 1
+
+        # Trouve un point d'apparition et une destination aléatoires parmi ceux possibles
+        spawn_coords = randint(0, len(matrice) - 1)
+        destination_coords = randint(0, len(matrice[0]) - 1)
+
+        # test si le chemin existe
+        chemin = randint(0, len(matrice[spawn_coords][destination_coords]))
+        while len(chemin) == 0 :
+            chemin = randint(0, len(matrice[spawn_coords][destination_coords]))
+
+        # On fait spawn la voiture
+        vitesse = 15
+        vpython_vehicle = spawn_car_test(chemin[0])
+        voiture = Car(chemin[0], vitesse, vpython_vehicle, chemin, self.internal_clock)
+        self.carsList.append(voiture)
+        self.trafficMap.add_car_on_road(chemin[0], chemin[1], voiture)
