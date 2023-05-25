@@ -170,5 +170,13 @@ while True:
             #start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
             #simulation.create_car_random_gps(start,end,vitesse)
             #ou 
+<<<<<<< HEAD
+            #start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
+            new_start = [(-1000,0,50)] # idem, en attendant d'opti les chemins
+            simulation.create_car_random_path(new_start, destination_points, vitesse)
+
+
+=======
             start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
             simulation.create_car_shortest_path_time(start,end,vitesse)
+>>>>>>> 0832aa5f805555abde41a0f0a32587c41981acf5
