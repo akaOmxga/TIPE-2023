@@ -145,6 +145,7 @@ i = 0 # compteur
 car_spawn_cooldown_range = (0, 1)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
 
 next_spawn_time = 60
+next_check_time = 30
 
 # LA SIMULATION #
 
@@ -178,3 +179,8 @@ while True:
             
             ########## avec les matrices de chemin :
             #simulation.create_car_matrix_all_paths(matrix_embouteillages_all_paths)
+
+        if i >= next_check_time : # on optimise le chemin de certaines voitures pour certains temps (toutes les 5 secondes, soit 30 tick) afin de minimiser la complexité 
+            car = simulation.carsList[randint(0,len(simulation.carsList)-1)]
+            simulation.gps.traffic_update(simulation,car)
+

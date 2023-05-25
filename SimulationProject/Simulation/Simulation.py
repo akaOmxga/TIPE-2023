@@ -4,6 +4,7 @@ from Simulation.TrafficMap import *
 from Simulation.NetworkGraph import *
 from Simulation.Car import *
 from Simulation.View import *
+from Simulation.GPS import * 
 from Simulation.PerformanceStats import *
 from random import randint
 
@@ -18,6 +19,7 @@ class Simulation:
         self.stats = PerformanceStats(self)
         self.carsList = []
         self.max_length = max_length
+        self.gps = PositioningSystem(max_length/4)
         
 
     def create_roads(self, roads_to_create, curved=False):
