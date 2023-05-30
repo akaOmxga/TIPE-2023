@@ -122,7 +122,7 @@ class Simulation:
 
     # Fait apparaître une voiture avec un point de spawn et de destination imposé, qui passe par le chemin le plus court :
 
-    def create_car_shortest_path_length(self,start,end,vitesse) :
+    def create_car_shortest_path_length(self, start, end, vitesse):
         # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
         self.stats.voitures_apparues += 1
 
@@ -142,7 +142,9 @@ class Simulation:
         chemin = possible_paths[0]
         minimun_longueur = longueur_chemin(chemin)
         for path in possible_paths :
-            if longueur_chemin(path) < minimun_longueur :
+            minimum_potentiel = longueur_chemin(path)
+            if minimum_potentiel < minimun_longueur:
+                minimun_longueur = minimum_potentiel
                 chemin = path
 
         # on spawn la voiture :
@@ -153,7 +155,7 @@ class Simulation:
         return
 
     
-    def create_car_shortest_path_time(self,start,end,vitesse) :
+    def create_car_shortest_path_time(self,start,end,vitesse):
         # Augmenter de 1 le nombre de voiture ayant spawn dans la simulation :
         self.stats.voitures_apparues += 1
         #  point d'apparition et une destination 

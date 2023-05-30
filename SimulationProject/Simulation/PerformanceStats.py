@@ -38,14 +38,14 @@ class PerformanceStats:
             "\nVoitures apparues : " + str(self.voitures_apparues) +
             "\nVoitures arrivées : " + str(self.voitures_arrivees) +
             "\nDistance totale parcourue : " + str(self.distance) +
-            "\n\nTemps réels total : " + str(self.temps_reel) +
-            "\n\nTemps idéaux total : " + str(self.temps_ideal) +
-            "\n\nVitesses moyennes : " + str(self.vitesse) +
-            "\n\n\nTemps moyen de parcours : " + str(self.temps_moy()) +
+            "\n\nTemps moyen de parcours : " + str(self.temps_moy()) +
             "\nRetard moyen de parcours : " + str(self.retard_moy()) +
             "\nVitesse moyenne de parcours : " + str(self.vitesse_moy()) +
             "\nFlux moyen : " + str(self.flux_moy()) +
-            "\nIndice de congestion : " + str(self.indice_congestion())
+            "\nIndice de congestion : " + str(self.indice_congestion()) +
+            "\n\n\nTemps réels total : " + str(self.temps_reel) +
+            "\n\nTemps idéaux total : " + str(self.temps_ideal) +
+            "\n\nVitesses moyennes : " + str(self.vitesse)
             )
 
     # temps moyen de parcours (en secondes)
