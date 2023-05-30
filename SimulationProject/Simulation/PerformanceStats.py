@@ -41,11 +41,11 @@ class PerformanceStats:
             "\n\nTemps réels total : " + str(self.temps_reel) +
             "\n\nTemps idéaux total : " + str(self.temps_ideal) +
             "\n\nVitesses moyennes : " + str(self.vitesse) +
-            "\n\n\nTemps moyen de parcourt : " + str(self.temps_moy) +
-            "\nRetard moyen de parcourt : " + str(self.retard_moy) +
-            "\nVitesse moyenne de parcourt : " + str(self.vitesse_moy) +
-            "\nFlux moyen : " + str(self.flux_moy) +
-            "\nIndice de congestion : " + str(self.indice_congestion)
+            "\n\n\nTemps moyen de parcourt : " + str(self.temps_moy()) +
+            "\nRetard moyen de parcourt : " + str(self.retard_moy()) +
+            "\nVitesse moyenne de parcourt : " + str(self.vitesse_moy()) +
+            "\nFlux moyen : " + str(self.flux_moy()) +
+            "\nIndice de congestion : " + str(self.indice_congestion())
             )
 
     # temps moyen de parcourt (en secondes)
