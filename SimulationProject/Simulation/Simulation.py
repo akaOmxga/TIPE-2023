@@ -171,16 +171,11 @@ class Simulation:
         # On teste le chemin le plus court (en terme de temps de parcourt) parmi ceux de possible_paths
         chemin = possible_paths[0]
         minimum_temps = temps_chemin(chemin, self)
-        print("Temps pour le premier chemin : ", minimum_temps)
         for path in possible_paths:
-            t = temps_chemin(path, self)
-            print("Temps sur un nouveau chemin : ", t)
-            if t < minimum_temps:
-                minimum_temps = t
-                print("C'est un min")
+            temps_a_tester = temps_chemin(path, self)
+            if temps_a_tester < minimum_temps:
+                minimum_temps = temps_a_tester
                 chemin = path
-
-        print("\n\nNouvelle voiture\n\n")
 
         # on spawn la voiture :
         vpython_vehicle = spawn_car_test(spawn_coords)
