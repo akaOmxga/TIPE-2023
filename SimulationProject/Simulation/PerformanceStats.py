@@ -38,9 +38,15 @@ class PerformanceStats:
             "\nVoitures apparues : " + str(self.voitures_apparues) +
             "\nVoitures arrivées : " + str(self.voitures_arrivees) +
             "\nDistance totale parcourue : " + str(self.distance) +
-            "\nTemps réel total : " + str(self.temps_reel) +
-            "\nTemps idéal total : " + str(self.temps_ideal) +
-            "\nVitesses moyennes : " + str(self.vitesse))
+            "\n\nTemps réels total : " + str(self.temps_reel) +
+            "\n\nTemps idéaux total : " + str(self.temps_ideal) +
+            "\n\nVitesses moyennes : " + str(self.vitesse) +
+            "\n\n\nTemps moyen de parcourt : " + str(self.temps_moy) +
+            "\nRetard moyen de parcourt : " + str(self.retard_moy) +
+            "\nVitesse moyenne de parcourt : " + str(self.vitesse_moy) +
+            "\nFlux moyen : " + str(self.flux_moy) +
+            "\nIndice de congestion : " + str(self.indice_congestion)
+            )
 
     # temps moyen de parcourt (en secondes)
     def temps_moy(self):
