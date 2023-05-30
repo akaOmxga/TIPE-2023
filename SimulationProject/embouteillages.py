@@ -134,7 +134,7 @@ simulation.create_roads(curved_roads, True)
 
 # STATISTIQUES ET PERFORMANCES #
 
-simulation_run_time = 60 * 100  # Temps (60*temps en secondes) que va durer la simulation avant de s'arrêter
+simulation_run_time = 60 * 50  # Temps (60*temps en secondes) que va durer la simulation avant de s'arrêter
 
 
 # APPARITION DES VOITURES #
