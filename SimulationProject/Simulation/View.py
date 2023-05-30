@@ -273,12 +273,20 @@ def pfd_IDM(voiture, dt, simulation_object):
     next_voiture = voiture.get_next_car(simulation_object)
 
     if (next_voiture == None):
-        acceleration = acc_max * (1 - (voiture.speed / speed_on_road(voiture, simulation_object)) ** exp_acc)
+        coef1 = (voiture.speed / speed_on_road(voiture, simulation_object))
+        if abs(coef1) < 1e+20: # Valeur safe, si au dessus, faut update l'accel sans le facteur (biaisé mais évite de crash)
+            acceleration = acc_max * (1 - coef1 ** exp_acc)
+        else:
+            acceleration = acc_max # Ce cas est biaisé, mais évite le crash (en théorie)
     else :
         pos_voiture = voiture.position
         pos_prochaine_voiture = next_voiture.position
         if (distance(pos_voiture, pos_prochaine_voiture) > distance_interaction):
-            acceleration = acc_max * (1 - (voiture.speed / speed_on_road(voiture, simulation_object)) ** exp_acc)
+            coef1 = (voiture.speed / speed_on_road(voiture, simulation_object))
+            if abs(coef1) < 1e+20: # Valeur safe, si au dessus, faut update l'accel sans le facteur (biaisé mais évite de crash)
+                acceleration = acc_max * (1 - coef1 ** exp_acc)
+            else:
+                acceleration = acc_max # Ce cas est biaisé, mais évite le crash (en théorie)
         else:
             acceleration = acc_max * (1 - (voiture.speed / speed_on_road(voiture, simulation_object)) ** exp_acc - (distance_securite(voiture.speed, (next_voiture.speed - voiture.speed)) / distance(pos_voiture, pos_prochaine_voiture)) ** 2)
     return acceleration
