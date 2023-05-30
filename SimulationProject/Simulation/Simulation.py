@@ -177,8 +177,6 @@ class Simulation:
                 minimum_temps = temps_a_tester
                 chemin = path
 
-        print("\n\nNouvelle voiture\n\n")
-
         # on spawn la voiture :
         vpython_vehicle = spawn_car_test(spawn_coords)
         voiture = Car(spawn_coords, vitesse, vpython_vehicle, chemin, self.internal_clock)
