@@ -128,7 +128,7 @@ dp12 = sphere(pos = vector(1000,50,750), radius = 20, color = vector(1,0,0))
 # Cordonnées des routes droites
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
 # Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
-straight_roads = braess + list_top_straight + list_bot_straight
+straight_roads = list_middle_straight + list_top_straight + list_bot_straight
 
 # Coordonnées des virages
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
@@ -186,7 +186,7 @@ while True:
             i = 0
             next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
 
-            #simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
+            simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
             #ou
             #chemin = ...
             #simulation.create_car(chemin):
