@@ -86,9 +86,7 @@ class Car:
         stats_object.temps_reel.append(round((simulation_object.internal_clock - self.start_clock)/60, 2))
         stats_object.temps_ideal.append(round(temps_chemin(self.chemin_init, simulation_object), 2))
         stats_object.vitesse.append(round(moyenne(self.speed_data), 2))
-
-        print("#Car-90 - Voiture dépop, stats :\n\n", stats_object)
-
+        
         # Envoyer les infos à vpython + liste voitures dans TrafficMap
         dispawn_car(self.vehicle)
         simulation_object.carsList.remove(self)

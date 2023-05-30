@@ -34,7 +34,7 @@ class PerformanceStats:
       
     def __str__(self):
         return("Durée simu : " + str(self.simulation_object.internal_clock) +
-            "\nTemps de congestion : " + str(self.congestion_time) +
+            "\nTemps de congestion : " + str(self.congestion_time) +  # temps passé à une vitesse inf à 70% de la congestion
             "\nVoitures apparues : " + str(self.voitures_apparues) +
             "\nVoitures arrivées : " + str(self.voitures_arrivees) +
             "\nDistance totale parcourue : " + str(self.distance) +

@@ -142,7 +142,7 @@ simulation_run_time = 60 * 100  # Temps (60*temps en secondes) que va durer la s
 vitesse = 13.9
 
 i = 0 # compteur
-car_spawn_cooldown_range = (0, 1)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
+car_spawn_cooldown_range = (1, 2)  # Cooldown entre 2 spawn de voitures (en secondes) (bornes incluses)
 
 next_spawn_time = 60
 next_check_time = 120
@@ -157,6 +157,9 @@ while True:
     if simulation.internal_clock >= simulation_run_time:
         if (simulation.internal_clock == simulation_run_time):
             print("\n\n\nSIMULATION TERMINÉE\n\n\n")
+            print("Statistiques globales :\n\n")
+            print(simulation.stats)
+            simulation.internal_clock += 1
         rate(1)
     else:
         rate(60)
@@ -165,7 +168,8 @@ while True:
         i += 1
         if i >= next_spawn_time:
             i = 0
-            #next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
+            next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
+
             #simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
             #ou
             #chemin = ...
@@ -174,15 +178,15 @@ while True:
             #start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
             #simulation.create_car_random_gps(start,end,vitesse)
             #ou 
-            #start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
-            #simulation.create_car_shortest_path_time(start,end,vitesse)
+            start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
+            simulation.create_car_shortest_path_time(start,end,vitesse)
             
             ########## avec les matrices de chemin :
             #simulation.create_car_matrix_all_paths(matrix_embouteillages_all_paths)
 
-        if i >= next_check_time : # on optimise le chemin de certaines voitures pour certains temps (toutes les 5 secondes, soit 30 tick) afin de minimiser la complexité 
+        '''if i >= next_check_time : # on optimise le chemin de certaines voitures pour certains temps (toutes les 5 secondes, soit 30 tick) afin de minimiser la complexité 
             if (simulation.carsList != []):
                 carIndex = randint(0, len(simulation.carsList) - 1)
                 car = simulation.carsList[carIndex]
-                simulation.gps.traffic_update(simulation,car)
+                simulation.gps.traffic_update(simulation,car)'''
 

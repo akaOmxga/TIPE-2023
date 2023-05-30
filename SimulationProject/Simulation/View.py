@@ -58,7 +58,7 @@ def temps_chemin(chemin,simulation_object): # renvoie le temps idéal pour parco
     N = len(chemin)
     temps = 0
     for i in range(N-1):
-        temps += distance(chemin[i],chemin[i+1])/simulation_object.network.get_road_speed_limit(chemin[i],chemin[i+1])
+        temps += distance(chemin[i],chemin[i+1]) / simulation_object.network.get_road_speed_limit(chemin[i],chemin[i+1])
     return(temps)
 
 def moyenne(data): # renvoie la moyenne des valeurs contenues dans la liste data
