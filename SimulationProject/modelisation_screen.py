@@ -5,7 +5,7 @@ from vpython import *
 
 #scene.center = vector(0, 200, 200)
 #scene.center = vector(-200,200,0)
-scene.center = vector(400,200,400)
+scene.center = vector(200,200,200)
 simulation = Simulation(max_length = 10)
 
 #bullshit
@@ -70,12 +70,12 @@ route_7_virages = [((60,0,310),(125,0,245),N_ville ,v_ville),((-60,0,310),(-125,
 # Cordonnées des routes droites
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
 # Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
-straight_roads = route_7_lignes
+straight_roads = route_1_lignes
 
 # Coordonnées des virages
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
 # Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
-curved_roads = route_7_virages
+curved_roads = route_1_virages
 
 # Points d'apparitions possibles des voitures
 spawn_points = []
