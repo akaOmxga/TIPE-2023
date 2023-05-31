@@ -49,7 +49,7 @@ class Car:
         start = self.chemin[0]
         end = self.chemin[1]
 
-        if new_speed < (70/100)*simulation_object.network.get_road_speed_limit(start,end) :
+        if (new_speed < (80/100)*simulation_object.network.get_road_speed_limit(start,end)) and (simulation_object.internal_clock - self.start_clock > 90):
             self.congestion_time += 1
 
         # si le délai delta_t est écouler, on prélève la vitesse de la voiture dans speed_data :

@@ -63,7 +63,7 @@ class Simulation:
 
         # test si les chemins existent 
         if len(possible_paths) == 0:
-            print("Pas de chemin depuis ", spawn_coords, " on retente avec des nouveaux points randoms")
+            #print("Pas de chemin depuis ", spawn_coords, " on retente avec des nouveaux points randoms")
             return
 
         # On prend un chemin au hasard
@@ -104,7 +104,7 @@ class Simulation:
         
         # test si les chemins existent 
         if len(possible_paths) == 0:
-            print("Pas de chemin depuis ", spawn_coords, " on retente avec des nouveaux points randoms")
+            #print("Pas de chemin depuis ", spawn_coords, " on retente avec des nouveaux points randoms")
             return
 
         # On prend un chemin au hasard
@@ -135,7 +135,7 @@ class Simulation:
 
         # test si les chemins existent 
         if len(possible_paths) == 0:
-            print("Pas de chemin depuis ", spawn_coords, " on retente avec des nouveaux points randoms")
+            #print("Pas de chemin depuis ", spawn_coords, " on retente avec des nouveaux points randoms")
             return
 
         # On teste le chemin le plus court (en terme de distance de parcourt) parmi ceux de possible_paths
@@ -167,7 +167,7 @@ class Simulation:
 
         # test si les chemins existent 
         if len(possible_paths) == 0:
-            print("Pas de chemin depuis ", spawn_coords, " on retente avec des nouveaux points randoms")
+            #print("Pas de chemin depuis ", spawn_coords, " on retente avec des nouveaux points randoms")
             return
 
         # On teste le chemin le plus court (en terme de temps de parcourt) parmi ceux de possible_paths

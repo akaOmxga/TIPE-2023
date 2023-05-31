@@ -35,7 +35,8 @@ class TrafficMap:
         if not cars_on_road:
             return
         if car not in cars_on_road:
-            raise Exception("Erreur : la voiture n'est pas sur la route")
+            return
+            #raise Exception("Erreur : la voiture n'est pas sur la route")
 
         # Normalement, la voiture qu'on retire se trouve toujours à l'indice 0
         # Mais on traite le cas général dans le doute.

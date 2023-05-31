@@ -150,7 +150,7 @@ simulation.create_roads(curved_roads, True)
 
 # STATISTIQUES ET PERFORMANCES #
 
-simulation_run_time = 60 * 300  # Temps (60*temps en secondes) que va durer la simulation avant de s'arrêter
+simulation_run_time = 60 * 50  # Temps (60*temps en secondes) que va durer la simulation avant de s'arrêter
 
 
 # APPARITION DES VOITURES #
@@ -164,6 +164,9 @@ next_spawn_time = 60
 next_check_time = 120
 
 # LA SIMULATION #
+
+# TEMPO : Pour faire spawn 2 listes de points (bool qui permet de savoir si on choisit la première ou non)
+spawnPremiereListe = True
 
 while True:
 
@@ -184,7 +187,8 @@ while True:
         i += 1
         if i >= next_spawn_time:
             i = 0
-            next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
+            #next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
+            next_spawn_time = 60 * 1 # cooldown de spawn = 2 secondes fixes
 
             #simulation.create_car_random_path(spawn_points, destination_points, randint(30, 60))
             #ou
@@ -194,8 +198,23 @@ while True:
             #start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
             #simulation.create_car_random_gps(start,end,vitesse)
             #ou 
-            start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
-            simulation.create_car_shortest_path_length(start, end, vitesse)
+            start, end = spawn_points[randint(0, len(spawn_points) - 1)], destination_points[randint(0, len(destination_points) - 1)]
+            
+
+            # POUR FAIRE SPAWN PLUSIEURS VOITURES À LA FOIS DEPUIS 2 LISTES DE POINTS DE SPAWN
+            start_points_1 = [(-1000,0,-450), (-1000,0,-750), (-1000,0,-50), (-1000,0,150), (-1000,0,450), (-1000,0,750)]
+            start_points_2 = [(-1000,0,-600), (-1000,0,-250), (-1000,0,-150), (-1000,0,50), (-1000,0,250), (-1000,0,600)]
+
+            if (spawnPremiereListe):
+                for elt in start_points_1:
+                    simulation.create_car_shortest_path_time(elt, end, vitesse)
+            else:
+                for elt in start_points_2:
+                    simulation.create_car_shortest_path_time(elt, end, vitesse)
+
+            spawnPremiereListe = not spawnPremiereListe
+
+            #simulation.create_car_shortest_path_time(start, end, vitesse)
             
             ########## avec les matrices de chemin :
             #simulation.create_car_matrix_all_paths(matrix_embouteillages_all_paths)
