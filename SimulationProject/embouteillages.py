@@ -150,7 +150,7 @@ simulation.create_roads(curved_roads, True)
 
 # STATISTIQUES ET PERFORMANCES #
 
-simulation_run_time = 60 * 50  # Temps (60*temps en secondes) que va durer la simulation avant de s'arrêter
+simulation_run_time = 60 * 300  # Temps (60*temps en secondes) que va durer la simulation avant de s'arrêter
 
 
 # APPARITION DES VOITURES #
@@ -205,12 +205,21 @@ while True:
             start_points_1 = [(-1000,0,-450), (-1000,0,-750), (-1000,0,-50), (-1000,0,150), (-1000,0,450), (-1000,0,750)]
             start_points_2 = [(-1000,0,-600), (-1000,0,-250), (-1000,0,-150), (-1000,0,50), (-1000,0,250), (-1000,0,600)]
 
-            if (spawnPremiereListe):
+            # Pour les shortest path
+            '''if (spawnPremiereListe):
                 for elt in start_points_1:
-                    simulation.create_car_shortest_path_time(elt, end, vitesse)
+                    simulation.create_car_shortest_path_length(elt, end, vitesse)
             else:
                 for elt in start_points_2:
-                    simulation.create_car_shortest_path_time(elt, end, vitesse)
+                    simulation.create_car_shortest_path_length(elt, end, vitesse)'''
+
+            # Pour les random path
+            if (spawnPremiereListe):
+                for elt in start_points_1:
+                    simulation.create_car_random_path([elt], destination_points, vitesse)
+            else:
+                for elt in start_points_2:
+                    simulation.create_car_random_path([elt], destination_points, vitesse)
 
             spawnPremiereListe = not spawnPremiereListe
 
