@@ -128,7 +128,7 @@ dp12 = sphere(pos = vector(1000,50,750), radius = 20, color = vector(1,0,0))
 # Cordonnées des routes droites
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
 # Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
-straight_roads = list_middle_straight + list_top_straight + list_bot_straight
+straight_roads = braess + list_top_straight + list_bot_straight
 
 # Coordonnées des virages
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
@@ -228,9 +228,9 @@ while True:
             ########## avec les matrices de chemin :
             #simulation.create_car_matrix_all_paths(matrix_embouteillages_all_paths)
 
-        '''if i >= next_check_time : # on optimise le chemin de certaines voitures pour certains temps (toutes les 5 secondes, soit 30 tick) afin de minimiser la complexité 
+        if i >= next_check_time : # on optimise le chemin de certaines voitures pour certains temps (toutes les 5 secondes, soit 30 tick) afin de minimiser la complexité 
             if (simulation.carsList != []):
                 carIndex = randint(0, len(simulation.carsList) - 1)
                 car = simulation.carsList[carIndex]
-                simulation.gps.traffic_update(simulation,car)'''
+                simulation.gps.traffic_update(simulation,car)
 

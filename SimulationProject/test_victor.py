@@ -3,7 +3,7 @@
 from Simulation.Simulation import *
 from vpython import *
 
-scene.center = vector(0, 300, 300)
+scene.center = vector(0, 100,0)
 
 simulation = Simulation(max_length = 13)
 
@@ -11,14 +11,13 @@ simulation = Simulation(max_length = 13)
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
 # Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
 straight_roads = [
-    ((-500, 0, 0), (0, 0, 0), 10, 30),
-    ((0, 0, 0), (500, 0, 0), 10, 30)
 ]
 
 # Coordonnées des virages
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
 # Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
 curved_roads = [
+    ((-100,0,0),(150,0,150),10,10)
 ]
 
 # Points d'apparitions possibles des voitures
@@ -51,24 +50,25 @@ next_spawn_time = 60
 
 # LA SIMULATION #
 
-while True:
+#while True:
 
     # Si on arrive à la fin de la simulation, on change juste de cas
     # ça permet de ne pas couper la boucle, et de ne pas générer d'erreurs venant de vpython
     # On change rate à 1 pour soulager python (i.e. moins d'actualisations/seconde)
-    if simulation.internal_clock >= simulation_run_time:
-        rate(1)
-    else:
-        rate(60)
-        simulation.update()
-
-        i += 1
-        if i >= next_spawn_time:
-            i = 0
-            next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
+    #if simulation.internal_clock >= simulation_run_time:
+    #    rate(1)
+    #else:
+    #    rate(60)
+    #    simulation.update()
+    #
+    #    i += 1
+    #    if i >= next_spawn_time:
+    #        i = 0
+    #        next_spawn_time = 60 * randint(car_spawn_cooldown_range[0], car_spawn_cooldown_range[1])
             # spawn car
             #start, end = spawn_points[randint(0,len(spawn_points)-1)], destination_points[randint(0,len(destination_points)-1)]
             #simulation.create_car_shortest_path(start, end, vitesse)
             #ou 
-            simulation.create_car_random_path(spawn_points,destination_points,vitesse)
+    #        simulation.create_car_random_path(spawn_points,destination_points,vitesse)
             
+box(pos=vector(130,5,150), size=vector(20, 10, 10), axis=vector(0, 0, 0), color=vector(1, 0, 0))
