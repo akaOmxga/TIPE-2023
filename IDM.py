@@ -11,7 +11,7 @@ v_max = 13.9  # vitesse max
 d_min = 2.0  # distance minimale entre deux véhicules
 temps_reac = 1.0  # temps de réaction des usagers
 l = 2.0  # longueur des véhicules
-N = 3  # nombre de voitures
+N = 4  # nombre de voitures
 deltat = 30 # intervalle de mesure
 
 
@@ -62,7 +62,7 @@ for k in range(deltat):  # visualisation d l'évolution des données sur 60 seco
         liste_acc[k].append(A[k])
 T = [k for k in range(deltat + 1)]
 for k in range(N):
-    plt.plot(T, liste_acc[k])
+    plt.plot(T, liste_vitesse[k])
 
 plt.xlabel('temps en seconde')
 plt.ylabel('vitesse en m/s')

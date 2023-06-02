@@ -150,7 +150,7 @@ simulation.create_roads(curved_roads, True)
 
 # STATISTIQUES ET PERFORMANCES #
 
-simulation_run_time = 60 * 50  # Temps (60*temps en secondes) que va durer la simulation avant de s'arrêter
+simulation_run_time = 60 * 300  # Temps (60*temps en secondes) que va durer la simulation avant de s'arrêter
 
 
 # APPARITION DES VOITURES #
@@ -207,10 +207,10 @@ while True:
 
             if (spawnPremiereListe):
                 for elt in start_points_1:
-                    simulation.create_car_shortest_path_time(elt, end, vitesse)
+                    simulation.create_car_shortest_path_length(elt, end, vitesse)
             else:
                 for elt in start_points_2:
-                    simulation.create_car_shortest_path_time(elt, end, vitesse)
+                    simulation.create_car_shortest_path_length(elt, end, vitesse)
 
             spawnPremiereListe = not spawnPremiereListe
 
@@ -219,9 +219,9 @@ while True:
             ########## avec les matrices de chemin :
             #simulation.create_car_matrix_all_paths(matrix_embouteillages_all_paths)
 
-        '''if i >= next_check_time : # on optimise le chemin de certaines voitures pour certains temps (toutes les 5 secondes, soit 30 tick) afin de minimiser la complexité 
+        if i >= next_check_time : # on optimise le chemin de certaines voitures pour certains temps (toutes les 5 secondes, soit 30 tick) afin de minimiser la complexité 
             if (simulation.carsList != []):
                 carIndex = randint(0, len(simulation.carsList) - 1)
                 car = simulation.carsList[carIndex]
-                simulation.gps.traffic_update(simulation,car)'''
+                simulation.gps.traffic_update(simulation,car)
 
