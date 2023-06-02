@@ -128,7 +128,7 @@ dp12 = sphere(pos = vector(1000,50,750), radius = 20, color = vector(1,0,0))
 # Cordonnées des routes droites
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
 # Avec seuil voitures le nombre maximum de voitures sur la route au dela duquel on ne peut avoir un meilleur flux
-straight_roads = list_middle_straight + list_top_straight + list_bot_straight
+straight_roads = braess + list_top_straight + list_bot_straight
 
 # Coordonnées des virages
 # Format : (coords départ, coords arrivée, seuil voitures, limitation vitesse en m/s²)
@@ -205,12 +205,25 @@ while True:
             start_points_1 = [(-1000,0,-450), (-1000,0,-750), (-1000,0,-50), (-1000,0,150), (-1000,0,450), (-1000,0,750)]
             start_points_2 = [(-1000,0,-600), (-1000,0,-250), (-1000,0,-150), (-1000,0,50), (-1000,0,250), (-1000,0,600)]
 
-            if (spawnPremiereListe):
+            # Pour les shortest path
+            '''if (spawnPremiereListe):
                 for elt in start_points_1:
                     simulation.create_car_shortest_path_length(elt, end, vitesse)
             else:
                 for elt in start_points_2:
+<<<<<<< HEAD
                     simulation.create_car_shortest_path_length(elt, end, vitesse)
+=======
+                    simulation.create_car_shortest_path_length(elt, end, vitesse)'''
+
+            # Pour les random path
+            if (spawnPremiereListe):
+                for elt in start_points_1:
+                    simulation.create_car_random_path([elt], destination_points, vitesse)
+            else:
+                for elt in start_points_2:
+                    simulation.create_car_random_path([elt], destination_points, vitesse)
+>>>>>>> ec434904f4d4e7aa73f26b36b69378d9af4b2bb6
 
             spawnPremiereListe = not spawnPremiereListe
 

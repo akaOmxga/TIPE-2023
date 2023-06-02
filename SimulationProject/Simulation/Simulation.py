@@ -47,7 +47,10 @@ class Simulation:
 
         destination_points = destination_points_to_copy.copy()
         # Trouve un point d'apparition et une destination aléatoires parmi ceux possibles
-        spawn_coords = spawn_points[randint(0, len(spawn_points) - 1)]
+        spawn_coords = spawn_points[0]
+        if len(spawn_points) > 1:
+            spawn_coords = spawn_points[randint(0, len(spawn_points) - 1)]
+
         destination_coords = spawn_coords
         possible_paths = []
 
